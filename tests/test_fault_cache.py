@@ -86,7 +86,7 @@ def test_physical_and_implementation_changes_invalidate(fixture, tmp_path, monke
     assert len(calls) == 4
 
 
-@pytest.mark.parametrize('corruption', ['partial', 'matrix', 'signatures'])
+@pytest.mark.parametrize('corruption', ['partial', 'matrix', 'signatures', 'metadata'])
 def test_invalid_cache_rebuilt_without_stale_success(fixture, tmp_path, corruption):
     expected = build(fixture, tmp_path)
     entry = next((tmp_path / 'models').glob('*/manifest.json')).parent
@@ -94,6 +94,11 @@ def test_invalid_cache_rebuilt_without_stale_success(fixture, tmp_path, corrupti
         (entry / 'manifest.json').unlink()
     elif corruption == 'matrix':
         (entry / 'H_data.npy').write_bytes(b'partial')
+    elif corruption == 'metadata':
+        import json
+        record = json.loads((entry / 'manifest.json').read_text())
+        record['metadata']['p'] = .06
+        (entry / 'manifest.json').write_text(json.dumps(record))
     else:
         sig = next((tmp_path / 'signatures').glob('*/manifest.json')).parent
         (sig / 'indices.npy').write_bytes(b'partial')

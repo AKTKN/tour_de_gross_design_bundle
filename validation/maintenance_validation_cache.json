@@ -28,9 +28,15 @@
       "failures": 0,
       "errors": 0,
       "skipped": 0
+    },
+    "cache-final": {
+      "tests": 18,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
     }
   },
-  "final_tree_coverage": "212 full-suite tests plus 53 controller tests after the retained-evidence path fix",
+  "final_tree_coverage": "212 full-suite tests plus 53 controller tests after the retained-evidence path fix; 18 cache tests after manifest-integrity addition",
   "cache_benchmark": {
     "scope": "gross memory construction/cache I/O only; no Monte Carlo or phase-07 acceptance",
     "rounds": 10,
@@ -45,18 +51,18 @@
     "N": 218160,
     "cold_warm_equal": true,
     "timings": {
-      "harness_and_locations_seconds": 12.802509193999867,
-      "cold_seconds": 13.099032244001137,
-      "warm_seconds": 1.8523571730002004,
-      "changed_p_seconds": 2.734919988997717,
-      "first_export_seconds": 0.795008590001089,
-      "reused_export_seconds": 0.3235726220009383
+      "harness_and_locations_seconds": 12.52373009099756,
+      "cold_seconds": 12.83891556800154,
+      "warm_seconds": 1.7785486429966113,
+      "changed_p_seconds": 2.433671452999988,
+      "first_export_seconds": 0.6901369490005891,
+      "reused_export_seconds": 0.27307017799830646
     },
     "storage": {
-      "numeric_export_bytes": 26383199
+      "numeric_export_bytes": 26383264
     }
   },
-  "export_files_hash_verified": 86,
+  "export_files_hash_verified": 90,
   "reference_audit_matches": true,
   "pip_check": "No broken requirements found.",
   "open_items": [
