@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "phase": "09",
+  "implementation": "Independent physical Tanner transfers and symbolic role/frame flows; no donor code copied or modified",
+  "paper": {
+    "arxiv": "2506.03094v1",
+    "url": "https://arxiv.org/pdf/2506.03094v1",
+    "sha256": "78599e80971cd05ba2d8ba0c1c6c0d62b7d3ccdbe482ab4578770d70e8631c73",
+    "source_lock": "locks/paper-sources.json",
+    "inspected": ["PDF section 2.2, pages 10-11: two-CNOT swaps, vacated readout/frame, 6+8=14 instruction accounting", "PDF A.2, pages 46-47: AiAjT/BiBjT routes and full logical action", "PDF A.7: C10 gross shifts, full K24 channel and P_circuit/C normalization"],
+    "license": "Scientific definitions cited; no implementation copied or PDF redistributed"
+  },
+  "backend": {"distribution": "stim", "version": "1.16.0", "license": "Apache-2.0", "source_lock": "locks/package-artifacts.json"},
+  "inherited_sources": ["locks/physical-scheduling-sources.json", "locks/flows-and-harness-sources.json", "locks/noise-and-fault-sources.json"],
+  "fixtures": "Unchanged frozen reference/gross.json, reference/two_gross.json and reference/table6.csv",
+  "external_source_root": "/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/external_libs",
+  "profile": "gross_B1_B0_x_plus_measure_prepare_v1",
+  "timing_assumption": "MX followed by R is an explicit one-tick cross-basis measurement/preparation bundle with separate noisy readout/reset locations; initial check preparation adds one tick to 14C",
+  "open_items": ["O1", "O2", "O3", "O4", "O5"],
+  "paper_exact": false
+}
