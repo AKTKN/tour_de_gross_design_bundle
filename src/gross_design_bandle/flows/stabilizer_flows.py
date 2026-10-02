@@ -210,3 +210,45 @@ def verify_deterministic(circuit):
     return {'oracle': 'exact signed affine stabilizer propagation; no randomized flow tests',
             'detectors': len(tracker.constraints), 'observables': len(tracker.observables),
             'all_zero': True}
+
+
+def verify_deterministic_stim(circuit):
+    """Strict determinacy plus raw reference signs, without Python state propagation.
+
+    The DEM proves each declared parity is constant; a noiseless reference record
+    fixes that constant. Detector samples alone subtract the reference baseline
+    and would miss a deterministic wrong sign.
+    """
+    circuit.detector_error_model(allow_gauge_detectors=False)
+    return _verify_reference_signs(circuit)
+
+
+def _verify_reference_signs(circuit):
+    """Internal sign check; caller must first extract this circuit's strict DEM."""
+    import stim
+    allowed = {'R','RX','RY','M','MX','MY','MPP','MPAD','H','S','S_DAG','X','Y','Z',
+               'CX','CY','CZ','SWAP','I','TICK','QUBIT_COORDS','SHIFT_COORDS',
+               'DETECTOR','OBSERVABLE_INCLUDE'}
+    flat = list(circuit.flattened())
+    if any(op.name not in allowed for op in flat):
+        raise ValueError('unsupported exact noiseless reference flow gate')
+    reference = circuit.reference_sample()
+    cursor = 0; detectors = []; observables = {}
+    for op in flat:
+        if op.name in ('DETECTOR', 'OBSERVABLE_INCLUDE'):
+            value = 0
+            for t in op.targets_copy():
+                if not t.is_measurement_record_target or not 0 <= cursor + t.value < cursor:
+                    raise ValueError('record offset outside measurement history')
+                value ^= int(reference[cursor + t.value])
+            if op.name == 'DETECTOR':
+                detectors.append(value)
+            else:
+                k = int(op.gate_args_copy()[0])
+                observables[k] = observables.get(k, 0) ^ value
+        else:
+            cursor += stim.Circuit(str(op)).num_measurements
+    if any(detectors) or any(observables.values()):
+        raise ValueError('nonzero signed flow: strict deterministic reference parity')
+    return {'oracle': 'strict Stim determinacy and exact reference-record signs',
+            'detectors': len(detectors), 'observables': len(observables), 'all_zero': True}

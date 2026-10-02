@@ -16,6 +16,32 @@ Implement independent Bernoulli and exact-uniform fixed-weight samplers over the
 
 Implement F03--F05. First exhaustively check tiny models. Then run only a smoke pilot of at most 256 shots per selected point and at most three accessible points, with a wall-time cap and explicit indication that it is not performance evidence. Zero failures remain upper bounds. Preserve all Y w>80 and all w<w0 events.
 
+## Efficient validation and artifact reuse
+
+Read `docs/VALIDATION_WORKFLOW.md` before writing tests. Use the minimum set of
+meaningful tests for this phase: one positive behavior check and its material
+negative cases, sharing expensive fixtures. Avoid assertions about serialization
+spelling, duplicate random seeds and re-exhausting unchanged primitives.
+
+Use strict Stim DEM plus raw reference-record signs for large C10/C18 harnesses;
+keep independent signed propagation and exhaustive Bell/gate oracles on small
+fixtures. Preserve all named logical rows, joint X/Z faults and admission maps.
+Run the smallest failing node with `pytest -xq` first, then the affected phase.
+Run final regression and export once after source stabilizes, sequentially.
+Do not repeatedly restart a full suite/export after an unrelated assertion fix.
+Cache numerical artifacts, never a test pass. Do not mark incomplete runs passed.
+
+Use `build_fault_model(..., cache_dir=...)` or the controller-provided
+`GROSS_DESIGN_CACHE_DIR`. Reuse physical signatures across probabilities/profiles
+and structural matrices across p changes. Export with
+`bench.artifacts.export_fault_model`; native CSC/sparse-signature/map arrays and
+checksummed manifests replace expanded catalogue JSON and repeated ZIP writes.
+Keep legacy JSON/NPZ opt-in for a real consumer. Hash relevant numerical inputs
+and implementations, not all test/doc files for numerical-cache invalidation.
+Record cold/warm timing, cache reuse/invalidation and changed coverage in STATUS.
+Implementation/test limits are 10800s/1800s; these never enlarge pilot/campaign
+budgets or authorize automatic retries.
+
 ## Acceptance
 
 Samplers agree on tiny exact cases; normalization and finite-tail bounds correct; data/chunks and priors reproducible; no target-fit numbers inserted as observations.

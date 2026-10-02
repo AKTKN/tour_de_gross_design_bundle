@@ -1,0 +1,71 @@
+{
+  "phase": "maintenance_validation_cache",
+  "branch": "feature/validation-cache",
+  "worktree": "/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/.codex-pipeline/tour-de-gross/worktrees/validation-cache",
+  "base_commit": "02f7f2fa7d091db4e98733c97c2307cc64a9add3",
+  "scope": "optimization only; phase 07 remains unaccepted; no sampler/decoder/campaign",
+  "test_runs": {
+    "focused": {
+      "tests": 97,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "cache-noise": {
+      "tests": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "final": {
+      "tests": 212,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "controller-final": {
+      "tests": 53,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "final_tree_coverage": "212 full-suite tests plus 53 controller tests after the retained-evidence path fix",
+  "cache_benchmark": {
+    "scope": "gross memory construction/cache I/O only; no Monte Carlo or phase-07 acceptance",
+    "rounds": 10,
+    "H_shape": [
+      1584,
+      218160
+    ],
+    "Lambda_shape": [
+      24,
+      218160
+    ],
+    "N": 218160,
+    "cold_warm_equal": true,
+    "timings": {
+      "harness_and_locations_seconds": 12.802509193999867,
+      "cold_seconds": 13.099032244001137,
+      "warm_seconds": 1.8523571730002004,
+      "changed_p_seconds": 2.734919988997717,
+      "first_export_seconds": 0.795008590001089,
+      "reused_export_seconds": 0.3235726220009383
+    },
+    "storage": {
+      "numeric_export_bytes": 26383199
+    }
+  },
+  "export_files_hash_verified": 86,
+  "reference_audit_matches": true,
+  "pip_check": "No broken requirements found.",
+  "open_items": [
+    "O1",
+    "O2",
+    "O3",
+    "O4",
+    "O5",
+    "phase-07 final acceptance remains required"
+  ],
+  "publication": "validated candidate; atomic feature/main push follows; actual outcome in local publication.json"
+}

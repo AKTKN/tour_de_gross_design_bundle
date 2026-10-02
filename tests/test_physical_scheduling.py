@@ -180,14 +180,16 @@ def test_C03_staggered_8C_plus_1_offsets_and_repeat():
             assert s.duration==8*rounds+1
             assert sum(i.name=='TICK' for i in s.to_stim())==s.duration
             assert validate(s)['eq67_overlap_pairs']>0
+            reset_times = {(o.round,o.check_id):o.time for o in s.ops if o.gate in ('R','RX')}
+            read_times = {(o.round,o.check_id):o.time for o in s.ops if o.outcome_id}
             for r in range(rounds):
                 for i,check in enumerate(s.checks):
-                    reset=next(o for o in s.ops if o.round==r and o.check_id==check.id and o.gate in ('R','RX'))
-                    read=next(o for o in s.ops if o.round==r and o.check_id==check.id and o.outcome_id)
-                    assert (reset.time,read.time)==((8*r+1,8*r+8) if i<c.spec.cells else (8*r,8*r+7))
-            for ccheck in s.checks:
-                one=replace(s,ops=tuple(o for o in s.ops if o.round==0))
-                assert check_tableau(one,ccheck)['signed_readout_matches']
+                    assert (reset_times[r,check.id],read_times[r,check.id])==((8*r+1,8*r+8) if i<c.spec.cells else (8*r,8*r+7))
+            # The first round is identical for C=1 and C=3. Prove its complete
+            # check set once; timing/overlap constraints above still cover both.
+            if rounds == 1:
+                for ccheck in s.checks:
+                    assert check_tableau(s,ccheck)['signed_readout_matches']
 
 
 def test_C04_ledger_counts_intervals_idle_and_policy_hash(gross):
@@ -276,7 +278,9 @@ def test_gross_X1_physical_instrument_matches_ideal_projection(gross):
     refs=tuple(f'ref:{i}' for i in range(c.k))
     register=physical.register+refs
     for mode in ('plus','minus','choi'):
-        for seed in range(4):
+        # Each explicit +, -, encoded-Choi input checks the complete logical
+        # stabilizer basis. Repeating it with four seeds added duplicate work.
+        for seed in range(1):
             stabs=[to_stim_pauli(p,register) for p in c.checks]
             from gross_design_bandle.surgery.ports import embed
             for i,(lx,lz) in enumerate(zip(c.logical_x,c.logical_z)):

@@ -18,7 +18,9 @@ class Report:
 def main():
     output = Path(sys.argv[1])
     reporter = Report()
-    code = pytest.main(['-q', '--strict-markers', *sys.argv[2:]], plugins=[reporter])
+    # Stop at the first failure; the next invocation still executes every mapped
+    # node. Numerical artifacts may be reused, test pass reports never are.
+    code = pytest.main(['-q', '-x', '--strict-markers', '--durations=10', *sys.argv[2:]], plugins=[reporter])
     output.write_text(json.dumps({'exit_code': int(code), 'tests': reporter.tests}, indent=2) + '\n')
     return int(code)
 

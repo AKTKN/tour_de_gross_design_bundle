@@ -1,5 +1,6 @@
 """Primitive lowering before DEM compaction, plus faithful Stim emission."""
 from itertools import product
+import os
 import numpy as np
 import stim
 from .locations import validate_locations
@@ -21,16 +22,8 @@ def primitive_terms(location):
         yield word,x,z
 
 
-def build_fault_model(circuit, locations, profile, *, admission_policy, grouping_policy):
-    """Admission/grouping have no defaults: O4 must be a deliberate choice."""
-    from gross_design_bandle.bench.columns import FaultModel, ADMISSION, GROUPING, matrix_from_signatures
-    if not profile.independent:
-        raise ValueError('categorical channel cannot use an independent Bernoulli catalogue')
-    if admission_policy not in ADMISSION or grouping_policy not in GROUPING:
-        raise ValueError('unknown admission/grouping policy')
-    locations = tuple(locations); validate_locations(circuit,locations)
-    # Strict ideal detector integrity is required even for an empty population.
-    circuit.detector_error_model(allow_gauge_detectors=False)
+def raw_population(locations, profile):
+    """Deterministic primitive/copy provenance, also used by numeric artifact reads."""
     raw = []; faults = []; copy_to_raw = []; ordinal = []
     for j,loc in enumerate(locations):
         for word,x,z in primitive_terms(loc):
@@ -41,7 +34,40 @@ def build_fault_model(circuit, locations, profile, *, admission_policy, grouping
                 'equal_q_multiplicity':MULTIPLICITIES[loc.kind],'copies':copies})
             faults.append((loc.after_instruction,x,z))
             copy_to_raw.extend([r]*copies); ordinal.extend(range(copies))
-    signatures = joint_signatures(circuit,faults)
+    return raw, faults, copy_to_raw, ordinal
+
+
+def build_fault_model(circuit, locations, profile, *, admission_policy, grouping_policy, cache_dir=None):
+    """Admission/grouping have no defaults: O4 must be a deliberate choice."""
+    from gross_design_bandle.bench.columns import FaultModel, ADMISSION, GROUPING, matrix_from_signatures
+    if not profile.independent:
+        raise ValueError('categorical channel cannot use an independent Bernoulli catalogue')
+    if admission_policy not in ADMISSION or grouping_policy not in GROUPING:
+        raise ValueError('unknown admission/grouping policy')
+    locations = tuple(locations)
+    if cache_dir is None:
+        cache_dir = os.environ.get('GROSS_DESIGN_CACHE_DIR') or None
+    if cache_dir is False:
+        cache_dir = None
+    if cache_dir is not None:
+        from .cache import cached_model
+        return cached_model(cache_dir, circuit, locations, profile, admission_policy, grouping_policy,
+                            lambda: _build_fault_model(circuit, locations, profile, admission_policy,
+                                                       grouping_policy, cache_dir))
+    return _build_fault_model(circuit, locations, profile, admission_policy, grouping_policy, None)
+
+
+def _build_fault_model(circuit, locations, profile, admission_policy, grouping_policy, cache_dir):
+    from gross_design_bandle.bench.columns import FaultModel, matrix_from_signatures
+    validate_locations(circuit,locations)
+    # Strict ideal detector integrity is required even for an empty population.
+    circuit.detector_error_model(allow_gauge_detectors=False)
+    raw, faults, copy_to_raw, ordinal = raw_population(locations, profile)
+    if cache_dir is None:
+        signatures = joint_signatures(circuit,faults)
+    else:
+        from .cache import cached_signatures
+        signatures = cached_signatures(cache_dir, circuit, locations, faults, joint_signatures)
     copy_to_raw = np.array(copy_to_raw,dtype=np.int64); ordinal = np.array(ordinal,dtype=np.int64)
     mask = np.array([admission_policy=='include_all' or bool(signatures[r]) for r in copy_to_raw],dtype=bool)
     admitted = np.flatnonzero(mask)

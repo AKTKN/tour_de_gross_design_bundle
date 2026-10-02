@@ -14,7 +14,33 @@ Use the validated engine to activate the full LPU for X1 X7 and Y1. The Y target
 
 ## Tests and scope limit
 
-Implement B04 and full D-level tests for these operations, including product-only versus separate-factor measurement. Confirm the same installed LPU geometry is used while active Pauli labels/connections differ. Compare fault ledgers with Table-6 gross XX and Y targets without padding N.
+Implement the minimum B04 and D-level coverage for these operations, including product-only versus separate-factor measurement. Confirm the same installed LPU geometry is used while active Pauli labels/connections differ. Compare fault ledgers with Table-6 gross XX and Y targets without padding N.
+
+## Efficient validation and artifact reuse
+
+Read `docs/VALIDATION_WORKFLOW.md` before writing tests. Use the minimum set of
+meaningful tests for this phase: one positive behavior check and its material
+negative cases, sharing expensive fixtures. Avoid assertions about serialization
+spelling, duplicate random seeds and re-exhausting unchanged primitives.
+
+Use strict Stim DEM plus raw reference-record signs for large C10/C18 harnesses;
+keep independent signed propagation and exhaustive Bell/gate oracles on small
+fixtures. Preserve all named logical rows, joint X/Z faults and admission maps.
+Run the smallest failing node with `pytest -xq` first, then the affected phase.
+Run final regression and export once after source stabilizes, sequentially.
+Do not repeatedly restart a full suite/export after an unrelated assertion fix.
+Cache numerical artifacts, never a test pass. Do not mark incomplete runs passed.
+
+Use `build_fault_model(..., cache_dir=...)` or the controller-provided
+`GROSS_DESIGN_CACHE_DIR`. Reuse physical signatures across probabilities/profiles
+and structural matrices across p changes. Export with
+`bench.artifacts.export_fault_model`; native CSC/sparse-signature/map arrays and
+checksummed manifests replace expanded catalogue JSON and repeated ZIP writes.
+Keep legacy JSON/NPZ opt-in for a real consumer. Hash relevant numerical inputs
+and implementations, not all test/doc files for numerical-cache invalidation.
+Record cold/warm timing, cache reuse/invalidation and changed coverage in STATUS.
+Implementation/test limits are 10800s/1800s; these never enlarge pilot/campaign
+budgets or authorize automatic retries.
 
 ## Acceptance
 
