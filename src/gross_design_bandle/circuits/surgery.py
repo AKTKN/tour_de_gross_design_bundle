@@ -10,15 +10,24 @@ from .schedule import Op, Schedule, finish_checks, bipartite_layers, overlap_pai
 def physical_checks(deformation):
     df = deformation
     code = df.lpu.codes[0]
-    if len(df.lpu.codes)!=1 or df.lpu.operation=='inter_XX':
-        raise ValueError('phase04 physical scheduler supports in-module checks only')
-    nold = len(code.checks)
+    codes = df.lpu.codes
+    inter = df.lpu.operation == 'inter_XX'
+    nold = sum(len(c.checks) for c in codes)
+    z_ids = {id for c in codes for id in c.check_ids[c.spec.cells:]}
     checks = []
     for i,(id,p) in enumerate(zip(df.group.ids,df.group.generators)):
         if i<nold:
             # A dressed X check has Z on auxiliary edges and therefore must use
             # the generic X-ancilla controlled-Pauli primitive.
-            checks.append(Check.single(id,p,basis='Z' if i>=code.spec.cells else 'X'))
+            checks.append(Check.single(id,p,basis='Z' if id in z_ids else 'X'))
+        elif inter and (id.startswith('vertex:adapter:') or id.startswith('cycle:adapter:')):
+            left = tuple(q for q in support(p) if q.startswith(f'edge:{code.block_id}:'))
+            if id.startswith('cycle:adapter:'):
+                index = id.rsplit(':',1)[1]
+                ancillas = tuple(f'anc:cycle:{c.block_id}:bridge:square:{index}' for c in codes)
+            else:
+                ancillas = tuple(f'anc:{id}:{c.block_id}' for c in codes)
+            checks.append(Check.bell(id,p,left,ancillas=ancillas))
         elif id == f'vertex:{df.graph.shared_vertex}':
             # The shared algebraic vertex is two physical check qubits. Split
             # its LPU support by the original half, and assign BB port support
@@ -34,7 +43,15 @@ def physical_checks(deformation):
                 left.append(shared_q)
             checks.append(Check.bell(id,p,left))
         else:
-            checks.append(Check.single(id,p))
+            ancilla = None
+            if inter and id.startswith('vertex:'):
+                from gross_design_bandle.codes.reference_profiles import reference_fixture
+                from gross_design_bandle.lpu.reference import label_index
+                for c in codes:
+                    shared = c.qubit_ids[label_index(reference_fixture(c.spec.name)['identified_vertices'][0],c.spec)]
+                    if id == f'vertex:{c.block_id}:l:{shared}':
+                        ancilla = f'anc:vertex:{c.block_id}:shared:l'
+            checks.append(Check.single(id,p,ancilla=ancilla))
     return tuple(checks)
 
 
@@ -43,8 +60,8 @@ def staged_schedule(deformation):
     checks = physical_checks(df)
     by_id = {c.id:c for c in checks}
     code = df.lpu.codes[0]
-    old_ids = set(code.check_ids)
-    bb_data = set(code.qubit_ids)
+    old_ids = {id for c in df.lpu.codes for id in c.check_ids}
+    bb_data = {q for c in df.lpu.codes for q in c.qubit_ids}
     raw = []
     phase_log = []
     cursor = 1
@@ -61,7 +78,8 @@ def staged_schedule(deformation):
             cursor += 1
         phase_log.append({'phase':name,'color_layers':len(layers)})
     color_phase('lpu_to_bb',[(c,q) for c in checks if c.id not in old_ids for q in support(c.pauli) if q in bb_data])
-    bb_edges,adapter = adapted_edges(code)
+    adapted = [adapted_edges(c) for c in df.lpu.codes]
+    bb_edges = tuple(edge for edges,_ in adapted for edge in edges)
     bb_start = cursor-1
     raw.extend(Op(bb_start+t,*by_id[id].interaction(q),id,q,phase='frozen_bb') for t,id,q in bb_edges)
     cursor = bb_start+8
@@ -140,7 +158,8 @@ def staged_schedule(deformation):
     schedule = Schedule(df.group.register,checks,ops,max(o.time for o in ops)+1,
                         'tdg_a5_staged_coloring_asap_v1')
     validate(schedule)
-    return schedule, {'stages':phase_log,'Delta_BB':delta,'adapter':adapter.to_dict(),
+    return schedule, {'stages':phase_log,'Delta_BB':delta,'adapter':adapted[0][1].to_dict(),
+                      'block_adapters':[adapter.to_dict() for _,adapter in adapted],
                       'precompaction_gate_depth':max(o.time for o in raw),
                       'deformed_cycle_ticks':schedule.duration,'paper_reported_cycle_ticks':12,
                       'exact_coloring_choice_equivalence':False}

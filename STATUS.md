@@ -10,7 +10,7 @@ The theory/design report, module architecture, reproduction contract, validation
 
 ## Not implemented / not run
 
-Phase 04 now supplies physical noiseless gross X1 circuits, single/Bell primitives and independently validated schedules. Phase 05 supplies an exact signed detector/observable compiler and ideal gross memory/X1 benchmark harness. Phase 06 supplies three distinct noise channels, primitive catalogues, joint H/Lambda matrices and gross memory/X1 audit exports. No production noisy surgery benchmark, distance proof, reproduction Relay adapter or Monte Carlo reproduction has been completed. The original delivery did not install or execute Stim, qLDPC or Relay; phase 00 subsequently pinned and tested tiny backend APIs. Phases 01--02 implemented signed algebra and deformations; phase 03 now validates an ideal measurement instrument through gross X1, with explicit limits recorded below. The delivered algebra audit is not a circuit-distance certification and its rank calculations are phase-blind.
+Phase 04 supplies physical noiseless gross X1 circuits, single/Bell primitives and independently validated schedules. Phase 05 supplies an exact signed detector/observable compiler and ideal gross memory/X1 benchmark harness. Phase 06 supplies three distinct noise channels, primitive catalogues, joint H/Lambda matrices and gross memory/X1 audit exports. Phases 07--08 now supply direct gross XX/Y and Fig. 13(b) two-block C10 instruments, independent noisy harnesses and compact joint fault exports; phase 08 uses the full named K47 profile and leaves published inter K23 unavailable on O1. No distance proof, reproduction Relay adapter or Monte Carlo reproduction has been completed. The original delivery did not install or execute Stim, qLDPC or Relay; phase 00 subsequently pinned and tested tiny backend APIs. Phases 01--02 implemented signed algebra and deformations; phase 03 validates an ideal measurement instrument through gross X1, with explicit limits recorded below. The delivered algebra audit is not a circuit-distance certification and its rank calculations are phase-blind.
 
 ## Specification blockers for exact reproduction
 
@@ -88,11 +88,11 @@ Implemented in the separate `feature/model-reasoning` worktree. Verification: `c
 
 ## Next action
 
-Phase 06 supplies independent noise/catalogue construction and the gross
-memory/X1 audit; its final regression and handoff verification are recorded below.
-Next prompt: `prompts/07_inmodule_XX_Y.md`, only in a new
-controller-authorized session after phase-06 acceptance/publication.
-This session stops at 06. Strict paper-equivalent sampling remains blocked
+Phase 08 supplies the physical one-to-one gross adapter and full named K47
+validation; its final regression and handoff verification are recorded below.
+Next prompt: `prompts/09_shift_automorphism.md`, only in a new
+controller-authorized session after phase-08 acceptance/publication.
+This session stops at 08. Strict paper-equivalent sampling remains blocked
 by O1--O5; no later phase or Git publication was run.
 
 ## Phase 00 source audit completed (2026-10-02)
@@ -1258,4 +1258,150 @@ strict paper manifests remain fail-closed. No reference correction is proposed.
 Short reproducible rerun: set the two environment variables above, run the
 phase test command, then the export command sequentially. Next prompt:
 `prompts/08_intermodule_adapter.md`, only in a new controller-authorized session
+after independent acceptance and publication. Stop here.
+
+## Phase 08 completed: one-to-one gross Bell adapter (2026-10-02/03 JST)
+
+Branch: `feature/08_intermodule_adapter`. Worktree:
+`/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/.codex-pipeline/tour-de-gross/worktrees/08_intermodule_adapter`.
+The supplied worktree was clean at entry; existing scientific fixtures, AGENTS,
+pipeline controls and external checkouts were preserved. Main is clean. Git
+publication was **not performed**: the outer controller owns independent
+acceptance, the feature commit, validated main merge and atomic push of both refs.
+This session stops at phase 08; no phase 09 job was launched.
+
+Implemented `CodeBlocks`, `build_physical_inter`, the two-block logical CX basis
+and `full_two_block_centralizer_K47` harness, extending the inherited scheduler,
+physical protocol and noise-location engine. `lpu/code_code_adapter.py` supplies
+module ownership, Bell support partitions/readout XORs and active/installed
+connectivity. Added `tests/test_intermodule_adapter.py`, the compact-array
+exporter `tools/audit_intermodule_adapter.py`, `docs/INTERMODULE_ADAPTER.md` and
+`locks/intermodule-adapter-sources.json`. No donor implementation was copied or
+modified. The pinned v1 PDF hash was verified and Fig. 13(b), A.4 (including
+footnote 14), A.5 and A.7/Table 6 were inspected from the retained phase-07 PDF.
+Local extracted text: `evidence/phase08/paper-v1.txt`.
+
+Both sets of eleven bridge data qubits remain physical. Eleven identifying X
+checks and ten six-edge joint Z cycles use module-local Bell halves; the latter
+reuse installed bridge-square measurement sites. Neither module's triangular
+bridge check is active. The active algebraic graph has V/E/cycles = 35/58/20;
+merged k = 23, distinct from the **47 named logical-action rows**. There are 710
+active/allocated qubits and 778 installed sites, with 68 inactive installed sites
+and maximum degree seven. An independent handoff check constrains every added
+installed coupler to the identifying links or cross-module Bell links, using
+the two inherited full-LPU installed graphs as the oracle.
+
+The independently chosen schedule has 13 ticks per deformed round, C=10, and
+141 physical ticks including reset, split and noiseless original verification;
+the reported paper cycle is 12 ticks. Native controlled Paulis, the shared
+half's installed left check site, live idle accounting and ideal boundaries are
+explicit policies. The raw physical instrument has no MPP. Ideal terminal MPPs
+are confined to the harness. Only the joint target is measured physically;
+`published_inter_K23` fails closed until its actual rows are source-verified.
+
+Coverage: one complete encoded-state test checks the + and - sectors and
+independent encoded Choi inputs, comparing a full rank-312 data/reference
+stabilizer group with the joint projector. Both individual X1 expectations
+remain random. Separate factor measurements destroy a retained cross-block
+coherence witness. Every physical check has an exact signed composite-tableau
+readout oracle; collision and Eq. (67) checks pass. Negative cases reject wrong
+module partitions, missing Bell preparation, a dropped Bell readout half,
+reused/single block IDs, wrong target ordering, invalid rounds and unresolved
+K23. Both C10 correction modes pass strict Stim DEM and raw reference-record
+sign checks. Joint faults retain both X/Z components and are checked on both
+Bell families and halves, first/middle/last rounds and every changed phase/role.
+The unchanged small exhaustive gate/Bell and signed-flow oracles execute in
+regression. The inter noisy circuit was checked with `a7_uniform_expanded`;
+other inter noise profiles were not separately exported or claimed validated.
+
+Actual validation commands (every Python invocation used tour_de_gross and,
+where relevant, `PYTHONPATH="$PWD/src"`; the cache was the writable local
+`GROSS_DESIGN_CACHE_DIR="$PWD/evidence/phase08/cache"`):
+
+```bash
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_intermodule_adapter.py::test_negative_blocks_profiles_and_rounds_fail_closed --junitxml=evidence/phase08/negative.xml
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_intermodule_adapter.py --durations=10 --junitxml=evidence/phase08/phase-initial.xml
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_intermodule_adapter.py::test_C_Bell_partition_XOR_schedule_and_resource_census --junitxml=evidence/phase08/resource-final.xml
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq --durations=15 --junitxml=evidence/phase08/final.xml
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_flows_and_harness.py::test_negative_missing_unknown_duplicate_records_and_unresolved_profiles --junitxml=evidence/phase08/scope-fix.xml
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_intermodule_adapter.py --durations=10 --junitxml=evidence/phase08/phase-final.xml
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq --durations=15 --junitxml=evidence/phase08/final.xml
+conda run --no-capture-output -n tour_de_gross python tools/audit_intermodule_adapter.py --output-dir evidence/phase08/artifacts --cache-dir evidence/phase08/cache
+conda run --no-capture-output -n tour_de_gross python tools/audit_reference.py --output evidence/phase08/independent-audit.json
+conda run --no-capture-output -n tour_de_gross python -m compileall -q src/gross_design_bandle tools/audit_intermodule_adapter.py
+conda run --no-capture-output -n tour_de_gross python -m pip check
+conda run --no-capture-output -n tour_de_gross python -m pytest --collect-only -q tests/test_intermodule_adapter.py
+conda run --no-capture-output -n tour_de_gross python /tmp/phase08_gates.py
+conda run --no-capture-output -n tour_de_gross python /tmp/phase08_handoff.py
+conda run --no-capture-output -n tour_de_gross python /tmp/phase08_result.py
+git diff --check
+```
+
+The first negative node passed **1 in 5.40s**; the initial phase passed **8 in
+297.99s**, before the installed-count clarification and input guard. The resource
+clarification passed **1 in 54.20s**. The first broader regression stopped at
+**83 passed / 1 failed in 57.70s**: supplying one CodeData to the inter harness
+raised TypeError instead of a scope ValueError. That failed/partial run is
+retained as `evidence/phase08/regression-initial-failed.{txt,xml}` and is not
+counted as a pass. The fixed smallest node passed **1 in 7.15s**, then the final
+affected phase passed **8 in 229.35s**. The one completed regression on corrected
+source passed **242 in 702.42s**, no skips/xfails. Its largest changed check was
+82.81s for bounded fixed-fault/active-frame/strict-noise validation. No concurrent
+full suite/export or repeated solver/benchmark retry was launched.
+
+Cold combined inter model/location setup was 101.17s; numerical reuse reduced
+it to 27.13s in the affected rerun (27.55s in final regression). The inspected
+hot paths are live-location construction, validated copy/group matrix creation,
+and the bounded independent forward/fixed-fault sweep. The changed
+`noise/locations.py` implementation conservatively invalidated prior model keys;
+new inter circuit/role/observable inputs have their own key. Test/doc edits and
+the scope guard do not invalidate numerical kernels. Final export found that
+key intact: model load 4.96s, warm 5.47s, p-only change 7.46s, first native export
+2.75s and intact reuse 1.39s. Matrices, signatures and all copy/admission/group
+maps match across p changes; only probabilities are reweighted. Construction,
+harnesses and serialized ledgers took 88.15s; stratified fault validation took
+47.51s and noisy emission/strict DEM 33.84s. No pytest result was cached.
+Timings and reuse are in `evidence/phase08/timing-summary.json` and the artifact
+index. Existing tiny cache tests also exercise corruption, interruption and
+invalidation in the final regression.
+
+The final exporter ran once, sequentially after regression. It produced
+392344 raw joint primitives, **817080 admitted equal-q copies**, 135606 decoder
+groups, H shape **3992 x 817080** and Lambda shape **47 x 817080**. Two hundred
+three representative fixed raw faults agree across reverse signatures,
+independent forward propagation and probability-one Stim injection. Strict
+noisy DEM has 3992 detectors, 47 observables and 135605 compact errors; that
+compact count is not the sampling population. Table-6 N=743456 differs by
+**+73624**, transparently reported without padding or dropping faults.
+No rates, fits, decoder performance or distance bounds were generated.
+
+Evidence: `evidence/phase08/{final.txt,final.xml,phase-final.txt,negative.txt,
+resource-final.txt,scope-fix.txt,acceptance-gates.json,collected-nodeids.txt,
+independent-audit.json,imports.txt,pip-check.txt,audit-export.txt,
+timing-summary.json,handoff-checks.json,completion.json}`. Artifact index
+`evidence/phase08/artifacts/index.json` checksums 31 files: raw/ideal/noisy
+circuits, signed deformation, physical/active/installed ledgers, named frame and
+active harness parities, locations, native CSC/sparse-signature/copy/admission/
+group arrays, fixed trials and N discrepancy. No legacy expanded catalogue JSON
+or repeated ZIP output was used. The handoff verifies all artifact/source hashes,
+all eight exact mapped passed nodes for B05, C_Bell, D_inter, K47_vs_K23 and
+negative_tests, independent installed-coupler additions, unchanged protected
+paths, clean main and equality of the independent algebra audit to delivery.
+Compilation, phase08 imports (Stim 1.16.0), dependency and whitespace checks pass.
+The result helper validates the unchanged controller completion schema. Helper
+sources are retained under `evidence/phase08/*-script.py`.
+
+O1--O5 remain open: published inter K23 generators; historical Relay/prior/
+column semantics; exact serialized schedule/lowering/boundaries; exact Table-6
+fault population/admission/merging; original grids/counts/bootstrap. This
+construction explicitly fixes every definition it requires. The K47, cycle-depth
+and population differences prevent a paper-exact claim. No reference correction
+is proposed. Strict sampling remains fail-closed. No long sampling, distance
+solver, cluster submission, external modification or Git publication was run;
+regression includes inherited tiny backend/unit sampling oracles, not a
+production decoder or rate campaign.
+
+Short reproducible rerun: set PYTHONPATH and the local cache variable as above;
+run the eight-node phase command, then the exporter sequentially in tour_de_gross.
+Next prompt: `prompts/09_shift_automorphism.md`, only in a new controller session
 after independent acceptance and publication. Stop here.

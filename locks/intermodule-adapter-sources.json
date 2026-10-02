@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "phase": "08",
+  "implementation": "Independent extension of local signed graph, physical schedule, flows and joint fault engine; no donor code copied or modified",
+  "paper": {
+    "arxiv": "2506.03094v1",
+    "sha256": "78599e80971cd05ba2d8ba0c1c6c0d62b7d3ccdbe482ab4578770d70e8631c73",
+    "source_lock": "locks/paper-sources.json",
+    "inspected": ["PDF Fig. 13(b) one-to-one Bell checks", "A.4 bridge identification and joint cycles; footnote 14 triangle omission", "A.5 Bell preparation and Eq. (67)", "A.7 centralizer convention and Table 6 inter K23"],
+    "local_inspection": "evidence/phase08/paper-v1.txt",
+    "license": "Scientific definitions cited; no implementation copied or PDF redistributed"
+  },
+  "backend": {"distribution": "stim", "version": "1.16.0", "license": "Apache-2.0", "source_lock": "locks/package-artifacts.json"},
+  "inherited_sources": ["locks/physical-scheduling-sources.json", "locks/flows-and-harness-sources.json", "locks/noise-and-fault-sources.json", "locks/inmodule-xx-y-sources.json"],
+  "fixtures": "Unchanged frozen reference/gross.json and reference/table6.csv",
+  "external_source_root": "/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/external_libs",
+  "open_items": ["O1", "O2", "O3", "O4", "O5"],
+  "policy": "Gross C10 one-to-one adapter; native physical Bell checks; full named K47 profile; published K23 fails closed; software split frame; include_all equal-q copies with joint-signature XOR grouping"
+}

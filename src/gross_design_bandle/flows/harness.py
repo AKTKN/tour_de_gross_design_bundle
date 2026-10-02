@@ -11,7 +11,8 @@ import numpy as np
 from gross_design_bandle.algebra import gf2
 from gross_design_bandle.surgery.frame import Parity
 from gross_design_bandle.circuits.memory import memory_schedule
-from gross_design_bandle.circuits.protocol import build_physical_inmodule
+from gross_design_bandle.circuits.protocol import build_physical_inmodule, build_physical_inter
+from gross_design_bandle.codes.blocks import CodeBlocks
 from .records import RecordProgram
 from .observables import LogicalBasisAdapter, correlation
 from .boundaries import input_boundary, mpp
@@ -78,7 +79,7 @@ class BenchmarkHarness:
                 'strict_dem_observables': dem.num_observables, 'gauge_workaround': False}
 
     def to_dict(self):
-        return {'schema_version': 1, 'scope': 'noiseless single-block A.7-style gross memory/X1/XX/Y benchmark',
+        return {'schema_version': 1, 'scope': 'noiseless named-centralizer gross benchmark; independent boundaries',
             'register': list(self.register), 'symbolic_outcomes': list(self.outcome_ids),
             'annotations': list(self.annotations), 'logical_generators': self.logical_generators,
             'boundaries': self.boundary_policy, 'split_mode': self.split_mode,
@@ -99,8 +100,12 @@ class TruthTableInstrument:
         return self.protocol.logical_outcome
 
 
-def build_benchmark(code, *, operation='memory', rounds=1, deformation=None, split_mode='frame'):
-    if code.spec.name != 'gross' or operation not in ('memory', 'X1', 'X1*X7', 'Y1'):
+def build_benchmark(code, *, operation='memory', rounds=1, deformation=None, split_mode='frame',
+                    observable_profile=None):
+    inter = operation == 'inter_XX'
+    if inter:
+        code = CodeBlocks(code)
+    elif code.spec.name != 'gross' or operation not in ('memory', 'X1', 'X1*X7', 'Y1'):
         raise ValueError('validated physical harness scope is gross memory/X1/XX/Y')
     if not isinstance(rounds, int) or isinstance(rounds, bool) or rounds < 1:
         raise ValueError('rounds must be a positive integer')
@@ -108,11 +113,16 @@ def build_benchmark(code, *, operation='memory', rounds=1, deformation=None, spl
         raise ValueError('split_mode must be frame or active')
     if operation == 'memory' and deformation is not None:
         raise ValueError('memory does not take a deformation')
-    basis = LogicalBasisAdapter.single_block(code, operation)
+    if inter:
+        basis = LogicalBasisAdapter.two_blocks(code, observable_profile or 'full_two_block_centralizer_K47')
+    else:
+        if observable_profile is not None:
+            raise ValueError('explicit observable_profile is supported for inter only')
+        basis = LogicalBasisAdapter.single_block(code, operation)
     if operation != 'memory':
-        if deformation is None or deformation.lpu.codes != (code,) or deformation.lpu.ports.target != basis.x[0]:
+        if deformation is None or deformation.lpu.codes != (code.codes if inter else (code,)) or deformation.lpu.ports.target != basis.x[0]:
             raise ValueError('surgery harness requires the same block and exact signed target deformation')
-        physical = build_physical_inmodule(deformation, rounds)
+        physical = (build_physical_inter if inter else build_physical_inmodule)(deformation, rounds)
         pregister = physical.register
     else:
         schedule = memory_schedule(code, rounds)
@@ -227,7 +237,8 @@ def build_benchmark(code, *, operation='memory', rounds=1, deformation=None, spl
     certificate['physical_parities'] = [{'index':a['observable_index'], 'name':a['name'], 'parity':a['parity']}
                                        for a in lowered.annotations if a['kind'] == 'observable']
     return BenchmarkHarness(lowered.circuit, register, lowered.outcome_ids, lowered.annotations, certificate,
-        {'profile':'a7_single_block_independent_boundaries_v1', 'phases':phases,
+        {'profile':'full_two_block_independent_boundaries_v1' if inter else 'a7_single_block_independent_boundaries_v1', 'phases':phases,
+         'block_ids':[c.block_id for c in code.codes] if inter else [code.block_id],
          'input':'ideal encoded Bell pairs; measured slot in + target eigenstate',
          'physical_last_original_round':'noise-free in this harness',
          'terminal':'ideal commuting original checks and logical/reference Bell correlations',
