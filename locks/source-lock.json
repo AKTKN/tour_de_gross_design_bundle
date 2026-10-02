@@ -1,0 +1,255 @@
+{
+  "schema_version": 1,
+  "audit_date": "2026-10-02",
+  "scope": "source and import capability audit only; no paper-equivalence certification",
+  "reference_sources_sha256": "d4229938adb30fa23ef57bb75557ac17df03fdaf0f30280a26396a869705ab5b",
+  "repositories": [
+    {
+      "repo": "qiskit-community/bicycle-architecture-compiler",
+      "url": "https://github.com/qiskit-community/bicycle-architecture-compiler",
+      "directory": "bicycle-architecture-compiler",
+      "commit": "c99eb046f10b38de2412468ccded14ca38f1ee4c",
+      "tree": "71ff3b3fc29272a1a6b6e658f2fd56dc9289e02c",
+      "license": "Apache-2.0",
+      "license_paths": [
+        "LICENSE"
+      ],
+      "source_modified": false,
+      "files": {
+        "README.md": {
+          "git_blob": "3079e6793a109c47db92604ff7ce4b5ffafd9d1e",
+          "sha256": "ec8fe4bca72123eef52ebc68dd900a8f6c349138126c390da66e6e14c80fcbee",
+          "bytes": 4652
+        },
+        "LICENSE": {
+          "git_blob": "d645695673349e3947e8e5ae42332d0ac3164cd7",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "bytes": 11358
+        },
+        "Cargo.toml": {
+          "git_blob": "d9c3f08f36e529586bac10ec42c53f900136107b",
+          "sha256": "c89171755c763f24539846bec475aaf1be2161492c06909d4e830dbffa5cfc11",
+          "bytes": 1522
+        }
+      }
+    },
+    {
+      "repo": "qLDPCOrg/qLDPC",
+      "url": "https://github.com/qLDPCOrg/qLDPC",
+      "directory": "qLDPC",
+      "commit": "60fc2cf465e880d6e64afacc933d33455d787bf4",
+      "tree": "87e079bdb54b032eab5c5a3de785aad44f1a9d8a",
+      "license": "Apache-2.0",
+      "license_paths": [
+        "LICENSE",
+        "COPYRIGHT"
+      ],
+      "source_modified": false,
+      "files": {
+        "README.md": {
+          "git_blob": "c5f2e695e78a7d8fc65993ceabfc9b63377ba786",
+          "sha256": "ee275c55e16a6cf7c1212633e603f6d6b2c742c1e925b0f70a2c3ab410094737",
+          "bytes": 9312
+        },
+        "LICENSE": {
+          "git_blob": "d645695673349e3947e8e5ae42332d0ac3164cd7",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "bytes": 11358
+        },
+        "COPYRIGHT": {
+          "git_blob": "1c72423339f8ac4282b9d0e93da794d0c71f518f",
+          "sha256": "7088a3caed41e3792395b285059a1fc02a3ed397f3a3f23959ec48b520bc5677",
+          "bytes": 327
+        },
+        "pyproject.toml": {
+          "git_blob": "e0489b7f3c71d7011a5023217a239c5b573c7055",
+          "sha256": "f4891a2bcd4a30eb5727f1c9d98e65691bc072a83c891eee5b66a6f02586c32d",
+          "bytes": 4618
+        },
+        "src/qldpc/experimental/surgery/__init__.py": {
+          "git_blob": "58b3910248aaf3259c34ed57c31df8f9a5c647f3",
+          "sha256": "a1ac044ad9eab87a96be3f34bd41287b4ede11781bc146085d56808cceb1a664",
+          "bytes": 1338
+        },
+        "src/qldpc/experimental/surgery/circuit.py": {
+          "git_blob": "ced89b47188704f00126bc53d8c108c533cad631",
+          "sha256": "46d437f02f0a40aa1fe390a0df0c6d385c9ff10cf2ca2e93dff376bd59b11606",
+          "bytes": 54207
+        },
+        "src/qldpc/experimental/surgery/gadget.py": {
+          "git_blob": "624c55c23f2427fa4d1742f70fe8d988c08e8099",
+          "sha256": "8f277edfc663dc7e103c3912a32235a457c0b96358ee574010dbe204dd8e91bf",
+          "bytes": 15338
+        },
+        "src/qldpc/experimental/surgery/bridge.py": {
+          "git_blob": "27cdc22fb11ebe0d0b93952328eafcc75e9bde02",
+          "sha256": "22c6e4dba9cdc142e431686d5aef0f509e9b1df1286c5399c040c2f2238c530e",
+          "bytes": 20728
+        },
+        "experiments/lattice_surgery/README.md": {
+          "git_blob": "0bb7c3910eb1dc4a73c09e2238e6900bcb02c4e7",
+          "sha256": "235e8f2b220878a9fe0c291780c44eeb484a3b77696a2fd48a9230580db3c18f",
+          "bytes": 2172
+        }
+      }
+    },
+    {
+      "repo": "gongaa/SlidingWindowDecoder",
+      "url": "https://github.com/gongaa/SlidingWindowDecoder",
+      "directory": "SlidingWindowDecoder",
+      "commit": "05d6b1f478f2b044effdc7477278647dfb99db07",
+      "tree": "8a084343032cc4fa47bb54458d6fa370e5117a14",
+      "license": "build_circuit.py: no license notice or repository-level license; utils.py: Apache-2.0; src/include: Radford Neal permissive notice (README calls it MIT), with GNU routines caveat",
+      "license_paths": [
+        "src/utils.py",
+        "src/include/COPYRIGHT"
+      ],
+      "source_modified": false,
+      "files": {
+        "README.md": {
+          "git_blob": "f86cb7c432b0df9367d9c771e1f486cfcbd7e06e",
+          "sha256": "f7006bbb90e659aa6a67b1673bd141d287cce08e8fb55740f7e463aecc1f91ff",
+          "bytes": 2691
+        },
+        "src/build_circuit.py": {
+          "git_blob": "25ce719a27c3f31caa74789bcafb7271d78ec9f6",
+          "sha256": "ba0e867dd6d59035fc41fc2e35b5158a69001c3616e4b62d8f86c4a5abacdb74",
+          "bytes": 12559
+        },
+        "src/utils.py": {
+          "git_blob": "aba1c5e0da2e052861fb988cfa3a8627ed6314ca",
+          "sha256": "cd5b68e39868a8d0e3758f2fc8a8c4f4c2fe88848da54d796ce631995b2a6d87",
+          "bytes": 19622
+        },
+        "src/include/README.md": {
+          "git_blob": "c73b3ec23f45ed43f54790ff6884ee7b2b159698",
+          "sha256": "4e9c95c22b414afdfda14d4f41130c8d32a90bd39a23157006890e99bad829b3",
+          "bytes": 844
+        },
+        "src/include/COPYRIGHT": {
+          "git_blob": "9cd0d7f65b4f9a2355eab881482d1aa16b363d6d",
+          "sha256": "25d72732107873da9164bcdefc270f6d729151650c0e694858b924d1fbbabe60",
+          "bytes": 820
+        }
+      }
+    },
+    {
+      "repo": "trmue/relay",
+      "url": "https://github.com/trmue/relay",
+      "directory": "relay",
+      "commit": "d185194ba0cb4101ced4340d82b2ee6d42f225f0",
+      "tree": "5654b7e60e3941f60e0ce62fcc1fd7914fb3094a",
+      "license": "Apache-2.0",
+      "license_paths": [
+        "LICENSE.txt"
+      ],
+      "source_modified": false,
+      "files": {
+        "README.md": {
+          "git_blob": "42fc92a34bdf2b55463dab50535d8edeb4986cd5",
+          "sha256": "2c098fc4b981f87977b2775c5f8bf85a99d7e10a59201579ffe5f55f8c4cb633",
+          "bytes": 14187
+        },
+        "LICENSE.txt": {
+          "git_blob": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "bytes": 11357
+        },
+        "pyproject.toml": {
+          "git_blob": "e766cad3abddaed748097f62a7c82dfd6620ca3e",
+          "sha256": "cb0cbdec35f79999649851e0455215e6886904f96e9b3eb786a832402f3fde65",
+          "bytes": 2053
+        },
+        "Cargo.toml": {
+          "git_blob": "b244c7d9d7a5ba4f13cf5dedcc1bc92a89c7f46a",
+          "sha256": "380a9b02f25770c6a01d1123a3ee6cb8597306132d09bf1ca408b1aaa8f78673",
+          "bytes": 704
+        },
+        "Cargo.lock": {
+          "git_blob": "e4259f67c65bb94ce2f7b869b44e371f774a5182",
+          "sha256": "35765b77b4df5d6a3287deae975cf03f21914578d5f7ffb6396ed555394c98ce",
+          "bytes": 35956
+        },
+        "src/relay_bp/__init__.py": {
+          "git_blob": "f6a6deceac0cac4982445053839f178c241a1d86",
+          "sha256": "932b62aa25129a3da0b34ea04f5ff54294b1b5b7fc649b0e24a3b8ed11668587",
+          "bytes": 560
+        },
+        "src/relay_bp/bp/__init__.py": {
+          "git_blob": "5848f2d3a443ed67cd5eca3ba231a0c0181d0261",
+          "sha256": "f79a8d762c707aec9507430e17aeebbbd0daab79bd99507684967c545ba397c4",
+          "bytes": 1341
+        },
+        "src/relay_bp/decoder.py": {
+          "git_blob": "29a7c8c6f43d8bef31d1d2b43ccc573277da57b1",
+          "sha256": "3c426c6f8aa5f5a0c76a294a7c7688576ed25bd87796b7d6eb516d263ff97b6b",
+          "bytes": 652
+        },
+        "src/relay_bp/observable_decoder.py": {
+          "git_blob": "b85c4c06f3dc9c35228c2f9ab797b492237026af",
+          "sha256": "0d1f8b598148038db43b626c9335870e60ad61429033eb046098014aba910e9b",
+          "bytes": 769
+        },
+        "crates/relay_bp/src/bp/relay.rs": {
+          "git_blob": "20237a8f591935cf5f39f487b62f1245dc515246",
+          "sha256": "cd476d5871b46662aa3f524c2d6c484fb9ff9005a99db263bb92416a3b2a05dc",
+          "bytes": 20105
+        },
+        "crates/relay_bp/src/bp/min_sum.rs": {
+          "git_blob": "2a1d94fee6569bb0a808148021b6f055637c1c6d",
+          "sha256": "427fbc52666e69d2257811a1ec8b857a5f8a747264b0f42fd83870fc97582174",
+          "bytes": 35304
+        },
+        "crates/relay_bp_py/src/bp/relay.rs": {
+          "git_blob": "b151413fd801ce07f2ca8b8efec438373c6c13b7",
+          "sha256": "ad9ae19b2c044e160169cbc2f459d6dbc6bce947da7dce406498534d700d626c",
+          "bytes": 6002
+        },
+        "crates/relay_bp_py/src/decoder.rs": {
+          "git_blob": "a4420781726955dde0a3c2ce8163ced6c5b0c977",
+          "sha256": "1fe636b214c72bbf391b729572b1825128ff97ea2befb9112f9037cf4f551446",
+          "bytes": 4428
+        },
+        "crates/relay_bp_py/src/observable_decoder.rs": {
+          "git_blob": "4d743a80c5e48ed8b73b7356087938d52143d967",
+          "sha256": "a5a43b2bd688e77ef9ba1edb822f291a81baeb3206454664cfa765f7f93c0b93",
+          "bytes": 12547
+        },
+        "tests/testdata/circuits.py": {
+          "git_blob": "bc3afaf64e2fd4dbb6349467e78f517563b586a9",
+          "sha256": "a522d28d71429a89f1614ebc1381be499e7f3552d69549bb0d74f57816182d5d",
+          "bytes": 3474
+        }
+      },
+      "history_files": {
+        "1290a2cae83a5f8a16dca09456681159288b8dd6:crates/relay_bp/src/bp/min_sum.rs": {
+          "git_blob": "27877a10f2d296739c995c1c13fd52480f974e8a",
+          "sha256": "47df5a06f44875e917915b96c918c37a39e5d2dc4bface9931fd66a09c1e0430",
+          "bytes": 31681
+        },
+        "1290a2cae83a5f8a16dca09456681159288b8dd6:crates/relay_bp/src/bp/relay.rs": {
+          "git_blob": "5442e838defb96381a45b8084e48bb8df1f7e940",
+          "sha256": "ae3b23eef3f0399452a70eb2da232e2916e370644c950ead1a0517d6fd878502",
+          "bytes": 20099
+        },
+        "1b41b689ad27128274fc7d0bb93c6ed50135c507:crates/relay_bp/src/bp/min_sum.rs": {
+          "git_blob": "e6738633fc3faf181dbce2bafc4474dba13b838a",
+          "sha256": "97156c1780937dadf1627a1e0ec3bf83730d9d9ef951b0ddeca5b250cef3ad11",
+          "bytes": 31794
+        },
+        "3f9a80109343f07155598596973f5e98a34dbd5a:crates/relay_bp/src/bp/min_sum.rs": {
+          "git_blob": "0945ceb6350698c59add010f0ebb053b364aa84e",
+          "sha256": "d87fd0a492cb4413e50d722284427adc0895c9fb4c7e79d6f12f15d6609c0e91",
+          "bytes": 32269
+        }
+      }
+    }
+  ],
+  "open_items": {
+    "O1": "unresolved",
+    "O2": "unresolved",
+    "O3": "unresolved",
+    "O4": "unresolved",
+    "O5": "unresolved"
+  }
+}

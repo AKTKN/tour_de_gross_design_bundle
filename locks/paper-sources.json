@@ -1,0 +1,19 @@
+{
+  "papers": [
+    {
+      "arxiv": "2506.03094v1",
+      "url": "https://arxiv.org/pdf/2506.03094v1",
+      "sha256": "78599e80971cd05ba2d8ba0c1c6c0d62b7d3ccdbe482ab4578770d70e8631c73",
+      "bytes": 3441247,
+      "redistributed": false
+    },
+    {
+      "arxiv": "2506.01779v1",
+      "url": "https://arxiv.org/pdf/2506.01779v1",
+      "sha256": "f35089cee6be8f1fff41f3dae71b35b6962eed627ec371134385a7279ec8c723",
+      "bytes": 1752359,
+      "redistributed": false
+    }
+  ],
+  "numbering": "PDF canonical; HTML only used for release-link discovery"
+}

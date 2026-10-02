@@ -88,7 +88,64 @@ Implemented in the separate `feature/model-reasoning` worktree. Verification: `c
 
 ## Next action
 
-Run `prompts/00_source_audit.md` in the target development repository. Do not skip to a long simulation prompt. Record a source-lock check and backend capability matrix first.
+Phase 00 is complete for source/import auditing and algebra-only declarations. Next implementation prompt is `prompts/01_algebra_and_codes.md`, only in a new controller-authorized session after phase-00 acceptance and publication. This session stops at 00; strict paper-equivalent sampling remains blocked by O1--O5.
+
+## Phase 00 source audit completed (2026-10-02)
+
+Branch: `feature/00_source_audit`. Worktree: `/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/.codex-pipeline/tour-de-gross/worktrees/00_source_audit`. Main checkout: `/home/quantum_teresheys/workspace/tour_de_gross_design_bundle`, unchanged/clean. Publication outcome: **not attempted; controller owns acceptance rerun, commit, merge and atomic push**. No fixture/control/AGENTS changes, external source patches, network writes, production circuits, solver searches, sampling or cluster work occurred. External read-only checkouts are at `/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/external_libs/{qLDPC,SlidingWindowDecoder,relay,bicycle-architecture-compiler}`, with clean source trees and detached pinned HEADs. No fork was needed for read-only inspection/unmodified builds.
+
+Deliverables: `docs/BACKEND_AUDIT.md`, `locks/source-lock.json`, `locks/environment-lock.json`, `locks/package-artifacts.json`, `locks/paper-sources.json`, `locks/requirements-phase00.txt`, `locks/conda-phase00-linux-64.explicit.txt`; read-only verification/import tools, a phase-00 manifest declaration validator under `src/gross_design_bandle/bench/`, and positive/negative source/API/manifest tests. All five fixture-pinned Git blobs match their commits and checkout bytes. Source lock additionally hashes inspected licenses, APIs, build metadata and Relay history. The observed environment imports Stim 1.16.0, qLDPC 0.4.0 from commit `60fc2cf465e880d6e64afacc933d33455d787bf4`, and Relay 0.2.2 built from commit `d185194ba0cb4101ced4340d82b2ee6d42f225f0` with its Cargo lock. Python 3.11.17 / NumPy 2.4.6 / SciPy 1.17.1 were preserved. qLDPC-installed source hashes also match the pinned checkout; installed backend binary/Python hashes are recorded separately. These are import/source locks, not circuit or decoder-equivalence certification.
+
+Commands actually run for source acquisition, compatibility and installation (source reads/downloads authorized by phase 00):
+
+```bash
+conda run --no-capture-output -n tour_de_gross python -V
+conda run --no-capture-output -n tour_de_gross python -m pip list
+git clone --filter=blob:none --no-checkout https://github.com/qLDPCOrg/qLDPC.git /home/quantum_teresheys/workspace/tour_de_gross_design_bundle/external_libs/qLDPC
+git -C /home/quantum_teresheys/workspace/tour_de_gross_design_bundle/external_libs/qLDPC checkout --detach 60fc2cf465e880d6e64afacc933d33455d787bf4
+git clone --filter=blob:none --no-checkout https://github.com/trmue/relay.git /home/quantum_teresheys/workspace/tour_de_gross_design_bundle/external_libs/relay
+git -C /home/quantum_teresheys/workspace/tour_de_gross_design_bundle/external_libs/relay checkout --detach d185194ba0cb4101ced4340d82b2ee6d42f225f0
+git clone --filter=blob:none --no-checkout https://github.com/gongaa/SlidingWindowDecoder.git /home/quantum_teresheys/workspace/tour_de_gross_design_bundle/external_libs/SlidingWindowDecoder
+git -C /home/quantum_teresheys/workspace/tour_de_gross_design_bundle/external_libs/SlidingWindowDecoder checkout --detach 05d6b1f478f2b044effdc7477278647dfb99db07
+git clone --filter=blob:none --no-checkout https://github.com/qiskit-community/bicycle-architecture-compiler.git /home/quantum_teresheys/workspace/tour_de_gross_design_bundle/external_libs/bicycle-architecture-compiler
+git -C /home/quantum_teresheys/workspace/tour_de_gross_design_bundle/external_libs/bicycle-architecture-compiler checkout --detach c99eb046f10b38de2412468ccded14ca38f1ee4c
+curl -L --fail https://arxiv.org/pdf/2506.03094v1 -o /tmp/tour-de-gross-v1.pdf
+pdftotext -layout /tmp/tour-de-gross-v1.pdf /tmp/tour-de-gross-v1.txt
+curl -L --fail https://arxiv.org/pdf/2506.01779v1 -o /tmp/relay-bp-v1.pdf
+pdftotext -layout /tmp/relay-bp-v1.pdf /tmp/relay-bp-v1.txt
+conda run --no-capture-output -n tour_de_gross python -m pip install --dry-run --report evidence/phase00/install-plan.json /home/quantum_teresheys/workspace/tour_de_gross_design_bundle/external_libs/qLDPC relay-bp==0.2.2
+conda run --no-capture-output -n tour_de_gross python -m pip install --report evidence/phase00/install.json /home/quantum_teresheys/workspace/tour_de_gross_design_bundle/external_libs/qLDPC maturin==1.12.6
+CARGO_HOME=/tmp/phase00-cargo CARGO_TARGET_DIR=/tmp/phase00-relay-target conda run --no-capture-output -n tour_de_gross maturin build --release --locked --jobs 2 --manifest-path /home/quantum_teresheys/workspace/tour_de_gross_design_bundle/external_libs/relay/crates/relay_bp_py/Cargo.toml --out /tmp/phase00-relay-wheels
+conda run --no-capture-output -n tour_de_gross python -m pip install --report evidence/phase00/relay-install.json /tmp/phase00-relay-wheels/relay_bp-0.2.2-cp311-cp311-manylinux_2_34_x86_64.whl
+conda run --no-capture-output -n tour_de_gross python -m pip install --no-build-isolation -e .
+conda run --no-capture-output -n tour_de_gross python tools/lock_sources.py
+conda run --no-capture-output -n tour_de_gross python -m pip freeze --exclude-editable
+conda list -n tour_de_gross --explicit
+```
+
+Also inspected source signatures, licenses, Relay Git history and paper PDF text with read-only `cat`, `rg`, `git show`, `git log` and `git ls-tree`; used arXiv/web release-link discovery. A local Conda Python heredoc saved pip artifact provenance, PDF/fixture hashes and Relay testdata filename inventory. Outputs are in the lock files and `evidence/phase00/`. Pip dry-run included registry Relay only to check dependency compatibility; the actual Relay install was built from the exact source commit, not that registry wheel. Rust build completed in 1m06s with two jobs. Optional decoder/Stim integration, compiler, gridsynth, GAP and upstream Monte Carlo examples were not run.
+
+Validation commands actually run:
+
+```bash
+conda run --no-capture-output -n tour_de_gross python tools/audit_sources.py --output evidence/phase00/source-verification.json
+conda run --no-capture-output -n tour_de_gross python tools/audit_backends.py --output evidence/phase00/backend-imports.json --environment-output locks/environment-lock.json
+conda run --no-capture-output -n tour_de_gross python tools/audit_backends.py --output evidence/phase00/backend-imports.json
+conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_backends.py tests/test_source_audit.py tests/test_manifest.py tests/test_reference.py
+conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_pipeline.py tests/test_reference.py
+conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_backends.py tests/test_source_audit.py tests/test_manifest.py tests/test_reference.py tests/test_pipeline.py
+conda run --no-capture-output -n tour_de_gross python tools/audit_reference.py --output evidence/phase00/algebra-audit.json
+conda run --no-capture-output -n tour_de_gross python -m pip check
+git diff --check
+```
+
+Final verification: **85 passed in 31.44s**, no skips/xfails. This includes all nine delivered utility tests and 27 new source/backend/manifest cases. Separate baseline regression run: **58 passed in 23.45s**. An intermediate phase run passed 35 tests before the final installed-source check was added. Initial failure is retained: the import probe assumed the README's nonexistent `RelayDecoderF32.par_decode_batch`, so its environment lock was not generated and the first pytest attempt had **1 failed, 34 passed**. Corrected the probe, added an explicit API absence assertion and reran validation. No failure was counted as a pass. The tiny deterministic Relay test uses a 2x3 matrix, explicit gammas, and a 12-iteration maximum per decode; it is not historical trace equivalence or production decoder integration. Stim tests strictly reject a random detector; no sampled shots were generated. The algebra audit remains phase-blind and is not a distance certificate. Pip and whitespace checks passed. Final checks found main and all external donor trees clean; fixture hashes were preserved.
+
+Nonempty evidence: `evidence/phase00/{source-verification.json,backend-imports.json,pytest-initial.txt,pytest-phase00.txt,pytest-regressions.txt,pytest-final.txt,pip-check.txt,algebra-audit.json,fixture-hashes.json,relay-circuit-inventory.json,install-plan.json,install-plan.txt,install.json,install.txt,relay-build.txt,relay-install.json,relay-install.txt,editable-install.txt,pip-freeze.txt,initial-imports.txt}`. Generated evidence is intentionally local/ignored under the existing policy; locks, audit documentation and tests are tracked. Gate mapping is in the completion JSON and local `evidence/phase00/acceptance-gates.json`.
+
+O1--O5 remain open. Recovered Relay-paper v1 Eqs. (1)--(4) / Algorithm 1, but Table-7 mapping (including 0.875 discount and gamma/rng_width), exact priors/columns and historical executable remain unverified. No original Figure-15 surgery/shift circuit/raw-data release was established in the bounded search; Relay supplies separate memory testdata, and the bicycle compiler is logical/resource software. The SlidingWindowDecoder memory builder has unresolved reuse licensing; no code was copied. Independent schedule derivation remains possible. These limitations do not block the next independent algebra phase, but every strict paper manifest currently fails closed; algebra-only declarations remain permitted. No source-backed fixture correction was identified or applied.
+
+Reproducible short rerun: execute the source audit, import audit without `--environment-output`, full five-file pytest command and pip check shown above, from this feature worktree in `tour_de_gross`. Stop after this phase. Next prompt: `01_algebra_and_codes.md`; production construction/sampling is still future work.
 
 ## Phase log template
 
@@ -98,4 +155,45 @@ Run `prompts/00_source_audit.md` in the target development repository. Do not sk
 | Development setup | passed | Conda create, editable install, nine tests, algebra audit, fit reconstruction, pip/ignore/fixture checks | evidence/setup/ (local), locks/, this status | O1--O5; prompt 00 remains next |
 | Prompt automation | passed | infrastructure/reference pytest, Bash syntax, CLI preflight, list/dry-run, isolated tmux with fake Codex | evidence/pipeline/ (local), prompts/scripts/README.md | O1--O5; implementation not launched |
 | Branch/worktree publication | passed | infrastructure/reference tests with real local Git remotes and fake Codex | evidence/branch_workflow/ (local), prompts/scripts/README.md | O1--O5; implementation not launched |
-| 00 source audit | not started | — | — | O1--O5 |
+| 00 source audit | passed within source/import/manifest scope; publication pending controller | source/backend audits, locked imports, full pytest (85 passed), pip/whitespace checks | docs/BACKEND_AUDIT.md, locks/, evidence/phase00/ (local) | O1--O5; donor memory-builder reuse license; exact physical/data release not established; next prompt 01 |
+
+## Phase 00 stopped-pipeline report repair (2026-10-02)
+
+Investigated run `20261002T143701-260a48d3` on `feature/00_source_audit` in the existing phase worktree. The controller rejected the completion JSON before executing acceptance tests: `validate_result` rejects every reported `failed` command, including optional attempts. The JSON retained two superseded failures (the backend API probe and its dependent initial pytest run) alongside successful reruns. This was a completion-report failure; the earlier failures and fixes remain accurately documented above.
+
+Preserved the original JSON as `runs/20261002T143701-260a48d3/00/result.before-repair.json` under the canonical `.codex-pipeline/tour-de-gross/` directory. Consolidated identical command entries to their final passed outcomes, retaining every attempt's outcome and explanation in notes. No failed outcome was relabeled as passed, no validator was weakened, and no pipeline controls, scientific fixtures or external sources were changed. Reproduced the original validator rejection before verifying the repaired report's schema, evidence and exact gate coverage. Local repair evidence: `evidence/phase00/recovery-gates.json` and `recovery-result.json`; original initial-failure logs are preserved.
+
+Commands actually run in `tour_de_gross`: `python /tmp/tour_de_gross_repair_result.py` (report repair, negative rejection check, existing controller validation and acceptance rerun); `python tools/audit_sources.py --output evidence/phase00/recovery-source-verification.json`; `python -m pip check`; `git diff --check`. The repair helper invokes the existing `prompts/scripts/pipeline_check_tests.py` with `tests/test_reference.py`, `tests/test_pipeline.py` and all 27 mapped exact node IDs. Actual acceptance: **85 passed in 30.27s**, with every mapped setup/call/teardown passed and no skips or xfails. Canonical run evidence: `00/recovery-pytest.json` and `00/recovery-pytest.log`. Source verification and pip compatibility passed.
+
+Publication outcome: not attempted; the original controller state remains stopped and phase 00 is not recorded as accepted/published. Controller-owned resume is `prompts/scripts/start_codex_pipeline_tmux.sh --through 00 --resume-feature --model gpt-6.1-sol --reasoning-effort high` (the retained dead tmux session must first be removed if it still exists). This resumes only phase 00 and reruns controller acceptance before commit/merge/push. O1--O5 and the phase-00 scientific limitations remain unchanged. No subsequent phase was started.
+
+## Phase 00 resumed validation (2026-10-02, run 20261002T152609-6aa225c2)
+
+Preserved and reviewed the existing phase-00 implementation and stopped-run history in branch `feature/00_source_audit`, worktree `/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/.codex-pipeline/tour-de-gross/worktrees/00_source_audit`. Read AGENTS, STATUS, development instructions and all scientific contracts before validation. Rechecked the actual pinned qLDPC surgery, SlidingWindowDecoder memory-builder and Relay binding/recurrence/history files and license notices. No new dependency installation or source modification was needed. The source/environment locks and capability audit remain the preserved phase-00 deliverables.
+
+Commands actually run for this resume:
+
+```bash
+conda run --no-capture-output -n tour_de_gross python tools/audit_sources.py --output evidence/phase00/resume-source-verification.json
+conda run --no-capture-output -n tour_de_gross python tools/audit_backends.py --output evidence/phase00/resume-backend-imports.json
+conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_backends.py tests/test_source_audit.py tests/test_manifest.py tests/test_reference.py tests/test_pipeline.py
+conda run --no-capture-output -n tour_de_gross python -m pip check
+curl -L --fail --max-time 45 https://arxiv.org/pdf/2506.03094v1 -o /tmp/phase00-resume-tdg.pdf
+curl -L --fail --max-time 45 https://arxiv.org/pdf/2506.01779v1 -o /tmp/phase00-resume-relay.pdf
+pdftotext -layout /tmp/phase00-resume-tdg.pdf /tmp/phase00-resume-tdg.txt
+pdftotext -layout /tmp/phase00-resume-relay.pdf /tmp/phase00-resume-relay.txt
+conda run --no-capture-output -n tour_de_gross python /tmp/phase00_resume_verify.py
+git diff --check
+```
+
+Also used read-only `cat`, `sed`, `rg`, `git status`, `git branch` and `git log` for contracts, upstream sources and local history, and arXiv HTML link discovery. Earlier temporary PDFs had been removed; fresh downloads match both PDF byte counts and SHA-256 hashes in `locks/paper-sources.json`. Rechecked Relay v1 PDF Eqs. (1)--(4) and p. 8 Algorithm 1 against the documented recurrence, and TdG Table 7 against its unresolved historical mapping. No scientific fixture correction was identified or applied.
+
+Actual result: **85 passed in 34.98s**, including the nine delivered utility tests and all 27 mapped phase-00 cases, with no skips/xfails. Source verification checked all four pinned repositories and inspected license/API/history blobs offline. Backend tests confirmed installed versions/bytes, pinned qLDPC source correspondence and actual signatures; deterministic tiny Relay and strict Stim detector checks passed within their documented scope. Pip reports no broken requirements (only a nonwritable-cache warning). Main is clean, external trees are clean, and reference/AGENTS/pipeline-control bytes match main. The manifest package imports from this feature worktree. Whitespace checking passed.
+
+Fresh nonempty evidence: `evidence/phase00/resume-source-verification.json`, `resume-backend-imports.json`, `resume-pytest.txt`, `resume-pip-check.txt`, and `resume-guards.json`. The guards evidence includes protected-file/PDF hashes, branch/worktree, clean main/donors, package path and exact gate mapping. The temporary read-only guard helper is `/tmp/phase00_resume_verify.py`. All four required gates (`source_lock`, `backend_capabilities`, `strict_manifest`, `negative_tests`) are mapped to existing exact pytest nodes in `evidence/phase00/acceptance-gates.json` and the completion JSON; the controller independently reruns them before publication. Generated evidence remains local/ignored according to the existing repository policy.
+
+Additionally ran `conda run --no-capture-output -n tour_de_gross python /tmp/phase00_validate_handoff.py`: the unchanged controller's read-only `validate_result` accepted the completion schema, nonempty evidence and all four gates (27 exact nodes). It did not execute the pipeline or publish Git refs. Local report/evidence: `evidence/phase00/resume-result.json` and `resume-handoff-validation.json`. Historical failures remain in the earlier status/logs; this completion report records the current passed reruns.
+
+O1--O5 remain open as documented in BACKEND_AUDIT: inter K23 generators; historical Relay semantics/priors/columns; physical schedule/shift/lowering/boundaries; primitive population/multiplicity/admission; original data/grids/bootstrap. No original Figure-15 physical surgery/shift release was established, and the memory-builder reuse license remains unresolved. These items prevent strict paper-equivalent sampling; none is assumed resolved or required to complete this source/import/declaration phase. Optional compiler/GAP/integration backends, production circuits, solvers and sampling were not run.
+
+Publication outcome: **not attempted; controller owns acceptance, commit, merge and atomic push**. This session stops after phase 00. Next prompt is `prompts/01_algebra_and_codes.md` only in a subsequent authorized session after controller acceptance/publication; this run authorizes phases through 00 only. To reproduce validation, rerun the first four commands above from the same feature worktree with the preserved environment/checkouts. No later phase was started.
