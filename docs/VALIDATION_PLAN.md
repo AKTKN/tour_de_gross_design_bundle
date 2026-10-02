@@ -81,7 +81,7 @@ F01. Reproduce A.8's two phenomenological optimization problems: spatial distanc
 
 F02. Circuit-distance search solves H e=0 with a selected nonzero logical action; any verified witness gives only an upper bound. Test witnesses independently. Absence of a smaller witness does not prove a lower bound. For small fixtures, exact enumeration can establish both.
 
-F03. Exhaustively enumerate all error subsets on tiny catalogue models to validate fixed-weight sampling, f(w), Bernoulli mixtures and rate normalization. Bernoulli- and fixed-weight-derived estimates must agree within uncertainty on accessible gross pilot points.
+F03. Exhaustively enumerate all error subsets on tiny catalogue models to validate fixed-weight sampling, f(w), Bernoulli mixtures and rate normalization. On a physical gross idle fault model, check the deterministic joint H/Lambda-to-Relay path with fixed error vectors, including the zero vector and a nonzero admitted fault. A bounded pilot checks execution and records uncertainty; it is not required to show statistical agreement between two estimators. A gross Bernoulli-versus-fixed-weight statistical comparison belongs to an explicitly budgeted later job with a prespecified stopping rule, failure counts and inconclusive-result handling. Do not turn an underpowered or zero-failure pilot into a pass by widening tolerance.
 
 F04. Always preserve observed failures below w0, gross-Y w>80 observations, zero-failure confidence bounds and nonconvergence rates. Use a non-adaptive holdout p grid for checking extrapolation. The ansatz is a model, not a certification of 10^-20 logical error rates.
 

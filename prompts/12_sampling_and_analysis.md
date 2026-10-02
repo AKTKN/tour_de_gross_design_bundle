@@ -14,7 +14,7 @@ Implement independent Bernoulli and exact-uniform fixed-weight samplers over the
 
 ## Tests and scope limit
 
-Implement F03--F05. First exhaustively check tiny models. Then run only a smoke pilot of at most 256 shots per selected point and at most three accessible points, with a wall-time cap and explicit indication that it is not performance evidence. Zero failures remain upper bounds. Preserve all Y w>80 and all w<w0 events.
+Implement F03--F05 as revised in `docs/VALIDATION_PLAN.md`. First exhaustively check tiny models and their Bernoulli/binomial-mixture identity. Then check a physical gross idle model deterministically through the joint H/Lambda matrices and compiled Relay batch path using fixed zero and nonzero error vectors. This gross check is an integration test, not a sampled rate estimate. A smoke pilot, if run, is limited to at most 256 shots per selected point, three selected points and 120 seconds total, and must be labeled as non-performance evidence. The earlier stopped attempt already used three tiny Bell pilot points; retain those records and do not silently reset or extend its budget. Zero failures remain upper bounds. Preserve all Y w>80 and all w<w0 events. Do not require statistical agreement of Bernoulli and fixed-weight estimators from this pilot; reserve that comparison for a separately budgeted later job with prespecified precision or target failures and a maximum shot/time cap.
 
 ## Efficient validation and artifact reuse
 
@@ -44,7 +44,8 @@ budgets or authorize automatic retries.
 
 ## Acceptance
 
-Samplers agree on tiny exact cases; normalization and finite-tail bounds correct; data/chunks and priors reproducible; no target-fit numbers inserted as observations.
+Tiny exact enumeration proves the sampling mixture identity and rate normalization; a physical gross idle model reaches joint H/Lambda evaluation and Relay batch decoding with fixed error vectors; normalization and finite-tail bounds are correct; data/chunks and priors are reproducible; no target-fit numbers are inserted as observations. The bounded smoke pilot and any zero-failure strata are reported with their uncertainty, without an estimator-agreement claim.
+Map both `test_F03_exact_subsets_and_bernoulli_mixture` and `test_F03_gross_idle_deterministic_joint_path` to the F03 controller gate in the structured handoff; a tiny-only F03 mapping is incomplete.
 
 ## Handoff
 

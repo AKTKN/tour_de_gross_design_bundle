@@ -1914,3 +1914,202 @@ conda run --no-capture-output -n tour_de_gross python tools/audit_relay_adapter.
 Next prompt is `prompts/12_sampling_and_analysis.md`, requiring a new explicit
 phase-12 authorization and the bounded pilot context after controller
 acceptance/publication. The present through-11 authorization ends here.
+
+## Phase 12 sampling and analysis candidate (2026-10-03; incomplete gross pilot)
+
+Branch `feature/12_sampling_and_analysis`; worktree
+`/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/.codex-pipeline/tour-de-gross/worktrees/12_sampling_and_analysis`.
+The controller owns commit, merge and atomic push; publication was **not
+attempted**. The main checkout and external sources were not edited. No
+reference fixture, AGENTS or pipeline control was changed.
+
+Added `bench/sampling.py`, `bench/results.py`, `bench/analysis.py`,
+`tools/audit_sampling.py`, `docs/SAMPLING.md` and five mapped tests in
+`tests/test_sampling_analysis.py`. The same admitted copy columns feed
+independent Bernoulli `q=p/15` and uniform without-replacement fixed-weight
+draws. Sparse CSC accumulation retains joint H/Lambda bits. The pinned Relay
+adapter's sequential compiled batch path uses fixed priors and one thread;
+every invalid return/nonconvergence remains a failure. Run manifests hash
+circuits, raw catalogue/maps, joint matrices, decoder settings and sampler
+source. Chunk seeds identify faults and decoder streams separately. Checksummed
+append-only JSONL records deduplicate identical resumes and reject conflicting
+ones. Each shot retains weight and failure flags, including below `w0` and
+gross-Y above 80. Zero failures receive exact one-sided binomial upper bounds.
+The Table-6-shaped ansatz, binomial integration/tail bound, gross-Y-only fit
+selection, chi-squared/Jeffreys-variance bootstrap and separately labeled
+likelihood fit use only new observed counts, never printed Table-6 rates.
+
+Tiny exact subsets, Bernoulli mixture, distribution sanity, negative inputs,
+result corruption, stream separation, fixed priors and pilot limits passed.
+An initial F03 test failed because its *test oracle* omitted GF(2) reduction;
+the oracle was fixed and the smallest node then passed. The affected phase
+passed **5/5**, followed by one final scoped regression of **90/90** including
+Relay, fault-cache, reference and pipeline tests (28.06s). Compilation,
+dependency check and Git whitespace/fixture-control guards passed.
+
+The tiny Bell smoke pilot used three points: fixed weights 1 and 2, and
+Bernoulli p=.03. An initial diagnostic ran 32 shots per point before the final
+per-shot schema; after source stabilized, the final export ran 32 additional
+shots at those same three points. Total: **64 shots per point, three points,
+well under 120 seconds combined pilot wall time** (the two recorded inner
+times are 0.057s and 0.077s). The final 96-shot export has failure counts
+14/32 at w=1, 13/32 at w=2, and 0/32 direct Bernoulli; the last is an upper
+bound, not a zero rate. These are tiny Bell smoke observations, **not gross or
+Figure-15 performance evidence**. No further pilot points were run. The
+standalone exporter uses `bench.artifacts.export_fault_model` and native
+checksummed arrays; it did not create expanded JSON/NPZ. Initial model build
+0.0101s and warm read 0.0056s; final existing-key read 0.00685s and warm
+read 0.00356s. The sampler changes did not invalidate physical signatures;
+the scoped cache tests covered cold/warm, changed-p, corruption and relevant
+implementation invalidation. No solver, long sampling or upstream write ran.
+
+**Acceptance gap:** F03 calls for direct Bernoulli versus fixed-weight
+estimates on accessible *gross* pilot points. The authorized three selected
+points were spent on the tiny Bell smoke case, so that gross comparison was
+not run. This phase is therefore a preserved candidate, **not complete and
+not safe for controller progression**. Do not count the passing tiny F03 node
+as gross pilot evidence. A new explicit pilot budget or reviewed replacement
+evidence is needed before this requirement can pass. O1--O5 remain open for
+paper-exact replication: inter K23 rows, historical Relay semantics, original
+schedule/boundaries, Table-6 N convention, and original grids/counts/bootstrap
+settings. The independent phase-12 implementation needs no invented values
+for these fields.
+
+Commands actually run in this feature worktree (Python commands used
+`tour_de_gross`; source imports used `PYTHONPATH="$PWD/src"`, and exporter used
+`GROSS_DESIGN_CACHE_DIR="$PWD/cache/faults"`):
+
+```bash
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_sampling_analysis.py::test_negative_sampling_and_result_corruption
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_sampling_analysis.py  # first run failed at test oracle; later affected run 5 passed
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_sampling_analysis.py::test_F03_exact_subsets_and_bernoulli_mixture
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_sampling_analysis.py::test_negative_sampling_and_result_corruption
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_sampling_analysis.py
+timeout 120s conda run --no-capture-output -n tour_de_gross python tools/audit_sampling.py --output-dir evidence/phase12/export --cache-dir "$PWD/cache/faults"
+timeout 1800s conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_sampling_analysis.py tests/test_relay_adapter.py tests/test_fault_cache.py tests/test_reference.py tests/test_pipeline.py --junitxml=evidence/phase12/regression.xml
+timeout 120s conda run --no-capture-output -n tour_de_gross python tools/audit_sampling.py --output-dir evidence/phase12/export-final --cache-dir "$PWD/cache/faults"
+conda run --no-capture-output -n tour_de_gross python -c "from gross_design_bandle.bench.results import read_chunks; from gross_design_bandle.bench.analysis import spectrum_from_chunks; ..."
+conda run --no-capture-output -n tour_de_gross python -m compileall -q src/gross_design_bandle/bench/sampling.py src/gross_design_bandle/bench/results.py src/gross_design_bandle/bench/analysis.py tools/audit_sampling.py
+conda run --no-capture-output -n tour_de_gross python -m pip check
+git diff --check
+git diff --exit-code -- reference AGENTS.md prompts/scripts
+```
+
+Evidence: `evidence/phase12/regression.xml`, `regression.txt`,
+`export/pilot-report.json`, `export-final/pilot-report.json`,
+`export-final/run-manifest.json`, `export-final/chunks.jsonl`, and the native
+fault model directory named in the final report. The pilot records distinguish
+actual observations from model fits and unpublished targets. No source-backed
+fixture correction was needed. Short reproduction of completed checks:
+
+```bash
+export PYTHONPATH="$PWD/src"
+export GROSS_DESIGN_CACHE_DIR="$PWD/cache/faults"
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_sampling_analysis.py
+```
+
+The next planned prompt is `prompts/13_statistical_campaign.md`, **only after**
+the phase-12 gross pilot requirement is resolved and controller acceptance and
+publication succeed. This session stops at phase 12.
+
+## Phase 12 F03 acceptance revision (2026-10-03; local validation complete)
+
+This entry supersedes the acceptance-gap conclusion above; the original failed
+attempt and its pilot records remain preserved. Branch:
+`feature/12_sampling_and_analysis`. Worktree:
+`/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/.codex-pipeline/tour-de-gross/worktrees/12_sampling_and_analysis`.
+The canonical `main` checkout remains clean at `ab1ffe0`.
+
+The user-supplied review identified that the former F03 gross estimator
+agreement criterion could not be established by a 256-shot smoke pilot,
+especially with zero failures. Revised `docs/VALIDATION_PLAN.md` and
+`prompts/12_sampling_and_analysis.md` now require exact tiny-catalogue
+enumeration and a deterministic physical gross idle joint H/Lambda-to-Relay
+integration check. `tests/test_sampling_analysis.py` adds fixed zero and
+nonzero admitted error vectors on the one-round gross idle physical harness,
+checks their independent sparse matrix products and executes compiled Relay
+batch decoding. This uses no new Monte Carlo shots and makes no gross rate or
+Bernoulli-versus-fixed-weight statistical agreement claim. `docs/SAMPLING.md`
+records the revised evidence scope. A gross estimator comparison is a later
+separately budgeted statistical job with prespecified stopping, precision and
+inconclusive-result rules. It must not be inferred from the earlier tiny Bell
+pilot. O1--O5 remain unresolved; strict paper-equivalent rates remain blocked.
+
+Commands actually run from this worktree, with `PYTHONPATH="$PWD/src"` and
+`GROSS_DESIGN_CACHE_DIR=/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/cache/faults`:
+
+```bash
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_sampling_analysis.py::test_F03_gross_idle_deterministic_joint_path  # 1 passed, 3.39s
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_sampling_analysis.py::test_negative_sampling_and_result_corruption  # 1 passed
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_sampling_analysis.py  # 6 passed, 2.86s
+timeout 1800s conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_sampling_analysis.py tests/test_relay_adapter.py tests/test_fault_cache.py tests/test_reference.py tests/test_pipeline.py --junitxml=evidence/phase12/revised-regression.xml  # 91 passed, 31.23s
+conda run --no-capture-output -n tour_de_gross python -m compileall -q src/gross_design_bandle/bench/sampling.py src/gross_design_bandle/bench/results.py src/gross_design_bandle/bench/analysis.py tools/audit_sampling.py tests/test_sampling_analysis.py
+git diff --check
+git diff --exit-code -- reference AGENTS.md prompts/scripts
+```
+
+Evidence: `evidence/phase12/revised-regression.xml` and the retained
+`evidence/phase12/export-final/` pilot artifacts described above. The test
+evidence is deterministic gross integration; the earlier pilot is a tiny Bell
+smoke run. Neither supplies a statistically precise gross comparison. No new
+sampling pilot, solver, cluster job, external source edit or network write ran.
+No fixture correction was needed. Local phase validation passes under the
+revised F03 criterion; the controller has not yet rerun acceptance or
+published this feature. Publication outcome: **not attempted; controller owns
+acceptance rerun, commit, merge and atomic push**. Next prompt after controller
+acceptance/publication is `prompts/13_reproduction_campaign.md`, subject to a
+separate explicit campaign budget. Stop at Phase 12.
+
+## Phase 12 final local review (2026-10-03)
+
+Branch `feature/12_sampling_and_analysis`, worktree
+`/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/.codex-pipeline/tour-de-gross/worktrees/12_sampling_and_analysis`.
+The controller still owns acceptance, commit, merge and atomic push; none was
+attempted here. The earlier bounded tiny Bell pilot was retained with no new
+shots or points. Added point summaries with explicit nonconvergence rates and
+one-sided zero-failure upper bounds, plus an extrapolation check that requires
+an explicitly declared holdout p grid and independent direct counts. The
+holdout implementation was tested with synthetic counts; no real holdout
+sampling or extrapolation validation was claimed. `docs/SAMPLING.md` records
+that limit. Existing O1--O5 remain unresolved for paper equivalence, but no
+unresolved definition was used to construct or validate this phase's
+independent sampler.
+
+Validation commands actually run in this review:
+
+```bash
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_sampling_analysis.py::test_negative_sampling_and_result_corruption  # first failed on a test regex, then 1 passed
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_sampling_analysis.py  # first stopped on inherited read-only main-cache path
+GROSS_DESIGN_CACHE_DIR="$PWD/cache/faults" conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_sampling_analysis.py::test_F03_gross_idle_deterministic_joint_path  # 1 passed
+GROSS_DESIGN_CACHE_DIR="$PWD/cache/faults" conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_sampling_analysis.py  # 6 passed
+GROSS_DESIGN_CACHE_DIR="$PWD/cache/faults" timeout 1800s conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_sampling_analysis.py tests/test_relay_adapter.py tests/test_fault_cache.py tests/test_reference.py tests/test_pipeline.py --junitxml=evidence/phase12/final-regression.xml > evidence/phase12/final-regression.txt 2>&1  # 91 passed, 29.44s
+conda run --no-capture-output -n tour_de_gross python -c 'import json; from pathlib import Path; from gross_design_bandle.bench.results import read_chunks; from gross_design_bandle.bench.analysis import point_summaries, spectrum_from_chunks; base=Path("evidence/phase12/export-final"); rows=list(read_chunks(base/"chunks.jsonl").values()); output={"source":"existing tiny Bell pilot chunks; no new shots", "performance_evidence":False, "point_summaries":point_summaries(rows), "spectrum":spectrum_from_chunks(rows)}; (base/"analysis-summary.json").write_text(json.dumps(output, indent=2, sort_keys=True)+"\n")'
+conda run --no-capture-output -n tour_de_gross python -m compileall -q src/gross_design_bandle/bench/analysis.py src/gross_design_bandle/bench/results.py src/gross_design_bandle/bench/sampling.py tools/audit_sampling.py tests/test_sampling_analysis.py
+git diff --check
+git diff --exit-code -- reference AGENTS.md prompts/scripts
+```
+
+Evidence: `evidence/phase12/final-regression.xml`,
+`evidence/phase12/final-regression.txt`, and the retained
+`evidence/phase12/export-final/{run-manifest.json,chunks.jsonl,pilot-report.json,analysis-summary.json}`.
+The existing 32-shot Bernoulli point had zero observed failures and a 95%
+one-sided upper bound of 0.08937; it is tiny Bell execution evidence only.
+The final regression exercised warm physical fault reuse via the worktree
+cache; the earlier phase-12 export records cold/warm timings (0.0101s/0.0056s
+initial; 0.00685s/0.00356s final). Cache tests cover changed-p reuse and
+implementation invalidation. No new native fault export was needed because
+the phase-12 analysis addition does not change physical signatures or the
+existing exported model. Changed coverage: declared holdout grid validation,
+point-level nonconvergence rates, zero-failure point bounds, plus the retained
+F03 gross deterministic batch path and F05 resume/budget negatives.
+
+Short reproduction without new sampling:
+
+```bash
+export GROSS_DESIGN_CACHE_DIR="$PWD/cache/faults"
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_sampling_analysis.py
+```
+
+Next prompt after controller acceptance/publication:
+`prompts/13_reproduction_campaign.md`, only with a separate explicit campaign
+budget. Stop at phase 12.
