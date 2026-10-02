@@ -16,6 +16,10 @@ conda activate tour_de_gross
 python -m pip install --no-build-isolation -e .
 ```
 
+## Automated development prompts
+
+The tmux controller and JSON phase gates are documented in [prompts/scripts/README.md](prompts/scripts/README.md). Use `prompts/scripts/run_codex_pipeline.sh --preflight` to check the local CLI/environment and `--dry-run --through 11` to inspect the plan. Implementation starts only when you explicitly launch the runner.
+
 ## What is already executable
 
 ```bash

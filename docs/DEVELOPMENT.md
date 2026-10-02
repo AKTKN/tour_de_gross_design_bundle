@@ -17,4 +17,6 @@ External source checkouts belong in `external_libs/` (on this machine `/home/qua
 
 Git tracks source, scientific fixtures, docs, locks and four small curated delivery evidence files. Generated circuits, sampling outputs, caches, logs, external checkouts and report build products remain local. New evidence belongs under ignored `evidence/setup/` or phase-specific directories; summarize actual results and paths in STATUS. Never ignore `reference/` or regenerate its fixtures from the implementation under test.
 
-The original delivered checksum index is preserved as `SHA256SUMS.delivery.txt`; it includes a report PDF absent from the supplied workspace. `SHA256SUMS.txt` indexes current tracked files except checksum indexes themselves. Setup does not advance implementation phases: prompt 00 is still next and O1--O5 remain unresolved.
+The original delivered checksum index is preserved as `SHA256SUMS.delivery.txt`; it includes a report PDF absent from the supplied workspace. `SHA256SUMS.txt` indexes current nonignored source files except checksum indexes themselves. Setup does not advance implementation phases: prompt 00 is still next and O1--O5 remain unresolved.
+
+The Codex/tmux development controller, phase JSON gates and CLI availability checks are documented in `prompts/scripts/README.md`. It does not start automatically.

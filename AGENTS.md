@@ -25,7 +25,7 @@ The repository currently contains a design, reference transcriptions and algebra
 
 ## Workflow
 
-Make small cohesive changes. Write the relevant negative test before or together with a fix. After each phase, run its acceptance tests, update `STATUS.md` with commands and evidence paths, list unresolved issues and stop. Do not continue into the next phase automatically. Do not repeatedly retry an expensive solver or benchmark to make a test pass.
+Make small cohesive changes. Write the relevant negative test before or together with a fix. After each phase, run its acceptance tests, update `STATUS.md` with commands and evidence paths, list unresolved issues and stop. Each Codex session must stop after its phase. When the user explicitly launches `prompts/scripts/run_codex_pipeline.sh` or its tmux wrapper for a bounded phase interval, the outer controller may submit the next prompt in a new session after its acceptance gates pass. This is the user-requested automation exception; it does not authorize phases outside that interval, an unapproved pilot/campaign, or automatic expensive retries. Do not repeatedly retry an expensive solver or benchmark to make a test pass.
 
 Preserve existing user code and configuration. Read donor licenses before copying; retain attribution and source commit/path. Prefer a thin adapter when possible. Keep network/GAP/distance-search side effects out of imports and default CI. Freeze external versions and record source blob hashes; do not treat a mutable main branch as a lockfile.
 

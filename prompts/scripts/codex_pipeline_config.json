@@ -1,0 +1,190 @@
+{
+  "version": 1,
+  "environment": "tour_de_gross",
+  "stages": [
+    {
+      "id": "00",
+      "prompt": "prompts/00_source_audit.md",
+      "permission": "implementation",
+      "gates": [
+        "source_lock",
+        "backend_capabilities",
+        "strict_manifest",
+        "negative_tests"
+      ],
+      "required_paths": [
+        "docs/BACKEND_AUDIT.md",
+        "locks/source-lock.json"
+      ]
+    },
+    {
+      "id": "01",
+      "prompt": "prompts/01_algebra_and_codes.md",
+      "permission": "implementation",
+      "gates": [
+        "A01",
+        "A02",
+        "A06",
+        "negative_tests"
+      ],
+      "required_paths": []
+    },
+    {
+      "id": "02",
+      "prompt": "prompts/02_graphs_and_deformation.md",
+      "permission": "implementation",
+      "gates": [
+        "A03",
+        "A04",
+        "A05",
+        "negative_tests"
+      ],
+      "required_paths": []
+    },
+    {
+      "id": "03",
+      "prompt": "prompts/03_ideal_protocol.md",
+      "permission": "implementation",
+      "gates": [
+        "B01",
+        "B02",
+        "B03",
+        "B04_X1",
+        "negative_tests"
+      ],
+      "required_paths": []
+    },
+    {
+      "id": "04",
+      "prompt": "prompts/04_physical_scheduling.md",
+      "permission": "implementation",
+      "gates": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "negative_tests"
+      ],
+      "required_paths": []
+    },
+    {
+      "id": "05",
+      "prompt": "prompts/05_flows_and_harness.md",
+      "permission": "implementation",
+      "gates": [
+        "D01",
+        "D02",
+        "D04",
+        "D05",
+        "negative_tests"
+      ],
+      "required_paths": []
+    },
+    {
+      "id": "06",
+      "prompt": "prompts/06_noise_and_fault_model.md",
+      "permission": "implementation",
+      "gates": [
+        "D03",
+        "E01",
+        "E02",
+        "negative_tests"
+      ],
+      "required_paths": []
+    },
+    {
+      "id": "07",
+      "prompt": "prompts/07_inmodule_XX_Y.md",
+      "permission": "implementation",
+      "gates": [
+        "B04_XX_Y",
+        "D01",
+        "D02",
+        "D03",
+        "D04",
+        "D05",
+        "negative_tests"
+      ],
+      "required_paths": []
+    },
+    {
+      "id": "08",
+      "prompt": "prompts/08_intermodule_adapter.md",
+      "permission": "implementation",
+      "gates": [
+        "B05",
+        "C_Bell",
+        "D_inter",
+        "K47_vs_K23",
+        "negative_tests"
+      ],
+      "required_paths": []
+    },
+    {
+      "id": "09",
+      "prompt": "prompts/09_shift_automorphism.md",
+      "permission": "implementation",
+      "gates": [
+        "B06",
+        "A06",
+        "shift_faults",
+        "shift_timing",
+        "negative_tests"
+      ],
+      "required_paths": []
+    },
+    {
+      "id": "10",
+      "prompt": "prompts/10_two_gross_extension.md",
+      "permission": "implementation",
+      "gates": [
+        "two_gross_algebra",
+        "two_gross_instrument",
+        "two_gross_schedule",
+        "two_gross_flows",
+        "two_gross_faults",
+        "extension_labels",
+        "negative_tests"
+      ],
+      "required_paths": []
+    },
+    {
+      "id": "11",
+      "prompt": "prompts/11_relay_adapter.md",
+      "permission": "implementation",
+      "gates": [
+        "E03",
+        "E04",
+        "E05",
+        "negative_tests"
+      ],
+      "required_paths": []
+    },
+    {
+      "id": "12",
+      "prompt": "prompts/12_sampling_and_analysis.md",
+      "permission": "bounded-pilot",
+      "gates": [
+        "F03",
+        "F04",
+        "F05",
+        "bounded_pilot",
+        "negative_tests"
+      ],
+      "required_paths": []
+    },
+    {
+      "id": "13",
+      "prompt": "prompts/13_reproduction_campaign.md",
+      "permission": "campaign-budget",
+      "gates": [
+        "campaign_preflight",
+        "manifest_counts",
+        "held_out_checks",
+        "claim_scope"
+      ],
+      "required_paths": []
+    }
+  ]
+}
