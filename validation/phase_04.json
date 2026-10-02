@@ -1,0 +1,552 @@
+{
+  "stage_id": "04",
+  "branch": "feature/04_physical_scheduling",
+  "base_commit": "a2d9a65693fffc7dbeba506eaa23560ce56b27b2",
+  "result": {
+    "stage_id": "04",
+    "status": "success",
+    "next_stage_safe": true,
+    "summary": "Completed physical single/Bell checks, staggered BB memory, legal staged coloring, exact tableau validation and gross X1 noiseless circuits with complete ledgers. Final phase tests: 14 passed; regressions: 170 passed. Stayed on feature/04_physical_scheduling in the supplied worktree. Publication remains with the controller; stopped after phase 04.",
+    "tests": [
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python -c 'import gross_design_bandle,stim; print(gross_design_bandle.__file__); print(stim.__version__)'",
+        "result": "passed",
+        "required": true,
+        "notes": "Confirmed feature-worktree import and Stim 1.16.0."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_physical_scheduling.py",
+        "result": "passed",
+        "required": true,
+        "notes": "Initial run: 1 failed, 13 passed due to an unflattened REPEAT tick assertion. Corrected rerun: 14 passed. Historical failure retained; no unresolved failure."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_physical_scheduling.py --junitxml=evidence/phase04/pytest-phase04.xml",
+        "result": "passed",
+        "required": true,
+        "notes": "14 passed in 53.25s."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_physical_scheduling.py --junitxml=evidence/phase04/pytest-phase04-final.xml",
+        "result": "passed",
+        "required": true,
+        "notes": "Final source, including physical ownership guards: 14 passed in 53.09s; no skips or xfails."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python -m pytest -q --junitxml=evidence/phase04/pytest-final.xml",
+        "result": "passed",
+        "required": true,
+        "notes": "170 passed in 169.27s, including reference and pipeline regressions. Phase tests loaded before the final ownership guard; the final phase JUnit run verifies that change separately."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python tools/audit_physical_scheduling.py --output-dir evidence/phase04/artifacts",
+        "result": "passed",
+        "required": true,
+        "notes": "Exported C10 X1 and memory circuits, signed Bell circuit, full ledgers, 161 exact tableau certificates, 707 overlap checks and installed connectivity. No noisy sampling or decoder invoked."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python tools/audit_reference.py --output evidence/phase04/independent-audit.json",
+        "result": "passed",
+        "required": true,
+        "notes": "Matches the delivered independent audit exactly; fixtures unchanged."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python -m pytest --collect-only -q tests/test_physical_scheduling.py",
+        "result": "passed",
+        "required": true,
+        "notes": "14 exact node IDs collected; all covered by acceptance mappings."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python -m pip check",
+        "result": "passed",
+        "required": true,
+        "notes": "No broken requirements."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python -",
+        "result": "passed",
+        "required": true,
+        "notes": "Read-only probes checked memory/X1 construction, both installed connectivity censuses, legal schedule depths and Stim flow API semantics."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python /tmp/phase04_handoff.py",
+        "result": "passed",
+        "required": true,
+        "notes": "Verified branch/worktree, clean main and external checkouts, protected bytes, PDF/artifact hashes, final JUnit outcomes and controller schema/gate validation."
+      },
+      {
+        "command": "git diff --check",
+        "result": "passed",
+        "required": true,
+        "notes": "Passed. No Git publication performed."
+      }
+    ],
+    "acceptance_checks": [
+      {
+        "gate": "C01",
+        "test_nodeids": [
+          "tests/test_physical_scheduling.py::test_C01_signed_single_and_bell_tableau_oracles",
+          "tests/test_physical_scheduling.py::test_bell_all_branches_dense_choi_projector",
+          "tests/test_physical_scheduling.py::test_C01_gross_all_physical_checks_and_collision_free"
+        ]
+      },
+      {
+        "gate": "C02",
+        "test_nodeids": [
+          "tests/test_physical_scheduling.py::test_C02_every_overlap_and_full_surgery_constraints",
+          "tests/test_physical_scheduling.py::test_coloring_is_optimal_delta_and_conflict_free",
+          "tests/test_physical_scheduling.py::test_negative_collision_free_reversed_anticommuting_overlap"
+        ]
+      },
+      {
+        "gate": "C03",
+        "test_nodeids": [
+          "tests/test_physical_scheduling.py::test_C03_donor_source_convention_and_paper_layers",
+          "tests/test_physical_scheduling.py::test_C03_staggered_8C_plus_1_offsets_and_repeat"
+        ]
+      },
+      {
+        "gate": "C04",
+        "test_nodeids": [
+          "tests/test_physical_scheduling.py::test_C04_ledger_counts_intervals_idle_and_policy_hash",
+          "tests/test_physical_scheduling.py::test_C04_bell_couplers_and_physical_census_are_separate",
+          "tests/test_physical_scheduling.py::test_gross_X1_physical_instrument_matches_ideal_projection"
+        ]
+      },
+      {
+        "gate": "C05",
+        "test_nodeids": [
+          "tests/test_physical_scheduling.py::test_C05_installed_full_connectivity_matches_published_census"
+        ]
+      },
+      {
+        "gate": "negative_tests",
+        "test_nodeids": [
+          "tests/test_physical_scheduling.py::test_negative_collision_free_reversed_anticommuting_overlap",
+          "tests/test_physical_scheduling.py::test_negative_bad_sign_gate_bell_preparation_and_collision",
+          "tests/test_physical_scheduling.py::test_negative_missing_interaction_and_bad_round_request"
+        ]
+      }
+    ],
+    "changed_files": [
+      "STATUS.md",
+      "docs/PHYSICAL_SCHEDULING.md",
+      "locks/physical-scheduling-sources.json",
+      "src/gross_design_bandle/circuits/__init__.py",
+      "src/gross_design_bandle/circuits/checks.py",
+      "src/gross_design_bandle/circuits/memory.py",
+      "src/gross_design_bandle/circuits/primitive.py",
+      "src/gross_design_bandle/circuits/protocol.py",
+      "src/gross_design_bandle/circuits/schedule.py",
+      "src/gross_design_bandle/circuits/surgery.py",
+      "src/gross_design_bandle/integrations/__init__.py",
+      "src/gross_design_bandle/integrations/sliding_window.py",
+      "src/gross_design_bandle/validation/connectivity.py",
+      "src/gross_design_bandle/validation/physical.py",
+      "tests/test_physical_scheduling.py",
+      "tools/audit_physical_scheduling.py"
+    ],
+    "evidence_paths": [
+      "evidence/phase04/pytest-initial.txt",
+      "evidence/phase04/pytest-after-fix.txt",
+      "evidence/phase04/pytest-phase04.txt",
+      "evidence/phase04/pytest-phase04.xml",
+      "evidence/phase04/pytest-phase04-final.txt",
+      "evidence/phase04/pytest-phase04-final.xml",
+      "evidence/phase04/pytest-final.txt",
+      "evidence/phase04/pytest-final.xml",
+      "evidence/phase04/collected-nodeids.txt",
+      "evidence/phase04/audit-physical.txt",
+      "evidence/phase04/audit-reference.txt",
+      "evidence/phase04/independent-audit.json",
+      "evidence/phase04/pip-check.txt",
+      "evidence/phase04/acceptance-gates.json",
+      "evidence/phase04/handoff-validation.json",
+      "evidence/phase04/artifacts/index.json",
+      "evidence/phase04/artifacts/gross_X1_C10.stim",
+      "evidence/phase04/artifacts/gross_X1_C10.json",
+      "evidence/phase04/artifacts/gross_memory_C10.stim",
+      "evidence/phase04/artifacts/gross_memory_C10.json",
+      "evidence/phase04/artifacts/bell_negative_YZ.stim",
+      "evidence/phase04/artifacts/bell_negative_YZ.json",
+      "evidence/phase04/artifacts/exact_tableau_checks.json",
+      "evidence/phase04/artifacts/gross_installed_connectivity.json",
+      "evidence/phase04/artifacts/two_gross_installed_connectivity.json"
+    ],
+    "unresolved_items": [
+      "O1: Published inter-module K23 logical-action generators remain unidentified.",
+      "O2: Historical Relay recurrence, parameters, prior and column semantics remain unresolved.",
+      "O3: Independent native controlled-Pauli policy is fixed locally; exact paper coloring, shifts, noisy lowering and boundaries remain unresolved. Gross X1 has 12-tick cycles; other coloring depths are documented as non-equivalent.",
+      "O4: Primitive multiplicities and admission/merging convention remain unresolved; candidate location counts are not Table-6 N.",
+      "O5: Original counts, grids and bootstrap inputs remain unavailable.",
+      "Donor builder reuse license remains unresolved. Only pinned schedule facts were extracted; no donor implementation was copied or executed.",
+      "Complete physical instrument validation is scoped to gross X1. Detectors, stochastic noise, shifts, inter-module instruments and reproduction decoding remain later-phase work."
+    ],
+    "blocking_issue": null
+  },
+  "controller_pytest": {
+    "exit_code": 0,
+    "tests": {
+      "tests/test_reference.py::test_full_algebra_audit[gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_full_algebra_audit[two_gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_reduced_cycles_are_not_a_standalone_full_basis[gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_reduced_cycles_are_not_a_standalone_full_basis[two_gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_corrupted_cycle_is_rejected[gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_corrupted_cycle_is_rejected[two_gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_ansatz_cutoff_and_monotonicity": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_reference_probability_validation": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_label_parser": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_manifest_and_stage_selection": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[missing_field]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[unknown_field]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[wrong_stage]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[not_run]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[failed]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[empty_gates]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[duplicate_gate]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[unknown_node]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[missing_evidence]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[path_escape]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[blocked]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[wrong_bool]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[empty_nodes]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[optional_only]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_open_paper_items_allow_scoped_success": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[skipped]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[xfail]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[failed]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[missing]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[teardown_failure]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_pilot_and_campaign_require_budget": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_sequential_sessions_and_resume": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[nonzero]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[malformed]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[not_run]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[skip]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[fail_test]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[no_status]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[control_edit]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[fixture_edit]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[timeout]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_resume_rejects_workspace_changes": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_prerequisite_skipping_and_budget_denied_before_codex": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_dry_run_is_read_only": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_repository_lock_blocks_second_runner": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_actual_report_records_skip_and_xfail": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_tmux_launcher_keeps_completed_pane": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_revalidate_allows_resume_after_pending_edits": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_revalidate_rejects_old_gate_regression": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_interrupt_terminates_child_group_and_records_stop": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_campaign_budget_rejects_unbounded_or_unknown_fields": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_dirty_main_is_preserved_without_codex": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failed_feature_requires_explicit_resume": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_atomic_push_failure_and_retry_do_not_repeat_implementation": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_remote_advancement_blocks_candidate_merge": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_commit_hook_mutation_is_not_merged": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_sol_high_reasoning_forwarded_and_recorded": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_hard_reasoning_rejected_before_launch": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_physical_scheduling.py::test_C01_gross_all_physical_checks_and_collision_free": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_physical_scheduling.py::test_C01_signed_single_and_bell_tableau_oracles": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_physical_scheduling.py::test_C02_every_overlap_and_full_surgery_constraints": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_physical_scheduling.py::test_C03_donor_source_convention_and_paper_layers": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_physical_scheduling.py::test_C03_staggered_8C_plus_1_offsets_and_repeat": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_physical_scheduling.py::test_C04_bell_couplers_and_physical_census_are_separate": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_physical_scheduling.py::test_C04_ledger_counts_intervals_idle_and_policy_hash": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_physical_scheduling.py::test_C05_installed_full_connectivity_matches_published_census": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_physical_scheduling.py::test_bell_all_branches_dense_choi_projector": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_physical_scheduling.py::test_coloring_is_optimal_delta_and_conflict_free": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_physical_scheduling.py::test_gross_X1_physical_instrument_matches_ideal_projection": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_physical_scheduling.py::test_negative_bad_sign_gate_bell_preparation_and_collision": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_physical_scheduling.py::test_negative_collision_free_reversed_anticommuting_overlap": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_physical_scheduling.py::test_negative_missing_interaction_and_bad_round_request": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      }
+    }
+  }
+}

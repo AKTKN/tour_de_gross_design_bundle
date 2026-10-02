@@ -10,7 +10,7 @@ The theory/design report, module architecture, reproduction contract, validation
 
 ## Not implemented / not run
 
-No production physical Stim surgery circuit, Bell schedule, detector/observable compiler, distance proof, reproduction Relay adapter or Monte Carlo reproduction has been completed. The original delivery did not install or execute Stim, qLDPC or Relay; phase 00 subsequently pinned and tested tiny backend APIs. Phases 01--02 implemented signed algebra and deformations; phase 03 now validates an ideal measurement instrument through gross X1, with explicit limits recorded below. The delivered algebra audit is not a circuit-distance certification and its rank calculations are phase-blind.
+Phase 04 now supplies physical noiseless gross X1 circuits, single/Bell primitives and independently validated schedules. No production noisy surgery benchmark, detector/observable compiler, distance proof, reproduction Relay adapter or Monte Carlo reproduction has been completed. The original delivery did not install or execute Stim, qLDPC or Relay; phase 00 subsequently pinned and tested tiny backend APIs. Phases 01--02 implemented signed algebra and deformations; phase 03 now validates an ideal measurement instrument through gross X1, with explicit limits recorded below. The delivered algebra audit is not a circuit-distance certification and its rank calculations are phase-blind.
 
 ## Specification blockers for exact reproduction
 
@@ -88,10 +88,10 @@ Implemented in the separate `feature/model-reasoning` worktree. Verification: `c
 
 ## Next action
 
-Phase 03 is complete for the ideal merge/repeat/split instrument and symbolic
-signed split frame through gross X1. Next implementation prompt is
-`prompts/04_physical_scheduling.md`, only in a new controller-authorized session
-after phase-03 acceptance and publication. This session stops at 03;
+Phase 04 is complete for physical primitives, staggered BB memory, legal
+staged-coloring schedules and the gross X1 noiseless physical instrument.
+Next prompt: `prompts/05_flows_and_harness.md`, only in a new controller-authorized
+session after phase-04 acceptance and publication. This session stops at 04;
 strict paper-equivalent sampling remains blocked by O1--O5.
 
 ## Phase 00 source audit completed (2026-10-02)
@@ -543,3 +543,163 @@ independent reference audit, full pytest and pip check above in `tour_de_gross`.
 Stop after phase 03. Next prompt: `prompts/04_physical_scheduling.md`, only in a
 new controller-authorized session after validation/publication. No later phase
 was started; publication remains with the controller.
+
+## Phase 04 physical scheduling completed (2026-10-02)
+
+Branch: `feature/04_physical_scheduling`. Worktree:
+`/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/.codex-pipeline/tour-de-gross/worktrees/04_physical_scheduling`.
+Main checkout: `/home/quantum_teresheys/workspace/tour_de_gross_design_bundle`,
+verified clean. Publication outcome: **not attempted; the outer controller owns
+acceptance rerun, feature commit, validated merge and atomic push**. Initial
+feature status was clean; existing code/configuration and reference fixtures
+were preserved. No AGENTS/controller edits, external source patches, network
+writes, long sampling, distance solver, cluster work or later phase was run.
+The inherited `tour_de_gross` editable import resolves to this feature worktree;
+no install or build was needed in this phase.
+
+Added physical signed single-check and Bell-check identities, integer-tick IR,
+physical-to-algebraic readout XORs, native basis policy, exact tableau validation,
+staggered memory, bipartite Delta coloring and A.5 staged/ASAP scheduling. The
+validator checks physical ownership, complete support/gate identity, all qubit
+collisions, reset/readout/sign consistency, Bell preparation order and Eq. (67)
+on every anticommuting overlap. It rejects a collision-free reversed-overlap
+schedule; exact inverse tableau propagation independently reveals its unwanted
+ancilla input factor. No ideal MPP occurs in the physical body. The earlier
+ideal MPP protocol remains an explicitly separate oracle.
+
+The read-only SlidingWindowDecoder adapter extracts twelve gate-layer facts
+from the pinned builder AST without importing/executing or copying that builder.
+The source builder has no license notice or repository-level license; its reuse
+license remains open. Local implementations are independently written. The
+donor's arbitrary A_list/B_list input is populated with literal permutation
+matrices in the paper xy/LR convention, with monomial order (2,0,1); a concrete
+identity ConventionAdapter verifies Hx/Hz before translating gates. Figures 3/4
+supply an independent geometric/coordinate oracle. This does not assert a map
+from the donor's separate default factory/logical basis. The canonical external
+checkouts remain unchanged and pinned. Provenance and inspected license/hash
+facts: `locks/physical-scheduling-sources.json`, plus unchanged phase-00 locks.
+The pinned PDF hash was rechecked and Figures 3--5/A.5 Eqs. (65)--(68) read.
+
+The physical policy uses native one-tick RX/R/MX/M and CX/CY/CZ. Pure BB Z checks
+use data-to-ancilla CNOTs with Z-basis preparation/readout; mixed checks use an
+X-basis ancilla. Y is directly controlled with its signed phase. Bell halves
+have disjoint support and one algebraic identity/two physical identities. A
+negative check inverts one physical outcome. Unsupported policy changes fail
+closed at lowering; policies, operations, time and live-idle accounting affect
+the schedule hash. Candidate location counts retain idles on all live data and
+prepared ancillas, including boundaries; split edges cease to be live. They are
+not an O4 primitive fault catalogue or Table-6 N. No stochastic noise or decoder
+is emitted/invoked by the new APIs.
+
+Gross X1 has 161 algebraic/physical single checks, 323 active fragment qubits,
+707 anticommuting overlap pairs, Delta_BB=1 and a 12-tick deformed cycle. Its
+per-cycle candidate census is CX=930, CZ=23, RX=89, R=72, MX=89, M=72 and
+IDLE=1004. The C=10 physical export contains 1 edge-init + 120 deformed + 1
+split + 9 original-check verification ticks = 131; the external ideal logical
+input/terminal harness is separately accounted as absent (zero). Gross memory
+C=10 is 81 ticks; tests verify 8C+1, Z reset/read offsets 0/7 and X offsets 1/8
+for both code sizes and repeated cycles. Complete operation/outcome/location
+ledgers, data/ancilla live intervals, policy and circuit/schedule hashes are
+saved. Physical original-check readouts predict the split-frame syndrome;
+applying the recorded frame restores every original stabilizer.
+
+The independent installed full-LPU connectivity union includes both X and
+ZX-dual Z port/dressing couplers and inactive installed links. It reproduces
+Figure-5 LPU counts 90/158 and degree histograms for gross/two-gross, maximum
+physical degree seven, degree five per shared Bell half. Algebraic graph degree,
+physical ancilla count, active fragment count and installed layout count remain
+separate. The selected reference cycles are unchanged and no ILP was used.
+Gross XX/Y schedules also pass all constraints and per-check tableau checks;
+this coloring choice has 13-tick cycles. Two-gross construction probes yield
+X/XX/Y depths 14/15/15. These choices do not establish the reported 12C timing
+or complete instrument semantics for those targets; the complete physical
+instrument delivered in this phase is scoped to gross X1.
+
+Exact signed Stim Clifford tableaus check every gross X1 primitive alone and
+its readout in the simultaneous scheduled round. Tiny primitives exhaust all
+16 two-qubit Pauli words, both signs and single/Bell implementations. Dense
+Bell Choi tests exhaust every physical branch for negative YZ, XX and ZY,
+checking the projector and coherence of both reference qubits. Gross X1 uses
+12 bounded noiseless stabilizer trajectories: four seeds each for + eigenstate,
+- eigenstate and full encoded Choi input, two physical rounds, split and frame.
+A complete data/reference stabilizer basis verifies target outcome and all
+preserved logical coherence. This is an instrument test, not a noisy pilot or
+sampled logical-error rate. Installed connectivity checks include two-gross;
+no complete two-gross instrument, inter-module schedule or shift is claimed.
+
+Commands actually run (all Python commands in `tour_de_gross`):
+
+```bash
+conda run --no-capture-output -n tour_de_gross python -c 'import gross_design_bandle,stim; print(gross_design_bandle.__file__); print(stim.__version__)'
+conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_physical_scheduling.py
+conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_physical_scheduling.py --junitxml=evidence/phase04/pytest-phase04.xml
+conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_physical_scheduling.py --junitxml=evidence/phase04/pytest-phase04-final.xml
+conda run --no-capture-output -n tour_de_gross python -m pytest -q --junitxml=evidence/phase04/pytest-final.xml
+conda run --no-capture-output -n tour_de_gross python tools/audit_physical_scheduling.py --output-dir evidence/phase04/artifacts
+conda run --no-capture-output -n tour_de_gross python tools/audit_reference.py --output evidence/phase04/independent-audit.json
+conda run --no-capture-output -n tour_de_gross python -m pytest --collect-only -q tests/test_physical_scheduling.py
+conda run --no-capture-output -n tour_de_gross python -m pip check
+conda run --no-capture-output -n tour_de_gross python /tmp/phase04_handoff.py
+git diff --check
+```
+
+Read-only Python heredoc probes also inspected Stim flow API semantics,
+constructed gross memory/X1, and checked installed counts/valid schedule depths
+for both sizes. File-edit helper scripts ran with the same environment. The
+final oracle deliberately uses exact Tableau arithmetic, avoiding signed
+Circuit.has_flow's documented randomized implementation. No external builder
+or production Relay backend was invoked by this phase.
+
+Validation history: initial phase run **1 failed, 13 passed in 38.05s**, because
+the tick-count test inspected an unflattened Stim REPEAT block. After correcting
+that assertion and adding the exact composite tableau oracle, **14 passed in
+52.80s**. The ledger/policy verification run passed **14 in 53.25s**. A final
+physical-ownership guard and negative tests were added while the full suite
+was running; the final phase command passed **14 in 53.09s** on the final source.
+The broad regression command passed **170 in 169.27s**, no skips/xfails. Its
+phase tests were loaded before the last ownership guard, so the final phase
+JUnit run is the evidence for that change. Both results are retained accurately;
+the controller will rerun the final mapped tree. No failure remains unresolved.
+The physical export checks 161 exact signed tableaus and all 707 overlap pairs.
+The independent reference audit matches the delivered audit exactly. Pip check
+reports no broken requirements.
+
+Gate mappings are saved in `evidence/phase04/acceptance-gates.json`: C01 physical
+primitive/Bell/projector/gross checks, C02 overlap/coloring constraints and the
+reversed-overlap negative, C03 donor/paper/convention and staggered timing,
+C04 complete location/live-interval/policy/Bell ledgers and gross instrument,
+C05 installed physical connectivity, and negative_tests for sign/gate/Bell
+ordering/collision/missing interaction/ownership/invalid-round failures. Every
+gate occurs exactly once with exact existing pytest nodes; all 14 phase nodes
+are covered. See `tests/test_physical_scheduling.py` for independent oracles.
+
+Nonempty local evidence: `evidence/phase04/{pytest-initial.txt,
+pytest-after-fix.txt,pytest-phase04.txt,pytest-phase04.xml,
+pytest-phase04-final.txt,pytest-phase04-final.xml,pytest-final.txt,
+pytest-final.xml,collected-nodeids.txt,audit-physical.txt,audit-reference.txt,
+independent-audit.json,pip-check.txt,acceptance-gates.json,
+handoff-validation.json,result.json}`. Exported artifacts under
+`evidence/phase04/artifacts/`: `gross_X1_C10.{stim,json}`,
+`gross_memory_C10.{stim,json}`, `bell_negative_YZ.{stim,json}`,
+`exact_tableau_checks.json`, `{gross,two_gross}_installed_connectivity.json`
+and `index.json` with byte hashes. The handoff helper checks branch/worktree,
+main cleanliness, protected tracked fixtures/contracts/source locks, canonical
+external source commits/cleanliness, feature imports, pinned PDF, independent
+reference audit, artifact hashes, exact JUnit node outcomes and the unchanged
+controller schema/gate/evidence validation. Generated evidence follows the
+existing ignored-output policy; the controller saves its tracked validation.
+
+O1--O5 remain open: O1 published inter K23 action generators; O2 historical Relay
+semantics/prior/column policy; O3 paper-exact schedule/coloring, shift, gate/noise
+lowering and boundaries; O4 primitive multiplicities and admission/merging;
+O5 original grids/counts/bootstrap. The named independent native policy fixes
+what this phase needs without assuming paper equivalence. Donor builder reuse
+licensing remains open; only source facts were read. Strict paper manifests
+remain fail-closed. Detector/observable integrity, actual stochastic fault
+catalogues, shifts, inter scheduling, distances and sampled rates are later work.
+
+Short rerun: from this worktree use the final phase pytest command, physical
+export, independent reference audit, full pytest and pip check above in
+`tour_de_gross`. Publication remains with the controller. Stop after phase 04.
+Next prompt: `prompts/05_flows_and_harness.md`, only in a new controller-authorized
+session after validation/publication. No later phase was started.
