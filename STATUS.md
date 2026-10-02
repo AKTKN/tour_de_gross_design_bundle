@@ -10,7 +10,7 @@ The theory/design report, module architecture, reproduction contract, validation
 
 ## Not implemented / not run
 
-Phase 04 now supplies physical noiseless gross X1 circuits, single/Bell primitives and independently validated schedules. Phase 05 supplies an exact signed detector/observable compiler and ideal gross memory/X1 benchmark harness. No production noisy surgery benchmark, distance proof, reproduction Relay adapter or Monte Carlo reproduction has been completed. The original delivery did not install or execute Stim, qLDPC or Relay; phase 00 subsequently pinned and tested tiny backend APIs. Phases 01--02 implemented signed algebra and deformations; phase 03 now validates an ideal measurement instrument through gross X1, with explicit limits recorded below. The delivered algebra audit is not a circuit-distance certification and its rank calculations are phase-blind.
+Phase 04 now supplies physical noiseless gross X1 circuits, single/Bell primitives and independently validated schedules. Phase 05 supplies an exact signed detector/observable compiler and ideal gross memory/X1 benchmark harness. Phase 06 supplies three distinct noise channels, primitive catalogues, joint H/Lambda matrices and gross memory/X1 audit exports. No production noisy surgery benchmark, distance proof, reproduction Relay adapter or Monte Carlo reproduction has been completed. The original delivery did not install or execute Stim, qLDPC or Relay; phase 00 subsequently pinned and tested tiny backend APIs. Phases 01--02 implemented signed algebra and deformations; phase 03 now validates an ideal measurement instrument through gross X1, with explicit limits recorded below. The delivered algebra audit is not a circuit-distance certification and its rank calculations are phase-blind.
 
 ## Specification blockers for exact reproduction
 
@@ -88,11 +88,11 @@ Implemented in the separate `feature/model-reasoning` worktree. Verification: `c
 
 ## Next action
 
-Phase 05 is complete for symbolic signed flows, strict detector/observable
-integrity and the independent A.7-style gross memory/X1 ideal harness.
-Next prompt: `prompts/06_noise_and_fault_model.md`, only in a new
-controller-authorized session after phase-05 acceptance/publication.
-This session stops at 05. Strict paper-equivalent sampling remains blocked
+Phase 06 supplies independent noise/catalogue construction and the gross
+memory/X1 audit; its final regression and handoff verification are recorded below.
+Next prompt: `prompts/07_inmodule_XX_Y.md`, only in a new
+controller-authorized session after phase-06 acceptance/publication.
+This session stops at 06. Strict paper-equivalent sampling remains blocked
 by O1--O5; no later phase or Git publication was run.
 
 ## Phase 00 source audit completed (2026-10-02)
@@ -867,3 +867,159 @@ pytest and pip check above from this worktree. Stop after phase 05. Next prompt:
 `prompts/06_noise_and_fault_model.md`, only in a new controller-authorized session
 after acceptance/publication. The controller owns publication; no later phase
 was started.
+
+## Phase 06 independent noise and primitive catalogue completed (2026-10-02)
+
+Branch: `feature/06_noise_and_fault_model`. Worktree:
+`/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/.codex-pipeline/tour-de-gross/worktrees/06_noise_and_fault_model`.
+Main checkout: `/home/quantum_teresheys/workspace/tour_de_gross_design_bundle`,
+verified clean. Publication outcome: **not attempted; the outer controller owns
+acceptance rerun, feature commit, validated merge and atomic push**. The supplied
+feature was initially clean. Existing source, fixtures, controls and source locks
+were preserved. No AGENTS/pipeline changes, external-source modifications,
+network writes, solver/cluster work, benchmark Monte Carlo or later phase ran.
+The `tour_de_gross` package import resolves to this feature worktree.
+
+Added `src/gross_design_bandle/noise/`, `bench/columns.py` and
+`validation/faults.py`: explicit physical locations, the three distinct profiles,
+primitive lowering, a reverse binary sensitivity sweep, joint sparse H/Lambda,
+copy/admission/grouping provenance and independent fault validation. Tests are
+in `tests/test_noise_and_fault_model.py`; export tool is
+`tools/audit_noise_and_fault_model.py`. API/scientific policy documentation is
+`docs/NOISE_AND_FAULT_MODEL.md`; provenance is
+`locks/noise-and-fault-sources.json`. No donor code was copied. Inherited source
+pins/licenses/hashes remain unchanged in the canonical shared `external_libs`.
+The locked v1 PDF hash was verified; Section 2.6 and A.7 were inspected locally.
+
+`a7_uniform_expanded` uses independent q=p/15 copies with multiplicities 15 for
+preparation/readout, 5 for each idle Pauli and 1 for each tensor two-qubit Pauli.
+`paper_linearized_unequal` keeps independent p, p/3, p/15 primitives.
+`standard_categorical_depolarizing` emits ordinary DEPOLARIZE1/2 under its own
+comparison ID and is rejected by the independent Bernoulli catalogue API.
+Independent emission uses separate CORRELATED_ERROR terms, never ELSE branches.
+Reset faults follow reset; readout flips precede measurement. Native CX/CY/CZ
+and Bell preparation CNOTs receive joint 15-term faults. The named independent
+v1 physical policy includes every unoccupied live data/prepared-ancilla tick,
+without active-gate idles or extra free Clifford conversion layers. Ideal input,
+reference qubits, X1's final original verification and terminal MPP remain
+noise-free. Software split frames are classical; active correction mode is
+explicitly rejected until a separately defined correction noise policy exists.
+
+Admission and grouping arguments have no defaults. `include_all` and
+`exclude_joint_zero` retain every zero-H/nonzero-Lambda fault; the latter removes
+only joint-zero columns. Every raw term has physical location, qubits, boundary,
+time, phase, round, role, tensor Pauli, probability and multiplicity. Exported
+copy ordinals, copy-to-raw, admission mask, admitted-to-copy and
+admitted-to-group maps are reversible. H and Lambda keep the same admitted-copy
+ordering. Grouping compares both sectors together; hyperedges are never split.
+Explicit XOR grouping uses (1-product(1-2p_i))/2 and preserves the unconditional
+joint channel, not the original fixed-weight population. Sampler N remains
+admitted copies; decoder group count and compact DEM count are separate fields.
+
+Tiny circuits exhaust every primitive and compare the reverse sweep to the
+independent forward Pauli oracle and Stim probability-one injections, including
+joint X/Z tensor faults, signed negative YY Bell checks, X/Y preparations and
+readouts, classical Y feedforward and nested repeats. E01 enumerates all tiny
+subsets, verifies two-copy cancellation analytically, checks O(p²) equalization
+error, and compares exact channel probabilities to 32768 bounded Stim and
+catalogue Bernoulli draws. These are tiny-channel unit tests, not production
+benchmark rates or a pilot. E02 covers duplicate columns, detector-zero logical
+faults, joint-zero masks, hyperedges, observable-only terms, repeat identities,
+joint grouping and saved physical maps. Negative tests reject unknown profiles,
+implicit/incorrect admission, categorical misuse, invalid locations, overlapping
+batched gates, nondeterministic detectors and corrupted maps/probabilities/
+signatures. A deliberate signature corruption saves its counterexample before
+failure. No gauge flags, dropped detectors or graphlike approximation are used.
+
+C10 gross memory and X1 audits export ideal and all three noisy-profile circuits,
+four independent full compressed catalogues, sparse H/Lambda matrices, source
+and artifact hashes and N discrepancy reports. The strict detector/observable
+counts are respectively 1584/K24 and 1892/K23. Memory has 141552 raw primitives
+and 218160 expanded copies; X1 has 177190 raw primitives and 346710 copies.
+The `include_all` export policy is explicit. Excluding joint-zero copies would
+give 215280 and 342599. Published N is 210960 and 324526, so include-all deltas
+are +7200 and +22184. Neither policy resolves O4. Reports break down copies by
+kind/phase/role and preserve the physical/boundary decisions; no padding or
+forced merging was used. Compact expanded DEM sizes are 59472/64801, whereas
+joint XOR group counts are 59473/64802, including the joint-zero group.
+These counts are audits of this implementation, not sampled Table-6 data.
+
+Every large raw column is generated by the independently validated gate/Pauli
+templates. Deterministic large-circuit checks span each phase/gate/role/tensor
+Pauli in first/middle/last rounds: 66 memory and 137 X1 raw strata agree exactly
+with the forward oracle and Stim. This is stratified coverage, not exhaustive
+independent validation of every large-circuit location. X1's half-LPU has no
+shared Bell check; Bell coverage comes from the exhaustive primitive fixture.
+All six noisy exports pass strict DEM extraction without disjoint approximation.
+
+Commands actually run (every Python install/build/test uses `tour_de_gross`;
+no install/build was needed):
+
+```bash
+conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_noise_and_fault_model.py --junitxml=evidence/phase06/pytest-initial.xml
+conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_noise_and_fault_model.py --junitxml=evidence/phase06/pytest-phase06.xml
+conda run --no-capture-output -n tour_de_gross python -m pytest -q --junitxml=evidence/phase06/pytest-final.xml
+conda run --no-capture-output -n tour_de_gross python tools/audit_noise_and_fault_model.py --output-dir evidence/phase06/artifacts
+conda run --no-capture-output -n tour_de_gross python tools/audit_reference.py --output evidence/phase06/independent-audit.json
+conda run --no-capture-output -n tour_de_gross python -m pytest --collect-only -q tests/test_noise_and_fault_model.py
+conda run --no-capture-output -n tour_de_gross python -m pip check
+conda run --no-capture-output -n tour_de_gross python -c 'import gross_design_bandle, stim; print(gross_design_bandle.__file__); print(stim.__version__)'
+curl --fail --location --silent --show-error https://arxiv.org/pdf/2506.03094v1 --output evidence/phase06/paper-v1.pdf
+sha256sum evidence/phase06/paper-v1.pdf
+pdftotext -f 58 -l 59 -layout evidence/phase06/paper-v1.pdf evidence/phase06/paper-a7.txt
+pdftotext -layout evidence/phase06/paper-v1.pdf evidence/phase06/paper-text.txt
+conda run --no-capture-output -n tour_de_gross python /tmp/phase06_handoff.py
+conda run --no-capture-output -n tour_de_gross python /tmp/phase06_result.py
+git diff --check
+```
+
+A read-only Python heredoc in the same environment saved `audit-summary.json`.
+The first phase run had **2 failed, 6 passed in 45.64s**. The fixture emitted two
+consecutive identical gates, which Stim merged into an overlapping batch; adding
+a TICK made the intended insertion boundary explicit. A second assertion
+incorrectly expected a Bell preparation in the X1 half-LPU; it now checks the
+actual edge-data role, while the Bell fixture retains exhaustive coverage.
+Original failed logs/XML are preserved as `pytest-initial-failed.{txt,xml}`.
+The corrected phase run passed **8 in 46.56s**. The initial command was rerun on
+the final source, passing **8 in 58.58s**; its latest log/XML are the passing
+`pytest-initial.{txt,xml}`. No failing execution is counted as a pass.
+
+Final full suite: **192 passed in 398.42s**, no skips/xfails, including reference
+and pipeline regressions. The independent reference audit equals the delivered
+JSON; pip check has no broken requirements. No failure remains unresolved.
+The handoff helper verifies branch/worktree/import, clean main, unchanged
+protected fixtures/controls/source locks, canonical external commits/files and
+cleanliness, the paper hash, exported source/artifact hashes, every saved
+H/Lambda column and copy/group map, and all mapped JUnit passes. The result
+helper validates the completion JSON against the unchanged controller schema,
+gate coverage and nonempty evidence requirements. The controller will rerun
+acceptance on the final tree and owns publication.
+
+Gate mappings: `evidence/phase06/acceptance-gates.json`, exactly D03, E01, E02 and
+negative_tests, covering the eight exact nodes in
+`evidence/phase06/collected-nodeids.txt`. Nonempty evidence includes
+`evidence/phase06/{pytest-initial.txt,pytest-initial.xml,pytest-initial-failed.txt,
+pytest-initial-failed.xml,pytest-phase06.txt,pytest-phase06.xml,pytest-final.txt,
+pytest-final.xml,audit-noise.txt,audit-summary.json,independent-audit.json,
+audit-reference.txt,pip-check.txt,imports.txt,paper-sha256.txt,paper-a7.txt,
+acceptance-gates.json,collected-nodeids.txt,handoff-validation.json,
+handoff-validation.txt,result.json,result-validation.txt}`. Under
+`evidence/phase06/artifacts/`, each gross C10 benchmark has its ideal circuit,
+physical-location JSON, three noisy profile circuits, two independent catalogue
+JSON.gz files and corresponding H/Lambda NPZ files, fixed-fault trials and N
+discrepancy report. `index.json` records their nonempty sizes and hashes.
+Evidence remains local under the established ignored-output policy.
+
+O1--O5 remain open: O1 published inter K23 generators; O2 historical Relay,
+priors and columns; O3 paper-exact schedule/shift/lowering/boundaries; O4 exact
+Table-6 population/admission/merging; O5 original grids/counts/bootstrap.
+The explicit independent noise/physical/admission policies supply all definitions
+required by this phase; strict paper manifests remain fail-closed. Inherited
+donor-builder reuse licensing remains open, with no donor code copied here.
+XX/Y physical benchmarks, inter-module construction, shifts, decoder integration,
+distance and benchmark sampling are later work and were not launched.
+
+Short rerun: from this worktree use the phase pytest command, noise exporter,
+independent reference audit, full pytest and pip check above. Stop after phase
+06. Next prompt: `prompts/07_inmodule_XX_Y.md`, only in a new
+controller-authorized session after acceptance/publication.
