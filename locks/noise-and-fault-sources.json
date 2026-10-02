@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "implementation": "Independently written explicit noise locations, primitive lowering, reverse binary sensitivity sweep, joint sparse matrices and population maps; no donor code copied or modified",
+  "paper": {
+    "arxiv": "2506.03094v1",
+    "url": "https://arxiv.org/pdf/2506.03094v1",
+    "sha256": "78599e80971cd05ba2d8ba0c1c6c0d62b7d3ccdbe482ab4578770d70e8631c73",
+    "definitions": ["Section 2.6 circuit noise", "Appendix A.7 independent equal-q expansion and joint decoding matrices, printed pp. 58–59"],
+    "license": "Scientific definitions cited; no implementation copied and PDF not redistributed"
+  },
+  "backend": {
+    "distribution": "stim",
+    "version": "1.16.0",
+    "pin_and_inspected_license": "locks/source-lock.json and locks/environment-lock.json",
+    "usage": "Public independent CORRELATED_ERROR and categorical DEPOLARIZE emission, strict DEM extraction and deterministic injection or bounded tiny-channel unit tests"
+  },
+  "inherited_sources": ["locks/physical-scheduling-sources.json", "locks/flows-and-harness-sources.json"],
+  "physical_policy": "native_schedule_independent_noise_v1: native gate noise including Bell CNOT, no active-gate idle, all unoccupied live data/prepared-ancilla idles, ideal input/references and last original verification/terminal MPP",
+  "admission": "Caller must explicitly choose include_all or exclude_joint_zero; zero-H/nonzero-Lambda retained",
+  "grouping": "Caller must explicitly choose preserve_copies or joint_signature_xor; fixed-weight population is admitted copies, never decoder groups",
+  "open_items": {
+    "O1": "Published inter-module K23 generators unresolved",
+    "O2": "Historical Relay semantics, priors and column policy unresolved",
+    "O3": "Paper-exact serialized schedule, shift, lowering and boundaries unresolved",
+    "O4": "Exact Table-6 primitive population and admission/merging unresolved; both counts exported",
+    "O5": "Original grids, counts and bootstrap settings unresolved"
+  }
+}
