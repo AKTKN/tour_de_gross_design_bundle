@@ -10,7 +10,7 @@ The theory/design report, module architecture, reproduction contract, validation
 
 ## Not implemented / not run
 
-Phase 04 now supplies physical noiseless gross X1 circuits, single/Bell primitives and independently validated schedules. No production noisy surgery benchmark, detector/observable compiler, distance proof, reproduction Relay adapter or Monte Carlo reproduction has been completed. The original delivery did not install or execute Stim, qLDPC or Relay; phase 00 subsequently pinned and tested tiny backend APIs. Phases 01--02 implemented signed algebra and deformations; phase 03 now validates an ideal measurement instrument through gross X1, with explicit limits recorded below. The delivered algebra audit is not a circuit-distance certification and its rank calculations are phase-blind.
+Phase 04 now supplies physical noiseless gross X1 circuits, single/Bell primitives and independently validated schedules. Phase 05 supplies an exact signed detector/observable compiler and ideal gross memory/X1 benchmark harness. No production noisy surgery benchmark, distance proof, reproduction Relay adapter or Monte Carlo reproduction has been completed. The original delivery did not install or execute Stim, qLDPC or Relay; phase 00 subsequently pinned and tested tiny backend APIs. Phases 01--02 implemented signed algebra and deformations; phase 03 now validates an ideal measurement instrument through gross X1, with explicit limits recorded below. The delivered algebra audit is not a circuit-distance certification and its rank calculations are phase-blind.
 
 ## Specification blockers for exact reproduction
 
@@ -88,11 +88,12 @@ Implemented in the separate `feature/model-reasoning` worktree. Verification: `c
 
 ## Next action
 
-Phase 04 is complete for physical primitives, staggered BB memory, legal
-staged-coloring schedules and the gross X1 noiseless physical instrument.
-Next prompt: `prompts/05_flows_and_harness.md`, only in a new controller-authorized
-session after phase-04 acceptance and publication. This session stops at 04;
-strict paper-equivalent sampling remains blocked by O1--O5.
+Phase 05 is complete for symbolic signed flows, strict detector/observable
+integrity and the independent A.7-style gross memory/X1 ideal harness.
+Next prompt: `prompts/06_noise_and_fault_model.md`, only in a new
+controller-authorized session after phase-05 acceptance/publication.
+This session stops at 05. Strict paper-equivalent sampling remains blocked
+by O1--O5; no later phase or Git publication was run.
 
 ## Phase 00 source audit completed (2026-10-02)
 
@@ -703,3 +704,166 @@ export, independent reference audit, full pytest and pip check above in
 `tour_de_gross`. Publication remains with the controller. Stop after phase 04.
 Next prompt: `prompts/05_flows_and_harness.md`, only in a new controller-authorized
 session after validation/publication. No later phase was started.
+
+
+## Phase 05 flows and ideal harness completed (2026-10-02)
+
+Branch: `feature/05_flows_and_harness`. Worktree:
+`/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/.codex-pipeline/tour-de-gross/worktrees/05_flows_and_harness`.
+Main checkout: `/home/quantum_teresheys/workspace/tour_de_gross_design_bundle`,
+verified clean. Publication outcome: **not attempted; the outer controller owns
+acceptance rerun, feature commit, validated merge and atomic push**. The supplied
+feature was initially clean and all existing source/configuration/reference
+fixtures were preserved. No AGENTS/controller changes, external-source edits,
+network writes, sampling pilot/campaign, distance solver, cluster work or later
+phase was run. The existing `tour_de_gross` import resolves to this worktree.
+
+Added `src/gross_design_bandle/flows/`: absolute outcome records, scoped nested
+repeats with explicit cross-iteration carry aliases, signed affine constants,
+final rec-offset lowering, an exact signed mixed-state stabilizer flow oracle,
+named logical Clifford bases, explicit ideal boundaries, the gross memory/X1
+harness and an independent joint X/Z fixed-fault signature oracle. Source and
+API documentation: `docs/FLOWS_AND_HARNESS.md`; provenance and scoped assumptions:
+`locks/flows-and-harness-sources.json`. Export tool:
+`tools/audit_flows_and_harness.py`; meaningful positive/negative tests:
+`tests/test_flows_and_harness.py`. No donor implementation was copied. Canonical
+external checkouts remain pinned and unchanged; their inherited inspected
+licenses/hashes are retained. The immutable paper PDF was downloaded read-only,
+its locked SHA256 rechecked and canonical A.7 pp. 58--59 inspected.
+
+Every measurement, including deterministic affine MPAD bits, has an absolute
+ID. Bell checks use both physical outcomes. Nested carry tests begin with a
+random sign and transport it across both repeat levels; compressed and unrolled
+circuits preserve identical parities and records. Missing/future/duplicate IDs,
+out-of-history offsets, unsupported instructions and coverage gaps fail closed.
+The exact oracle tracks i^p X^x Z^z and affine eigenvalues; resets partially trace
+an entangled qubit before preparing it. Exhaustive signed Clifford tests compare
+it to an independent exact Stim tableau. It never uses the randomized signed
+`has_flow` method and never silently ignores stochastic noise.
+
+The harness prepares twelve encoded Bell pairs for memory (K24), or the + X1
+slot and eleven encoded Bell pairs for X1 (K23). The rows have semantic names,
+physical Pauli representatives, logical-coordinate ranks, exact physical scoring
+parities and terminal joint readout Paulis. All 24 input logical Pauli generators
+were injected independently before each physical body: the observed signatures
+match their symplectic pairing with every named row, have zero syndrome and
+rank 24/23. Logical CX(1,7) and S(1) adapters support future X1*X7 and signed
+Y1=i X1 Z1 targets algebraically; their physical benchmarks are still later work.
+Published inter K23 is explicitly rejected under O1, with no unnamed subset or
+claim of a two-block K47 physical harness.
+
+Initial dressed/cycle parities follow encoded stabilizers and reset edge Z.
+Random individual first-round vertex outcomes are not detectors. Repeated
+readouts, selected split cycle parity, retained old/dressed/Z-dressing relations
+and final original-check closure each have saved signed justifications. The X1
+score is the last-round vertex XOR; final X1 has a consistency detector. Other
+scores are final logical/reference Bell correlations with all software-frame
+terms recorded. Both correction modes keep the same detectors and semantic rows.
+The frame is a linear tree rule on raw bits, while cycle detectors expose non-cut
+faults; the ideal-only `SplitFrame.evaluate` cut check is not misused on noisy
+records. The separate raw `TruthTableInstrument` has no decoding annotations;
+its full encoded Choi input yields an exactly nonconstant target outcome.
+
+This named independent boundary policy uses ideal input encoding, a noise-free
+physical original-check verification round after split and ideal terminal MPP
+closure. These boundaries are separately labelled and their input/output
+constraints saved. No MPP occurs in the physical operation body. Active split
+corrections use real record-controlled Pauli instructions in that body; software
+corrections modify the terminal/syndrome parities. Three-round gross stratified
+joint-fault signatures agree exactly between the two modes. Small Bell negative
+YY tests exhaust joint tensor faults on physical operands and verify both XOR
+halves and CY/Y signs; a separate signed Y-frame fixture checks active tracking.
+These are probability-one oracle injections, not sampled logical-error rates or
+an O4 primitive catalogue. No dropped/gauge detectors or altered hidden boundaries
+were used. Deliberate offset corruption fails both exact flow and strict DEM;
+omitted frame/Bell-half, inverted terminal sign and missing middle observable
+also fail their appropriate checks.
+
+C10 exported memory has 300 qubits (12 ideal references), 1608 outcomes,
+1584 detectors and K24; each X1 mode has 334 qubits (11 ideal references), 1939
+outcomes, 1892 detectors and K23. All declared benchmark detectors/observables
+are exactly zero in the noiseless harness. Each export passes exact signed flows,
+strict Stim DEM extraction with `allow_gauge_detectors=False`, four bounded
+noiseless oracle trajectories and deterministic fixed-fault comparisons.
+Generated source/artifact hashes are checked and the exporter fails if source
+bytes change during export. These counts are not Table-6 N and do not imply a
+circuit-distance result or paper-exact serialization.
+
+Commands actually run (all Python installs/builds/tests use `tour_de_gross`;
+no install/build was needed):
+
+```bash
+conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_flows_and_harness.py --junitxml=evidence/phase05/pytest-initial.xml
+conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_flows_and_harness.py::test_D04_Y_frame_and_Bell_XOR_signed_flows
+conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_flows_and_harness.py --junitxml=evidence/phase05/pytest-phase05.xml
+conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_flows_and_harness.py::test_D01_nested_repeat_carries_random_stabilizer_sign_across_iterations
+conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_flows_and_harness.py --junitxml=evidence/phase05/pytest-phase05-final.xml
+conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_flows_and_harness.py::test_D05_physical_parities_realize_complete_named_logical_action
+conda run --no-capture-output -n tour_de_gross python -m pytest -q --junitxml=evidence/phase05/pytest-final.xml
+conda run --no-capture-output -n tour_de_gross python tools/audit_flows_and_harness.py --output-dir evidence/phase05/artifacts
+conda run --no-capture-output -n tour_de_gross python tools/audit_reference.py --output evidence/phase05/independent-audit.json
+conda run --no-capture-output -n tour_de_gross python -m pytest --collect-only -q tests/test_flows_and_harness.py
+conda run --no-capture-output -n tour_de_gross python -m pip check
+curl --fail --location --silent --show-error https://arxiv.org/pdf/2506.03094v1 --output evidence/phase05/paper-v1.pdf
+sha256sum evidence/phase05/paper-v1.pdf
+pdftotext -f 58 -l 59 -layout evidence/phase05/paper-v1.pdf evidence/phase05/paper-a7.txt
+conda run --no-capture-output -n tour_de_gross python /tmp/phase05_handoff.py
+git diff --check
+```
+
+Read-only Python heredoc probes in the same environment inspected local Stim
+flow API documentation/imports and constructed two-round memory/frame/active
+X1 harnesses. File-edit helper scripts also used that environment. Initial phase
+validation had **1 failed, 10 passed in 62.34s**: a new toy frame fixture attached
+an unrelated random bit to data. Adding the actual controlled-Y interaction
+corrected the fixture; its focused test passed. Subsequent phase runs passed
+**12 in 63.19s**, then **13 in 109.96s**. The nested carry and full physical logical
+signature focused tests passed. Final phase rerun, reusing the initial command,
+passed **14 in 110.99s** on the final source. The original failing log/XML were
+preserved as `pytest-initial-failed.{txt,xml}` before that rerun.
+
+The broad suite passed **183 in 321.17s**, no skips/xfails. Its collection preceded
+the final observable coverage guard and final new logical-signature test; the
+14-node final phase rerun covers these changes. The inherited regression source
+was not modified. The C10 export was rerun after final source guards, retaining
+its first successful log/index separately. The independent reference audit
+matches the delivered JSON exactly; pip check has no broken requirements.
+No failure remains unresolved. Controller acceptance will rerun the final tree.
+
+Gate mappings are in `evidence/phase05/acceptance-gates.json`: exactly D01, D02,
+D04, D05 and negative_tests, with existing exact pytest nodes covering all 14
+phase tests. D03 small fault/signature oracle coverage is included under D02;
+large active/frame comparisons are D04. No optional/backend implementation is
+claimed as newly validated beyond the actual bounded oracles described here.
+
+Nonempty evidence: `evidence/phase05/{pytest-initial.txt,pytest-initial.xml,
+pytest-initial-failed.txt,pytest-initial-failed.xml,pytest-toy-fix.txt,
+pytest-repeat-carry.txt,pytest-phase05.txt,pytest-phase05.xml,
+pytest-phase05-final.txt,pytest-phase05-final.xml,pytest-logical-signatures.txt,
+pytest-final.txt,pytest-final.xml,collected-nodeids.txt,audit-flows.txt,
+audit-flows-first.txt,index-first-export.json,audit-reference.txt,
+independent-audit.json,pip-check.txt,paper-sha256.txt,paper-a7.txt,
+acceptance-gates.json,handoff-validation.json,result.json}`. Under
+`evidence/phase05/artifacts/`, each `gross_memory_C10_frame`,
+`gross_X1_C10_frame` and `gross_X1_C10_active` has `.stim`, `.json` and
+`_fixed_faults.json`, with byte/source hashes and validations in `index.json`.
+Evidence remains local under the established ignored-output policy. The handoff
+helper checks branch/worktree, clean main, protected contracts/fixtures/source
+locks, external commits/source hashes/cleanliness, feature imports, paper hash,
+independent audit equality, artifact/source hashes, all mapped JUnit passes and
+the unchanged controller schema/gate/evidence validation.
+
+O1--O5 remain open: O1 inter K23 generators, O2 historical Relay/prior/column
+semantics, O3 paper-exact schedule/shift/lowering/boundaries, O4 primitive
+multiplicities/admission/merging and O5 original grids/counts/bootstrap. The named
+independent boundary policy supplies all assumptions required by this phase;
+strict paper manifests remain fail-closed. Inherited donor-builder reuse licensing
+also remains open, with no donor code copied. XX/Y physical harnesses, inter K47,
+shifts, actual fault catalogues, decoder integration, distances and sampled rates
+are later work; none was launched in this session.
+
+Short rerun: use the final phase command, flow export, independent audit, full
+pytest and pip check above from this worktree. Stop after phase 05. Next prompt:
+`prompts/06_noise_and_fault_model.md`, only in a new controller-authorized session
+after acceptance/publication. The controller owns publication; no later phase
+was started.
