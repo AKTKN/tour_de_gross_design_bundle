@@ -10,7 +10,7 @@ The theory/design report, module architecture, reproduction contract, validation
 
 ## Not implemented / not run
 
-Phase 04 supplies physical noiseless gross X1 circuits, single/Bell primitives and independently validated schedules. Phase 05 supplies an exact signed detector/observable compiler and ideal gross memory/X1 benchmark harness. Phase 06 supplies three distinct noise channels, primitive catalogues, joint H/Lambda matrices and gross memory/X1 audit exports. Phases 07--08 now supply direct gross XX/Y and Fig. 13(b) two-block C10 instruments, independent noisy harnesses and compact joint fault exports; phase 08 uses the full named K47 profile and leaves published inter K23 unavailable on O1. No distance proof, reproduction Relay adapter or Monte Carlo reproduction has been completed. The original delivery did not install or execute Stim, qLDPC or Relay; phase 00 subsequently pinned and tested tiny backend APIs. Phases 01--02 implemented signed algebra and deformations; phase 03 validates an ideal measurement instrument through gross X1, with explicit limits recorded below. The delivered algebra audit is not a circuit-distance certification and its rank calculations are phase-blind.
+Phase 04 supplies physical noiseless gross X1 circuits, single/Bell primitives and independently validated schedules. Phase 05 supplies an exact signed detector/observable compiler and ideal gross memory/X1 benchmark harness. Phase 06 supplies three distinct noise channels, primitive catalogues, joint H/Lambda matrices and gross memory/X1 audit exports. Phases 07--08 now supply direct gross XX/Y and Fig. 13(b) two-block C10 instruments, independent noisy harnesses and compact joint fault exports; phase 08 uses the full named K47 profile and leaves published inter K23 unavailable on O1. Phase 09 supplies physical gross shifts; phase 10 exercises the shared implementation on two-gross C18 idle/shift/in-module surgery and explicit inter C17/C18 extensions, with bounded A.8 inputs prepared but no solver launched. No distance proof, reproduction Relay adapter or Monte Carlo reproduction has been completed. The original delivery did not install or execute Stim, qLDPC or Relay; phase 00 subsequently pinned and tested tiny backend APIs. Phases 01--02 implemented signed algebra and deformations; phase 03 validates an ideal measurement instrument through gross X1, with explicit limits recorded below. The delivered algebra audit is not a circuit-distance certification and its rank calculations are phase-blind.
 
 ## Specification blockers for exact reproduction
 
@@ -88,11 +88,11 @@ Implemented in the separate `feature/model-reasoning` worktree. Verification: `c
 
 ## Next action
 
-Phase 09 supplies real gross Tanner-edge shift transfers, role/frame flows,
-full K24 C10 harness and joint fault validation in a named reconstruction.
-Next prompt: `prompts/10_two_gross_extension.md`, only in a new
-controller-authorized session after phase-09 acceptance/publication.
-This session stops at 09. Strict paper-equivalent sampling remains blocked
+Phase 10 supplies shared two-gross C18 idle/shift and in-module surgery,
+explicit inter C17/C18 extension profiles, joint fault artifacts and bounded
+A.8 inputs. Next prompt: `prompts/11_relay_adapter.md`, only in a new
+controller-authorized session after phase-10 acceptance/publication.
+This session stops at 10. Strict paper-equivalent sampling remains blocked
 by O1--O5; no later phase or Git publication was run.
 
 ## Phase 00 source audit completed (2026-10-02)
@@ -1555,3 +1555,215 @@ then `python tools/audit_physical_shifts.py --output-dir evidence/phase09/export
 --cache-dir "$PWD/cache/faults"`, both with `conda run --no-capture-output -n
 tour_de_gross`. Next prompt: `prompts/10_two_gross_extension.md`, only in a new
 controller session after independent acceptance and publication. Stop at 09.
+
+
+## Phase 10 two-gross extension (2026-10-03)
+
+Branch: `feature/10_two_gross_extension`. Worktree:
+`/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/.codex-pipeline/tour-de-gross/worktrees/10_two_gross_extension`.
+Validated base at entry: `36df268b9ae3d9affdbf07b5b251c38a88af767e`.
+Main checkout: `/home/quantum_teresheys/workspace/tour_de_gross_design_bundle`,
+still clean. The feature worktree was initially clean. Publication: **not
+attempted; the controller owns acceptance rerun, commit, merge and atomic push**.
+No reference fixtures, AGENTS, pipeline controls or external sources changed.
+The canonical external directory remains
+`/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/external_libs`;
+no donor implementation was copied or modified, so no fork was needed.
+The pinned locally cached v1 PDF was read for A.3/A.4/A.7/A.8; its SHA256
+matches `locks/paper-sources.json`. No source download or network write occurred.
+
+Deliverables: `bench/two_gross.py`, `validation/phenomenological.py`,
+`tests/test_two_gross_extension.py`, `tools/audit_two_gross_extension.py`,
+`docs/TWO_GROSS_EXTENSION.md`, `locks/two-gross-extension-sources.json`, and
+the shared code/block/harness/shift adapters. The same physical BB generators
+now accept either reference code without gross-size simulation hardcoding.
+Every in-module surgery has C18; idle and real shift have 18 repetitions;
+inter C17 and C18 are separate **extensions**, neither a Figure-15 series.
+Idle/shift reporting is P/C; surgery reporting is P. Rate tests use synthetic
+input only. All surgery profiles record `circuit_distance=None`.
+
+The unchanged chosen X1/X7/Z1/Z7 supports have weight 20. Both halves retain
+their two expansion edges, 20 vertices and 32 edges. Full LPU geometry retains
+17 bridge edges and its reduced 37 selected cycles (39 vertices, 81 edges,
+158 installed LPU sites). Omitted-cycle redundancy has signed witnesses in
+the complete deformed group. The inter graph retains 57 vertices, 98 edges
+and 38 cycles; its one-to-one Bell adapter has 17 identifying and 16 joint
+six-edge cycle checks, no active triangles, and 1502 installed physical sites.
+All named K24/K23/full-K47 rows are retained. Published inter K23 fails on O1.
+Direct Y uses iXZ, never sequential X/Z measurements.
+
+Changed coverage shares lazy geometry/harness fixtures and one large catalogue
+at a time. It includes complete signed +/- and encoded Choi trajectories for
+all five surgery profiles, every preserved logical correlation, and a full
+288-data physical Choi transfer check outside the BB codespace. Schedules
+check every signed physical readout with a composite Clifford tableau, Bell
+XORs/preparation, collisions, Eq.67 ordering and installed connectivity. C17/C18
+flows use strict Stim DEM (gauge disabled) plus raw reference-record signs.
+Material negatives reject deleted bridge cycles, imaginary Y, separate-factor
+measurements, omitted Bell preparation, wrong routing/record offsets, invalid
+blocks/profile/boundaries and undefined paper profiles. Existing small signed
+propagation, exhaustive Bell/gate oracles and reference/pipeline tests are reused.
+
+Large faults use deterministic phase/gate/role/first-middle-last strata and
+IX/ZI/XX/YZ joint words. They are not exhaustive injection of the full large
+population. All 5184 first-transfer readout-flip signatures retain zero logical
+action. Representative Bell/Y/split signatures agree in active/frame modes.
+Joint H/Lambda, multiplicities and every admission/group map remain aligned;
+include-all admits joint-zero terms. The native exports have these actual counts:
+
+| Profile | Raw terms | Include-all copies | Decoder groups | Logical rows | Independent raw trials |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| two_gross_idle | 508896 | 781920 | 213409 | 24 | 33 |
+| two_gross_shift | 869472 | 1447200 | 254881 | 24 | 106 |
+| two_gross_X_C18_extension | 665164 | 1400100 | 231558 | 23 | 71 |
+| two_gross_XX_C18_extension | 782802 | 1733670 | 260298 | 23 | 119 |
+| two_gross_Y_C18_extension | 782046 | 1730970 | 260153 | 23 | 140 |
+| two_gross_inter_XX_C17_extension | 1371336 | 3041460 | 454110 | 47 | 203 |
+| two_gross_inter_XX_C18_extension | 1451788 | 3219180 | 480866 | 47 | 203 |
+
+Two-gross idle has N=781920 vs Table-6 N=762912 (**+19008**). Shift has
+N=1447200 vs Table-6 N=1748736 (**-301536**). Excluding joint-zero terms would
+give idle 771552 and shift 1399536, respectively. These are explicit O3/O4
+population discrepancies, not corrected fixtures, padding, forced merging,
+sampled observations or evidence that Table-6 fit rates were reproduced.
+Memory has 145 ticks; physical shift has 253 ticks. The inherited B1/B0 x
+route and one-tick MX/R bundle (separate readout/reset fault sites), native
+controlled-Pauli schedule, ideal encoded/terminal boundaries and include-all
+equal-q population are named reconstruction choices, not paper-exact claims.
+
+A.8 Eq.84 inputs are prepared for X, XX, Y and inter-XX. Spatial q is a full
+2k quotient basis (22 one-block / 46 two-block jobs); temporal q is L and M
+omits every vertex check without adding L. Pauli OR weight counts Y once.
+C17/C18 share intrinsic inputs, not a duplicate job. Each family declares a
+120s/10000-node aggregate cap, 5s/1000 nodes per job, one worker and no retries.
+Native M/q arrays and job manifests are hashed. Independently checked temporal
+weight-20 and spatial candidate witnesses supply **upper bounds only**;
+solver lower bounds are null. No solver/backend, exact circuit-distance search,
+decoder integration, sampling, campaign, cluster job or later phase ran.
+There is no claim that all two-gross surgery has circuit distance 18.
+
+Validation history (every Python command used `tour_de_gross` with feature
+imports): the first negative node passed **1 in 0.46s**. Early attempts were
+interrupted (exit 130), with no completed JUnit report or invented pass:
+`changed-small.txt`, `construction-profile.txt`, `affected.txt`,
+`phase-stable.txt`, `affected-faults.txt`. Diagnostic stacks exposed repeated
+support computation/Clifford compilation and Stim circuit property scans.
+The fixes retain every check: sort/readout grouping and supports are computed
+once; one compiled composite inverse checks all separate signed readouts;
+location operands and circuit qubit/detector counts are hoisted out of loops;
+the repeated physical cycle is compiled/remapped once. Numerical inputs and
+validation semantics are unchanged by these performance fixes.
+
+Completed scoped checks: labels **1 in 27.64s**; changed inter-C18 physical
+readout plus inherited positive/negative primitive tests **3 in 39.51s**;
+location/admission/signature negative **1 in 1.61s**; exhaustive small joint
+gate/Bell and corruption checks **2 in 2.39s**. The cold affected fault/A.8
+subset passed **8, 23 deselected in 1487.56s**. Its inter-C17/C18 calls took
+410.19/426.49s, including redundant full expanded matrix revalidation. This
+is whole-check cold timing, not a pure model-build timing. The new trusted
+audit flag's tiny positive and corrupt-raw negative test passed **1 in 0.48s**.
+Default standalone/mutated validation remains full; large unmodified public
+builder models avoid repeating structural checks already performed cold or
+verified by warm checksums. All independent forward/Stim trials still execute.
+
+After source stabilized, the one full-regression attempt was stopped before
+its 1800s bound (exit 130). Its ordered pytest console output records **276
+completed passes**, but it has no completed JUnit report and is **not reported
+as a passed command**. The unchanged collection has 278 cases. Only the two
+unfinished nodes (inter-C18 faults and A.8) were continued, sequentially, and
+passed **2 in 381.47s** with JUnit. C18 took 325.86s; A.8 took 54.53s because
+its other constructions were fresh in that process. `final-coverage.json`
+records the exact console-progress/collection basis, hashes and continuation
+outcomes. All 278 collected cases are covered without restarting earlier
+completed tests; no skips/xfails or earlier phase pass reports are substituted.
+The controller still independently reruns every mapped node and regressions.
+
+The artifact exporter ran once, sequentially after that continuation, and
+checked every source/output hash. No identical suite/export ran concurrently.
+It packages the actual numerical fault observations, not cached pytest passes;
+model-key and oracle-source hashes must match. Native CSC/signature/map arrays
+use `bench.artifacts.export_fault_model`; no expanded fault JSON or repeated
+ZIP export is generated. No solver or benchmark was retried.
+
+Export initial loads found all seven numerical keys intact. Warm same-p and
+p=.002 reuse have identical H/Lambda, raw/group signatures and every copy,
+ordinal/admission/group array, verified by a complete structural checksum.
+Only probabilities change. Actual pure load/export timings in seconds:
+
+| Profile | Initial existing-key load | Warm load | Changed-p load | Native export |
+| --- | ---: | ---: | ---: | ---: |
+| two_gross_idle | 6.71 | 6.13 | 7.74 | 3.45 |
+| two_gross_shift | 12.83 | 11.70 | 14.32 | 8.98 |
+| two_gross_X_C18_extension | 8.69 | 8.40 | 11.29 | 5.35 |
+| two_gross_XX_C18_extension | 10.70 | 10.28 | 13.71 | 6.48 |
+| two_gross_Y_C18_extension | 10.32 | 10.62 | 13.60 | 6.72 |
+| two_gross_inter_XX_C17_extension | 21.49 | 20.47 | 26.03 | 15.06 |
+| two_gross_inter_XX_C18_extension | 22.88 | 21.81 | 28.24 | 16.50 |
+
+Changes to `noise/locations.py` and `noise/signatures.py` invalidated the old
+implementation keys before the completed cold subset; old artifacts were
+preserved. Physical signatures remain reusable across populations/p values;
+structures across p values. Tests/docs do not invalidate numerical keys or
+cache a pass. The controller cache is outside sandbox write roots, so local
+runs explicitly use `GROSS_DESIGN_CACHE_DIR="$PWD/cache/faults"`.
+Compilation, feature import origin, dependency consistency, output checksums,
+seven gate mappings, clean main, branch and fixture/control guards passed.
+
+Actual commands (prepend `PYTHONPATH="$PWD/src"` and the cache variable above
+to Python validation commands). Interrupted diagnostic attempts are included
+and are not counted as passed checks:
+
+```bash
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_two_gross_extension.py::test_negative_profiles_blocks_and_paper_claims
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_two_gross_extension.py -k 'not joint_fault' --durations=10 --junitxml=evidence/phase10/changed-small.xml  # interrupted
+conda run --no-capture-output -n tour_de_gross python -m cProfile -o evidence/phase10/construction.pstats -m pytest -xq tests/test_two_gross_extension.py::test_extension_labels_and_normalization -o faulthandler_timeout=60 --durations=5  # interrupted; pstats not completed
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_two_gross_extension.py::test_extension_labels_and_normalization -o faulthandler_timeout=60 --durations=5 --junitxml=evidence/phase10/construction-fast.xml
+timeout 1800s conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_two_gross_extension.py --durations=15 --junitxml=evidence/phase10/affected.xml -o faulthandler_timeout=180  # interrupted
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq 'tests/test_two_gross_extension.py::test_two_gross_schedule_and_physical_readout[two_gross_inter_XX_C18_extension]' tests/test_physical_scheduling.py::test_C01_signed_single_and_bell_tableau_oracles tests/test_physical_scheduling.py::test_negative_bad_sign_gate_bell_preparation_and_collision --durations=5 --junitxml=evidence/phase10/readout-fast.xml
+timeout 1800s conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_two_gross_extension.py --durations=15 --junitxml=evidence/phase10/phase-stable.xml -o faulthandler_timeout=180  # interrupted
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_noise_and_fault_model.py::test_negative_profiles_admission_maps_and_corrupt_signatures --junitxml=evidence/phase10/locations-negative.xml
+timeout 1800s conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_two_gross_extension.py -k 'joint_fault or bounded_A8' --durations=12 --junitxml=evidence/phase10/affected-faults.xml -o faulthandler_timeout=180  # interrupted
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_noise_and_fault_model.py::test_D03_exhaustive_gate_templates_and_joint_Bell_faults tests/test_noise_and_fault_model.py::test_negative_profiles_admission_maps_and_corrupt_signatures --junitxml=evidence/phase10/signatures-small.xml
+timeout 1800s conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_two_gross_extension.py -k 'joint_fault or bounded_A8' --durations=12 --junitxml=evidence/phase10/affected-faults-fast.xml -o faulthandler_timeout=180
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_two_gross_extension.py::test_fault_audit_revalidation_contract_and_corrupt_raw_oracle --junitxml=evidence/phase10/audit-contract.xml
+timeout 1800s conda run --no-capture-output -n tour_de_gross python -m pytest -xq --durations=20 --junitxml=evidence/phase10/final.xml -o faulthandler_timeout=240  # interrupted; final.xml absent
+conda run --no-capture-output -n tour_de_gross python -m pytest --collect-only -q
+timeout 1800s conda run --no-capture-output -n tour_de_gross python -m pytest -xq 'tests/test_two_gross_extension.py::test_two_gross_joint_fault_strata_and_catalogue[two_gross_inter_XX_C18_extension]' tests/test_two_gross_extension.py::test_bounded_A8_jobs_and_independent_witness_checks --durations=5 --junitxml=evidence/phase10/final-continuation.xml -o faulthandler_timeout=240
+timeout 1800s conda run --no-capture-output -n tour_de_gross python tools/audit_two_gross_extension.py --output-dir evidence/phase10/export --cache-dir "$PWD/cache/faults"
+conda run --no-capture-output -n tour_de_gross python -m compileall -q src/gross_design_bandle tools/audit_two_gross_extension.py
+conda run --no-capture-output -n tour_de_gross python -m pip check
+conda run --no-capture-output -n tour_de_gross python evidence/phase10/validate_handoff.py
+git diff --check
+git diff --exit-code -- reference AGENTS.md prompts/scripts
+```
+
+Feature-import and progress/fault-count probes additionally ran as bounded
+conda Python `-c` commands; their actual outputs are saved. Evidence:
+`evidence/phase10/` completed/partial `.txt` logs, scoped JUnit `.xml` files,
+`final-collection.txt`, `partial-outcomes.txt`, `final-continuation.xml`,
+`final-coverage.json`, `fault_checks/*.json`, `fault-oracle-counts.json`,
+`environment.txt`, `imports.txt`, `export.txt`, `export/index.json`, all seven
+profile summaries/population/physical/circuit/model manifests/native arrays,
+four `export/A8_*/` job families/candidate witnesses, `acceptance-gates.json`
+and `handoff-checks.json`. The index verifies nonempty file sizes/checksums;
+gate mapping names existing exact positive/negative pytest node IDs.
+
+Unresolved paper-exact items: **O1** published inter K23 row selection;
+**O2** historical Relay semantics/priors/columns; **O3** original scheduling,
+lowering, timing/shift/boundaries; **O4** Table-6 primitive population/admission;
+**O5** original statistical grids/counts/bootstrap data. None is silently
+filled by a fixture change or a fabricated source definition. The named
+independent profiles have all definitions needed for this phase; strict paper
+configuration stays closed. Solver and circuit-distance results remain absent.
+
+Short reproduction from this worktree (no later phase, sampling or solver):
+
+```bash
+export PYTHONPATH="$PWD/src"
+export GROSS_DESIGN_CACHE_DIR="$PWD/cache/faults"
+timeout 1800s conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_two_gross_extension.py
+timeout 1800s conda run --no-capture-output -n tour_de_gross python tools/audit_two_gross_extension.py --output-dir evidence/phase10/export --cache-dir "$GROSS_DESIGN_CACHE_DIR"
+```
+
+Next prompt: `prompts/11_relay_adapter.md`, submitted by the controller only
+after phase-10 validation/publication. This session stops at phase 10.

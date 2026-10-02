@@ -1,5 +1,5 @@
 """Transfer readout flows, carried X frames and full K24 shift channel harness."""
-from gross_design_bandle.circuits.shift import shift_sequence, PROFILE, TIMING_POLICY
+from gross_design_bandle.circuits.shift import shift_sequence, timing_policy
 from gross_design_bandle.codes.reference_profiles import physical_shift_permutation
 from gross_design_bandle.surgery.frame import Parity
 from .harness import BenchmarkHarness, remap, xor
@@ -14,7 +14,7 @@ def x_frame_parity(frame, pauli):
     return xor(f for f,z in zip(frame,pauli.z) if z)
 
 
-def build_shift_benchmark(code, instructions=10, *, profile=PROFILE):
+def build_shift_benchmark(code, instructions=10, *, profile=None):
     sequence = shift_sequence(code,instructions,profile=profile)
     plan = sequence.plan; basis = LogicalBasisAdapter.single_block(code,'memory')
     initial,register,refs = input_boundary(code,basis,sequence.register)
@@ -78,8 +78,8 @@ def build_shift_benchmark(code, instructions=10, *, profile=PROFILE):
     cert['physical_parities'] = [{'index':a['observable_index'],'name':a['name'],'parity':a['parity']}
                                for a in lowered.annotations if a['kind']=='observable']
     return BenchmarkHarness(lowered.circuit,register,lowered.outcome_ids,lowered.annotations,cert,
-        {'profile':PROFILE,'paper_exact':False,'open_items':['O1','O2','O3','O4','O5'],
-         'timing':sequence.validate(),'timing_policy':TIMING_POLICY,'instructions':instructions,
+        {'profile':plan.profile,'paper_exact':False,'open_items':['O1','O2','O3','O4','O5'],
+         'timing':sequence.validate(),'timing_policy':timing_policy(plan.profile),'instructions':instructions,
          'reporting':'P_circuit/C; no sampled rate in this construction',
          'divisor':instructions,'transfer_plan':plan.to_dict(),'role_and_frame_history':history,
          'boundaries':'ideal encoded input/references and terminal MPP; noisy initial check preparation',

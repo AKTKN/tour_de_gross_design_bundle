@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "phase": "10",
+  "implementation": "Independent extension of shared local physical generators; no donor code copied or modified",
+  "paper": {
+    "arxiv": "2506.03094v1",
+    "url": "https://arxiv.org/pdf/2506.03094v1",
+    "sha256": "78599e80971cd05ba2d8ba0c1c6c0d62b7d3ccdbe482ab4578770d70e8631c73",
+    "source_lock": "locks/paper-sources.json",
+    "inspected": ["PDF A.3/A.4 equations 27--64: fixed two-gross ports, expansion/bridge edges and selected cycles", "PDF A.7 Figure 15/Table 6: two-gross idle/shift only, C18 and P/C", "PDF A.8 equation 84: full deformed spatial quotient and temporal nonvertex commuting set; Pauli OR weight"],
+    "license": "Scientific definitions cited; no implementation copied or PDF redistributed"
+  },
+  "backend": {"distribution": "stim", "version": "1.16.0", "license": "Apache-2.0", "source_lock": "locks/package-artifacts.json"},
+  "inherited_sources": ["locks/source-lock.json", "locks/physical-scheduling-sources.json", "locks/flows-and-harness-sources.json", "locks/noise-and-fault-sources.json", "locks/intermodule-adapter-sources.json", "locks/shift-sources.json"],
+  "fixtures": {"reference/two_gross.json": "9aaf8a1515a3021c217d6735932c07f3e5293b9af94818aa83f13e46c6faddd1"},
+  "external_source_root": "/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/external_libs",
+  "independent_assumptions": ["Inherited native CX/CY/CZ schedule, ideal encoded/terminal boundaries and include-all equal-q copies", "B1/B0 x translation with one-tick cross-basis MX/R bundle and separate fault locations", "Full named K47 inter centralizer; C17 and C18 are explicitly separate extensions"],
+  "solver_jobs": "bounded A.8 phenomenological inputs only; no solver execution/backend certification",
+  "open_items": ["O1", "O2", "O3", "O4", "O5"],
+  "paper_exact": false
+}

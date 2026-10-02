@@ -1,4 +1,4 @@
-"""A.7-style deterministic gross memory/X1/XX/Y harness around physical bodies.
+"""A.7-style deterministic reference BB harness around physical bodies.
 
 Ideal encoding, final MPP closure and reference qubits are explicit boundaries.
 The physical body retains the phase04 native schedule. A raw instrument API is
@@ -79,7 +79,7 @@ class BenchmarkHarness:
                 'strict_dem_observables': dem.num_observables, 'gauge_workaround': False}
 
     def to_dict(self):
-        return {'schema_version': 1, 'scope': 'noiseless named-centralizer gross benchmark; independent boundaries',
+        return {'schema_version': 1, 'scope': 'noiseless named-centralizer BB benchmark; independent boundaries',
             'register': list(self.register), 'symbolic_outcomes': list(self.outcome_ids),
             'annotations': list(self.annotations), 'logical_generators': self.logical_generators,
             'boundaries': self.boundary_policy, 'split_mode': self.split_mode,
@@ -105,8 +105,8 @@ def build_benchmark(code, *, operation='memory', rounds=1, deformation=None, spl
     inter = operation == 'inter_XX'
     if inter:
         code = CodeBlocks(code)
-    elif code.spec.name != 'gross' or operation not in ('memory', 'X1', 'X1*X7', 'Y1'):
-        raise ValueError('validated physical harness scope is gross memory/X1/XX/Y')
+    elif code.spec.name not in ('gross', 'two_gross') or operation not in ('memory', 'X1', 'X1*X7', 'Y1'):
+        raise ValueError('physical harness scope is gross/two_gross memory/X1/XX/Y')
     if not isinstance(rounds, int) or isinstance(rounds, bool) or rounds < 1:
         raise ValueError('rounds must be a positive integer')
     if split_mode not in ('frame', 'active'):
@@ -160,9 +160,10 @@ def build_benchmark(code, *, operation='memory', rounds=1, deformation=None, spl
         program.chunk(c); body += c
         last = {}
         cycle_readouts = physical.cycle.readouts()
+        cycle_circuit = remap(physical.cycle.to_stim(), physical.cycle.register, register)
         for r in range(rounds):
             ids = tuple(i.replace('deformed/0/', f'deformed/{r}/') for i in physical.cycle.outcomes)
-            c = remap(physical.cycle.to_stim(), physical.cycle.register, register)
+            c = cycle_circuit
             program.chunk(c, ids); body += c
             current = {check.id:Parity(tuple(i.replace('deformed/0/', f'deformed/{r}/')
                        for i in cycle_readouts[f'{check.id}/0'])) for check in physical.cycle.checks}

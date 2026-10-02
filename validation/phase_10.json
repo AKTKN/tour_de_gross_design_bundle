@@ -1,0 +1,815 @@
+{
+  "stage_id": "10",
+  "branch": "feature/10_two_gross_extension",
+  "base_commit": "36df268b9ae3d9affdbf07b5b251c38a88af767e",
+  "result": {
+    "stage_id": "10",
+    "status": "success",
+    "next_stage_safe": true,
+    "summary": "Completed phase 10 on feature/10_two_gross_extension in /home/quantum_teresheys/workspace/tour_de_gross_design_bundle/.codex-pipeline/tour-de-gross/worktrees/10_two_gross_extension. Exported seven two-gross profiles and native fault artifacts. Regression coverage comprises 276 console passes plus two continuation JUnit passes; the interrupted full command is not reported as passed. STATUS updated; stopped at phase 10. Publication remains with the controller.",
+    "tests": [
+      {
+        "command": "PYTHONPATH=\"$PWD/src\" GROSS_DESIGN_CACHE_DIR=\"$PWD/cache/faults\" conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_two_gross_extension.py::test_negative_profiles_blocks_and_paper_claims",
+        "result": "passed",
+        "required": false,
+        "notes": "1 passed in 0.46s; negative first."
+      },
+      {
+        "command": "PYTHONPATH=\"$PWD/src\" GROSS_DESIGN_CACHE_DIR=\"$PWD/cache/faults\" conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_two_gross_extension.py -k 'not joint_fault' --durations=10 --junitxml=evidence/phase10/changed-small.xml",
+        "result": "not_run",
+        "required": false,
+        "notes": "Started then interrupted, exit 130. No completed check or JUnit; superseded diagnostic attempt, not counted as passed."
+      },
+      {
+        "command": "PYTHONPATH=\"$PWD/src\" GROSS_DESIGN_CACHE_DIR=\"$PWD/cache/faults\" conda run --no-capture-output -n tour_de_gross python -m cProfile -o evidence/phase10/construction.pstats -m pytest -xq tests/test_two_gross_extension.py::test_extension_labels_and_normalization -o faulthandler_timeout=60 --durations=5",
+        "result": "not_run",
+        "required": false,
+        "notes": "Interrupted diagnostic, exit 130; no completed pstats or check. Repeated support computation was subsequently fixed."
+      },
+      {
+        "command": "PYTHONPATH=\"$PWD/src\" GROSS_DESIGN_CACHE_DIR=\"$PWD/cache/faults\" conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_two_gross_extension.py::test_extension_labels_and_normalization -o faulthandler_timeout=60 --durations=5 --junitxml=evidence/phase10/construction-fast.xml",
+        "result": "passed",
+        "required": false,
+        "notes": "1 passed in 27.64s."
+      },
+      {
+        "command": "PYTHONPATH=\"$PWD/src\" GROSS_DESIGN_CACHE_DIR=\"$PWD/cache/faults\" timeout 1800s conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_two_gross_extension.py --durations=15 --junitxml=evidence/phase10/affected.xml -o faulthandler_timeout=180",
+        "result": "not_run",
+        "required": false,
+        "notes": "Interrupted diagnostic, exit 130; no completed check. Repeated Clifford compilation was subsequently fixed."
+      },
+      {
+        "command": "PYTHONPATH=\"$PWD/src\" GROSS_DESIGN_CACHE_DIR=\"$PWD/cache/faults\" conda run --no-capture-output -n tour_de_gross python -m pytest -xq 'tests/test_two_gross_extension.py::test_two_gross_schedule_and_physical_readout[two_gross_inter_XX_C18_extension]' tests/test_physical_scheduling.py::test_C01_signed_single_and_bell_tableau_oracles tests/test_physical_scheduling.py::test_negative_bad_sign_gate_bell_preparation_and_collision --durations=5 --junitxml=evidence/phase10/readout-fast.xml",
+        "result": "passed",
+        "required": false,
+        "notes": "3 passed in 39.51s."
+      },
+      {
+        "command": "PYTHONPATH=\"$PWD/src\" GROSS_DESIGN_CACHE_DIR=\"$PWD/cache/faults\" timeout 1800s conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_two_gross_extension.py --durations=15 --junitxml=evidence/phase10/phase-stable.xml -o faulthandler_timeout=180",
+        "result": "not_run",
+        "required": false,
+        "notes": "Interrupted diagnostic, exit 130; no completed check. Repeated circuit-property scans in location validation were subsequently fixed."
+      },
+      {
+        "command": "PYTHONPATH=\"$PWD/src\" GROSS_DESIGN_CACHE_DIR=\"$PWD/cache/faults\" conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_noise_and_fault_model.py::test_negative_profiles_admission_maps_and_corrupt_signatures --junitxml=evidence/phase10/locations-negative.xml",
+        "result": "passed",
+        "required": false,
+        "notes": "1 passed in 1.61s."
+      },
+      {
+        "command": "PYTHONPATH=\"$PWD/src\" GROSS_DESIGN_CACHE_DIR=\"$PWD/cache/faults\" timeout 1800s conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_two_gross_extension.py -k 'joint_fault or bounded_A8' --durations=12 --junitxml=evidence/phase10/affected-faults.xml -o faulthandler_timeout=180",
+        "result": "not_run",
+        "required": false,
+        "notes": "Interrupted diagnostic, exit 130; no completed check. Repeated circuit-property scans in signature construction were subsequently fixed."
+      },
+      {
+        "command": "PYTHONPATH=\"$PWD/src\" GROSS_DESIGN_CACHE_DIR=\"$PWD/cache/faults\" conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_noise_and_fault_model.py::test_D03_exhaustive_gate_templates_and_joint_Bell_faults tests/test_noise_and_fault_model.py::test_negative_profiles_admission_maps_and_corrupt_signatures --junitxml=evidence/phase10/signatures-small.xml",
+        "result": "passed",
+        "required": false,
+        "notes": "2 passed in 2.39s; exhaustive small gate/Bell checks and corruption negatives."
+      },
+      {
+        "command": "PYTHONPATH=\"$PWD/src\" GROSS_DESIGN_CACHE_DIR=\"$PWD/cache/faults\" timeout 1800s conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_two_gross_extension.py -k 'joint_fault or bounded_A8' --durations=12 --junitxml=evidence/phase10/affected-faults-fast.xml -o faulthandler_timeout=180",
+        "result": "passed",
+        "required": true,
+        "notes": "8 passed, 23 deselected in 1487.56s; cold affected fault/A.8 coverage."
+      },
+      {
+        "command": "PYTHONPATH=\"$PWD/src\" GROSS_DESIGN_CACHE_DIR=\"$PWD/cache/faults\" conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_two_gross_extension.py::test_fault_audit_revalidation_contract_and_corrupt_raw_oracle --junitxml=evidence/phase10/audit-contract.xml",
+        "result": "passed",
+        "required": false,
+        "notes": "1 passed in 0.48s; trusted audit flag and corrupt raw-signature negative."
+      },
+      {
+        "command": "PYTHONPATH=\"$PWD/src\" GROSS_DESIGN_CACHE_DIR=\"$PWD/cache/faults\" timeout 1800s conda run --no-capture-output -n tour_de_gross python -m pytest -xq --durations=20 --junitxml=evidence/phase10/final.xml -o faulthandler_timeout=240",
+        "result": "not_run",
+        "required": false,
+        "notes": "Stopped before the 1800s bound, exit 130. Records 276 completed console passes but no completed JUnit. This command is incomplete, not passed; only its two unfinished nodes were continued."
+      },
+      {
+        "command": "PYTHONPATH=\"$PWD/src\" conda run --no-capture-output -n tour_de_gross python -m pytest --collect-only -q",
+        "result": "passed",
+        "required": false,
+        "notes": "278 cases collected. Unchanged collection order and passed-dot indicators identify the 276 completed cases; basis recorded in final-coverage.json."
+      },
+      {
+        "command": "PYTHONPATH=\"$PWD/src\" GROSS_DESIGN_CACHE_DIR=\"$PWD/cache/faults\" timeout 1800s conda run --no-capture-output -n tour_de_gross python -m pytest -xq 'tests/test_two_gross_extension.py::test_two_gross_joint_fault_strata_and_catalogue[two_gross_inter_XX_C18_extension]' tests/test_two_gross_extension.py::test_bounded_A8_jobs_and_independent_witness_checks --durations=5 --junitxml=evidence/phase10/final-continuation.xml -o faulthandler_timeout=240",
+        "result": "passed",
+        "required": true,
+        "notes": "2 passed in 381.47s with JUnit. Completed the two unfinished cases without restarting the preceding 276."
+      },
+      {
+        "command": "PYTHONPATH=\"$PWD/src\" GROSS_DESIGN_CACHE_DIR=\"$PWD/cache/faults\" timeout 1800s conda run --no-capture-output -n tour_de_gross python tools/audit_two_gross_extension.py --output-dir evidence/phase10/export --cache-dir \"$PWD/cache/faults\"",
+        "result": "passed",
+        "required": true,
+        "notes": "One sequential export completed: seven strict noisy DEMs, native arrays, warm/changed-p structural equality, checksums and four prepared A.8 families. No solver or sampling."
+      },
+      {
+        "command": "PYTHONPATH=\"$PWD/src\" conda run --no-capture-output -n tour_de_gross python -m compileall -q src/gross_design_bandle tools/audit_two_gross_extension.py",
+        "result": "passed",
+        "required": false,
+        "notes": "Compilation passed."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python -m pip check",
+        "result": "passed",
+        "required": false,
+        "notes": "No broken requirements; no installation."
+      },
+      {
+        "command": "PYTHONPATH=\"$PWD/src\" conda run --no-capture-output -n tour_de_gross python evidence/phase10/validate_handoff.py",
+        "result": "passed",
+        "required": true,
+        "notes": "Verified all export checksums, seven gate mappings, 278-case coverage, clean main and branch/fixture/control guards."
+      },
+      {
+        "command": "git diff --check",
+        "result": "passed",
+        "required": false,
+        "notes": "Whitespace checking passed after STATUS update."
+      },
+      {
+        "command": "git diff --exit-code -- reference AGENTS.md prompts/scripts",
+        "result": "passed",
+        "required": false,
+        "notes": "Fixtures, AGENTS and pipeline controls unchanged."
+      },
+      {
+        "command": "PYTHONPATH=\"$PWD/src\" conda run --no-capture-output -n tour_de_gross python -c 'from pathlib import Path; import gross_design_bandle, stim, sys; p=Path(gross_design_bandle.__file__).resolve(); assert p.is_relative_to(Path.cwd()/\"src\"); assert \"envs/tour_de_gross\" in sys.executable; print(\"Interpreter:\",sys.executable); print(\"Feature import:\",p); print(\"Stim:\",stim.__version__)'",
+        "result": "passed",
+        "required": false,
+        "notes": "Feature import and tour_de_gross interpreter confirmed; Stim 1.16.0."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python /tmp/phase10_status.py",
+        "result": "passed",
+        "required": false,
+        "notes": "STATUS records commands, evidence, timings, limitations, branch/worktree, O1\u2013O5 and next prompt 11."
+      },
+      {
+        "command": "PYTHONPATH=\"$PWD/src\" conda run --no-capture-output -n tour_de_gross python evidence/phase10/validate_result.py",
+        "result": "passed",
+        "required": false,
+        "notes": "Completion schema and controller result validation passed; seven gates, 34 unique mapped nodes and final repository guards verified."
+      }
+    ],
+    "acceptance_checks": [
+      {
+        "gate": "two_gross_algebra",
+        "test_nodeids": [
+          "tests/test_two_gross_extension.py::test_two_gross_signed_algebra_and_reduced_reference_cycles",
+          "tests/test_two_gross_extension.py::test_bounded_A8_jobs_and_independent_witness_checks"
+        ]
+      },
+      {
+        "gate": "two_gross_instrument",
+        "test_nodeids": [
+          "tests/test_two_gross_extension.py::test_two_gross_complete_signed_instrument[two_gross_X_C18_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_complete_signed_instrument[two_gross_XX_C18_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_complete_signed_instrument[two_gross_Y_C18_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_complete_signed_instrument[two_gross_inter_XX_C17_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_complete_signed_instrument[two_gross_inter_XX_C18_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_shift_arbitrary_physical_Choi"
+        ]
+      },
+      {
+        "gate": "two_gross_schedule",
+        "test_nodeids": [
+          "tests/test_two_gross_extension.py::test_two_gross_schedule_and_physical_readout[two_gross_idle]",
+          "tests/test_two_gross_extension.py::test_two_gross_schedule_and_physical_readout[two_gross_shift]",
+          "tests/test_two_gross_extension.py::test_two_gross_schedule_and_physical_readout[two_gross_X_C18_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_schedule_and_physical_readout[two_gross_XX_C18_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_schedule_and_physical_readout[two_gross_Y_C18_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_schedule_and_physical_readout[two_gross_inter_XX_C17_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_schedule_and_physical_readout[two_gross_inter_XX_C18_extension]",
+          "tests/test_physical_scheduling.py::test_negative_collision_free_reversed_anticommuting_overlap"
+        ]
+      },
+      {
+        "gate": "two_gross_flows",
+        "test_nodeids": [
+          "tests/test_two_gross_extension.py::test_two_gross_C18_C17_strict_flows_and_named_rows[two_gross_idle]",
+          "tests/test_two_gross_extension.py::test_two_gross_C18_C17_strict_flows_and_named_rows[two_gross_shift]",
+          "tests/test_two_gross_extension.py::test_two_gross_C18_C17_strict_flows_and_named_rows[two_gross_X_C18_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_C18_C17_strict_flows_and_named_rows[two_gross_XX_C18_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_C18_C17_strict_flows_and_named_rows[two_gross_Y_C18_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_C18_C17_strict_flows_and_named_rows[two_gross_inter_XX_C17_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_C18_C17_strict_flows_and_named_rows[two_gross_inter_XX_C18_extension]"
+        ]
+      },
+      {
+        "gate": "two_gross_faults",
+        "test_nodeids": [
+          "tests/test_two_gross_extension.py::test_two_gross_joint_fault_strata_and_catalogue[two_gross_idle]",
+          "tests/test_two_gross_extension.py::test_two_gross_joint_fault_strata_and_catalogue[two_gross_shift]",
+          "tests/test_two_gross_extension.py::test_two_gross_joint_fault_strata_and_catalogue[two_gross_X_C18_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_joint_fault_strata_and_catalogue[two_gross_XX_C18_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_joint_fault_strata_and_catalogue[two_gross_Y_C18_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_joint_fault_strata_and_catalogue[two_gross_inter_XX_C17_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_joint_fault_strata_and_catalogue[two_gross_inter_XX_C18_extension]",
+          "tests/test_noise_and_fault_model.py::test_negative_profiles_admission_maps_and_corrupt_signatures",
+          "tests/test_two_gross_extension.py::test_fault_audit_revalidation_contract_and_corrupt_raw_oracle"
+        ]
+      },
+      {
+        "gate": "extension_labels",
+        "test_nodeids": [
+          "tests/test_two_gross_extension.py::test_extension_labels_and_normalization",
+          "tests/test_two_gross_extension.py::test_negative_profiles_blocks_and_paper_claims"
+        ]
+      },
+      {
+        "gate": "negative_tests",
+        "test_nodeids": [
+          "tests/test_two_gross_extension.py::test_negative_profiles_blocks_and_paper_claims",
+          "tests/test_two_gross_extension.py::test_two_gross_signed_algebra_and_reduced_reference_cycles",
+          "tests/test_two_gross_extension.py::test_bounded_A8_jobs_and_independent_witness_checks",
+          "tests/test_physical_scheduling.py::test_negative_collision_free_reversed_anticommuting_overlap",
+          "tests/test_noise_and_fault_model.py::test_negative_profiles_admission_maps_and_corrupt_signatures",
+          "tests/test_two_gross_extension.py::test_fault_audit_revalidation_contract_and_corrupt_raw_oracle",
+          "tests/test_two_gross_extension.py::test_two_gross_complete_signed_instrument[two_gross_X_C18_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_complete_signed_instrument[two_gross_XX_C18_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_complete_signed_instrument[two_gross_Y_C18_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_complete_signed_instrument[two_gross_inter_XX_C17_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_complete_signed_instrument[two_gross_inter_XX_C18_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_C18_C17_strict_flows_and_named_rows[two_gross_idle]",
+          "tests/test_two_gross_extension.py::test_two_gross_C18_C17_strict_flows_and_named_rows[two_gross_shift]",
+          "tests/test_two_gross_extension.py::test_two_gross_C18_C17_strict_flows_and_named_rows[two_gross_X_C18_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_C18_C17_strict_flows_and_named_rows[two_gross_XX_C18_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_C18_C17_strict_flows_and_named_rows[two_gross_Y_C18_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_C18_C17_strict_flows_and_named_rows[two_gross_inter_XX_C17_extension]",
+          "tests/test_two_gross_extension.py::test_two_gross_C18_C17_strict_flows_and_named_rows[two_gross_inter_XX_C18_extension]"
+        ]
+      }
+    ],
+    "changed_files": [
+      "STATUS.md",
+      "docs/TWO_GROSS_EXTENSION.md",
+      "locks/two-gross-extension-sources.json",
+      "src/gross_design_bandle/bench/two_gross.py",
+      "src/gross_design_bandle/circuits/protocol.py",
+      "src/gross_design_bandle/circuits/schedule.py",
+      "src/gross_design_bandle/circuits/shift.py",
+      "src/gross_design_bandle/codes/blocks.py",
+      "src/gross_design_bandle/flows/harness.py",
+      "src/gross_design_bandle/flows/shift.py",
+      "src/gross_design_bandle/noise/locations.py",
+      "src/gross_design_bandle/noise/shift.py",
+      "src/gross_design_bandle/noise/signatures.py",
+      "src/gross_design_bandle/validation/faults.py",
+      "src/gross_design_bandle/validation/phenomenological.py",
+      "src/gross_design_bandle/validation/physical.py",
+      "tests/test_two_gross_extension.py",
+      "tools/audit_two_gross_extension.py"
+    ],
+    "evidence_paths": [
+      "evidence/phase10/acceptance-gates.json",
+      "evidence/phase10/negative-first.txt",
+      "evidence/phase10/changed-small.txt",
+      "evidence/phase10/construction-profile.txt",
+      "evidence/phase10/construction-fast.txt",
+      "evidence/phase10/construction-fast.xml",
+      "evidence/phase10/affected.txt",
+      "evidence/phase10/readout-fast.txt",
+      "evidence/phase10/readout-fast.xml",
+      "evidence/phase10/phase-stable.txt",
+      "evidence/phase10/locations-negative.txt",
+      "evidence/phase10/locations-negative.xml",
+      "evidence/phase10/affected-faults.txt",
+      "evidence/phase10/signatures-small.txt",
+      "evidence/phase10/signatures-small.xml",
+      "evidence/phase10/affected-faults-fast.txt",
+      "evidence/phase10/affected-faults-fast.xml",
+      "evidence/phase10/audit-contract.txt",
+      "evidence/phase10/audit-contract.xml",
+      "evidence/phase10/final.txt",
+      "evidence/phase10/final-collection.txt",
+      "evidence/phase10/partial-outcomes.txt",
+      "evidence/phase10/final-continuation.txt",
+      "evidence/phase10/final-continuation.xml",
+      "evidence/phase10/final-coverage.json",
+      "evidence/phase10/fault-oracle-counts.json",
+      "evidence/phase10/environment.txt",
+      "evidence/phase10/imports.txt",
+      "evidence/phase10/export.txt",
+      "evidence/phase10/export/index.json",
+      "evidence/phase10/export/two_gross_idle/summary.json",
+      "evidence/phase10/export/two_gross_shift/summary.json",
+      "evidence/phase10/export/two_gross_X_C18_extension/summary.json",
+      "evidence/phase10/export/two_gross_XX_C18_extension/summary.json",
+      "evidence/phase10/export/two_gross_Y_C18_extension/summary.json",
+      "evidence/phase10/export/two_gross_inter_XX_C17_extension/summary.json",
+      "evidence/phase10/export/two_gross_inter_XX_C18_extension/summary.json",
+      "evidence/phase10/export/A8_X/manifest.json",
+      "evidence/phase10/export/A8_X/candidate_witnesses.json",
+      "evidence/phase10/export/A8_XX/manifest.json",
+      "evidence/phase10/export/A8_XX/candidate_witnesses.json",
+      "evidence/phase10/export/A8_Y/manifest.json",
+      "evidence/phase10/export/A8_Y/candidate_witnesses.json",
+      "evidence/phase10/export/A8_inter_XX/manifest.json",
+      "evidence/phase10/export/A8_inter_XX/candidate_witnesses.json",
+      "evidence/phase10/handoff-checks.json",
+      "evidence/phase10/handoff-checks.txt",
+      "evidence/phase10/validate_handoff.py",
+      "evidence/phase10/status-update.txt",
+      "evidence/phase10/validate_result.py",
+      "evidence/phase10/result-validation.txt",
+      "evidence/phase10/stage-result.json"
+    ],
+    "unresolved_items": [
+      "O1: published inter K23 rows unresolved; extensions retain the explicitly named full K47 profile.",
+      "O2: historical Relay parameter/prior/column semantics unresolved; decoder integration not performed.",
+      "O3: paper-exact scheduling, lowering, timing, shift and boundaries unresolved; named reconstruction choices are documented.",
+      "O4: idle N=781920 versus Table-6 762912 (+19008); shift N=1447200 versus 1748736 (-301536). Population/admission remains unresolved; no padding or fixture changes.",
+      "O5: original statistical grids, counts and bootstrap data unavailable; no sampled rates.",
+      "A.8 inputs and independently checked upper-bound candidates are prepared only. No solver lower bound or circuit-distance certification.",
+      "The full regression command was interrupted before 1800s and has no completed JUnit. Coverage uses 276 ordered console passes plus two continuation JUnit passes; the controller must independently rerun mapped nodes."
+    ],
+    "blocking_issue": null
+  },
+  "controller_pytest": {
+    "exit_code": 0,
+    "tests": {
+      "tests/test_reference.py::test_full_algebra_audit[gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_full_algebra_audit[two_gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_reduced_cycles_are_not_a_standalone_full_basis[gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_reduced_cycles_are_not_a_standalone_full_basis[two_gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_corrupted_cycle_is_rejected[gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_corrupted_cycle_is_rejected[two_gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_ansatz_cutoff_and_monotonicity": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_reference_probability_validation": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_label_parser": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_manifest_and_stage_selection": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[missing_field]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[unknown_field]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[wrong_stage]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[not_run]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[failed]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[empty_gates]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[duplicate_gate]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[unknown_node]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[missing_evidence]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[path_escape]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[blocked]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[wrong_bool]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[empty_nodes]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[optional_only]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_open_paper_items_allow_scoped_success": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_prior_evidence_stays_in_retained_worktree": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[skipped]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[xfail]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[failed]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[missing]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[teardown_failure]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_pilot_and_campaign_require_budget": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_sequential_sessions_and_resume": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[nonzero]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[malformed]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[not_run]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[skip]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[fail_test]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[no_status]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[control_edit]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[fixture_edit]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[timeout]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_resume_rejects_workspace_changes": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_prerequisite_skipping_and_budget_denied_before_codex": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_dry_run_is_read_only": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_repository_lock_blocks_second_runner": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_actual_report_records_skip_and_xfail": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_tmux_launcher_keeps_completed_pane": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_revalidate_allows_resume_after_pending_edits": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_revalidate_rejects_old_gate_regression": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_reviewed_controls_revalidate_without_starting_next_phase": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_reviewed_controls_cannot_accept_failed_prior_gate": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_reviewed_controls_cannot_adopt_changed_reference": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_interrupt_terminates_child_group_and_records_stop": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_campaign_budget_rejects_unbounded_or_unknown_fields": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_dirty_main_is_preserved_without_codex": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failed_feature_requires_explicit_resume": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_atomic_push_failure_and_retry_do_not_repeat_implementation": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_remote_advancement_blocks_candidate_merge": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_commit_hook_mutation_is_not_merged": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_sol_high_reasoning_forwarded_and_recorded": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_hard_reasoning_rejected_before_launch": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_noise_and_fault_model.py::test_negative_profiles_admission_maps_and_corrupt_signatures": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_physical_scheduling.py::test_negative_collision_free_reversed_anticommuting_overlap": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_bounded_A8_jobs_and_independent_witness_checks": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_extension_labels_and_normalization": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_fault_audit_revalidation_contract_and_corrupt_raw_oracle": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_negative_profiles_blocks_and_paper_claims": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_C18_C17_strict_flows_and_named_rows[two_gross_XX_C18_extension]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_C18_C17_strict_flows_and_named_rows[two_gross_X_C18_extension]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_C18_C17_strict_flows_and_named_rows[two_gross_Y_C18_extension]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_C18_C17_strict_flows_and_named_rows[two_gross_idle]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_C18_C17_strict_flows_and_named_rows[two_gross_inter_XX_C17_extension]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_C18_C17_strict_flows_and_named_rows[two_gross_inter_XX_C18_extension]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_C18_C17_strict_flows_and_named_rows[two_gross_shift]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_complete_signed_instrument[two_gross_XX_C18_extension]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_complete_signed_instrument[two_gross_X_C18_extension]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_complete_signed_instrument[two_gross_Y_C18_extension]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_complete_signed_instrument[two_gross_inter_XX_C17_extension]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_complete_signed_instrument[two_gross_inter_XX_C18_extension]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_joint_fault_strata_and_catalogue[two_gross_XX_C18_extension]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_joint_fault_strata_and_catalogue[two_gross_X_C18_extension]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_joint_fault_strata_and_catalogue[two_gross_Y_C18_extension]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_joint_fault_strata_and_catalogue[two_gross_idle]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_joint_fault_strata_and_catalogue[two_gross_inter_XX_C17_extension]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_joint_fault_strata_and_catalogue[two_gross_inter_XX_C18_extension]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_joint_fault_strata_and_catalogue[two_gross_shift]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_schedule_and_physical_readout[two_gross_XX_C18_extension]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_schedule_and_physical_readout[two_gross_X_C18_extension]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_schedule_and_physical_readout[two_gross_Y_C18_extension]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_schedule_and_physical_readout[two_gross_idle]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_schedule_and_physical_readout[two_gross_inter_XX_C17_extension]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_schedule_and_physical_readout[two_gross_inter_XX_C18_extension]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_schedule_and_physical_readout[two_gross_shift]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_shift_arbitrary_physical_Choi": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_two_gross_extension.py::test_two_gross_signed_algebra_and_reduced_reference_cycles": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      }
+    }
+  }
+}
