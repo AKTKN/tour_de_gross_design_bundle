@@ -1,0 +1,601 @@
+{
+  "stage_id": "00",
+  "branch": "feature/00_source_audit",
+  "base_commit": "cee624f2be1c9b02e0524b09263d2e2e83cc975d",
+  "result": {
+    "stage_id": "00",
+    "status": "success",
+    "next_stage_safe": true,
+    "summary": "Phase 00 completed on feature/00_source_audit in /home/quantum_teresheys/workspace/tour_de_gross_design_bundle/.codex-pipeline/tour-de-gross/worktrees/00_source_audit. Preserved and verified the source/environment locks, capability audit and strict-manifest validator. All 85 tests passed. Main and protected files remain unchanged. Publication is controller-owned; stopped after phase 00.",
+    "tests": [
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python tools/audit_sources.py --output evidence/phase00/resume-source-verification.json",
+        "result": "passed",
+        "required": true,
+        "notes": "Four pinned repositories; inspected commits, trees, blobs, hashes and license/history bytes verified offline."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python tools/audit_backends.py --output evidence/phase00/resume-backend-imports.json",
+        "result": "passed",
+        "required": true,
+        "notes": "Observed Stim, qLDPC and Relay imports/signatures. Optional backends were not exercised."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_backends.py tests/test_source_audit.py tests/test_manifest.py tests/test_reference.py tests/test_pipeline.py",
+        "result": "passed",
+        "required": true,
+        "notes": "85 passed in 34.98s; no skips/xfails. Includes nine delivered utility tests and all 27 mapped phase-00 cases."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python -m pip check",
+        "result": "passed",
+        "required": true,
+        "notes": "No broken requirements; nonwritable-cache warning only."
+      },
+      {
+        "command": "curl -L --fail --max-time 45 https://arxiv.org/pdf/2506.03094v1 -o /tmp/phase00-resume-tdg.pdf",
+        "result": "passed",
+        "required": false,
+        "notes": "Fresh v1 PDF matches its preserved lock hash."
+      },
+      {
+        "command": "curl -L --fail --max-time 45 https://arxiv.org/pdf/2506.01779v1 -o /tmp/phase00-resume-relay.pdf",
+        "result": "passed",
+        "required": false,
+        "notes": "Fresh Relay v1 PDF matches its preserved lock hash."
+      },
+      {
+        "command": "pdftotext -layout /tmp/phase00-resume-tdg.pdf /tmp/phase00-resume-tdg.txt",
+        "result": "passed",
+        "required": false,
+        "notes": "Rechecked canonical Table 7 and source-release references."
+      },
+      {
+        "command": "pdftotext -layout /tmp/phase00-resume-relay.pdf /tmp/phase00-resume-relay.txt",
+        "result": "passed",
+        "required": false,
+        "notes": "Rechecked PDF equations (1)\u2013(4) and Algorithm 1; historical mapping remains unresolved."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python /tmp/phase00_resume_verify.py",
+        "result": "passed",
+        "required": true,
+        "notes": "Verified branch/worktree, clean main/donors, protected-file and PDF hashes, package path and gate mapping."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python /tmp/phase00_validate_handoff.py",
+        "result": "passed",
+        "required": true,
+        "notes": "Read-only controller validation accepted the schema, evidence and four gates with 27 exact nodes. No publication executed."
+      },
+      {
+        "command": "git diff --check",
+        "result": "passed",
+        "required": true,
+        "notes": "Whitespace check passed. Read-only source inspection commands are recorded in STATUS.md."
+      }
+    ],
+    "acceptance_checks": [
+      {
+        "gate": "source_lock",
+        "test_nodeids": [
+          "tests/test_source_audit.py::test_locked_commits_blobs_and_worktree_bytes",
+          "tests/test_source_audit.py::test_changed_blob_bytes_are_rejected",
+          "tests/test_source_audit.py::test_reference_commit_cannot_be_replaced",
+          "tests/test_source_audit.py::test_missing_pinned_blob_is_rejected"
+        ]
+      },
+      {
+        "gate": "backend_capabilities",
+        "test_nodeids": [
+          "tests/test_backends.py::test_locked_dependencies_import_and_match_installed_bytes",
+          "tests/test_backends.py::test_reviewed_upstream_api_signatures",
+          "tests/test_backends.py::test_installed_qldpc_matches_pinned_source",
+          "tests/test_backends.py::test_relay_tiny_explicit_gamma_syndrome_interface"
+        ]
+      },
+      {
+        "gate": "strict_manifest",
+        "test_nodeids": [
+          "tests/test_manifest.py::test_algebra_only_allows_unresolved_sections",
+          "tests/test_manifest.py::test_paper_exact_rejects_unresolved_definitions",
+          "tests/test_manifest.py::test_self_asserted_resolution_is_rejected"
+        ]
+      },
+      {
+        "gate": "negative_tests",
+        "test_nodeids": [
+          "tests/test_backends.py::test_qldpc_rejects_Y_basis",
+          "tests/test_backends.py::test_relay_rejects_historical_keyword",
+          "tests/test_backends.py::test_stim_strict_detector_failure_is_not_hidden",
+          "tests/test_manifest.py::test_unknown_top_level_field_is_rejected",
+          "tests/test_manifest.py::test_unknown_section_fields_fail_closed[observable]",
+          "tests/test_manifest.py::test_unknown_section_fields_fail_closed[schedule]",
+          "tests/test_manifest.py::test_unknown_section_fields_fail_closed[fault_population]",
+          "tests/test_manifest.py::test_unknown_section_fields_fail_closed[decoder_mapping]",
+          "tests/test_manifest.py::test_unverified_profile_is_not_certified_in_algebra_mode[observable]",
+          "tests/test_manifest.py::test_unverified_profile_is_not_certified_in_algebra_mode[schedule]",
+          "tests/test_manifest.py::test_unverified_profile_is_not_certified_in_algebra_mode[fault_population]",
+          "tests/test_manifest.py::test_unverified_profile_is_not_certified_in_algebra_mode[decoder_mapping]",
+          "tests/test_manifest.py::test_invalid_types_versions_and_modes[changes0]",
+          "tests/test_manifest.py::test_invalid_types_versions_and_modes[changes1]",
+          "tests/test_manifest.py::test_invalid_types_versions_and_modes[changes2]",
+          "tests/test_manifest.py::test_invalid_types_versions_and_modes[changes3]"
+        ]
+      }
+    ],
+    "changed_files": [
+      "STATUS.md",
+      "docs/BACKEND_AUDIT.md",
+      "locks/source-lock.json",
+      "locks/environment-lock.json",
+      "locks/package-artifacts.json",
+      "locks/paper-sources.json",
+      "locks/requirements-phase00.txt",
+      "locks/conda-phase00-linux-64.explicit.txt",
+      "src/gross_design_bandle/bench/__init__.py",
+      "src/gross_design_bandle/bench/manifest.py",
+      "tests/test_backends.py",
+      "tests/test_manifest.py",
+      "tests/test_source_audit.py",
+      "tools/audit_backends.py",
+      "tools/audit_sources.py",
+      "tools/lock_sources.py"
+    ],
+    "evidence_paths": [
+      "docs/BACKEND_AUDIT.md",
+      "locks/source-lock.json",
+      "locks/environment-lock.json",
+      "locks/package-artifacts.json",
+      "locks/paper-sources.json",
+      "evidence/phase00/resume-source-verification.json",
+      "evidence/phase00/resume-backend-imports.json",
+      "evidence/phase00/resume-pytest.txt",
+      "evidence/phase00/resume-pip-check.txt",
+      "evidence/phase00/resume-guards.json",
+      "evidence/phase00/acceptance-gates.json",
+      "evidence/phase00/resume-handoff-validation.json"
+    ],
+    "unresolved_items": [
+      "O1: Published inter-module K23 observable generators; full-two-block K47 remains distinct.",
+      "O2: Historical Table-7 semantics, executable/trace equivalence and prior/column policy. Partial recurrence recovered from the [Relay v1 PDF](https://arxiv.org/pdf/2506.01779v1).",
+      "O3: Concrete scheduling, shift representative, lowering and ideal/noisy boundaries.",
+      "O4: Primitive fault multiplicities, admission/merging policy and Table-6 N.",
+      "O5: Original counts, grids and bootstrap data/settings.",
+      "SlidingWindowDecoder memory-builder reuse license remains unresolved; no donor code copied.",
+      "Original Figure-15 physical surgery/shift circuit or raw-data release not established by the bounded audit.",
+      "Controller acceptance/publication pending. O1\u2013O5 block paper-exact sampling but not independent algebra development. No later phase was started."
+    ],
+    "blocking_issue": null
+  },
+  "controller_pytest": {
+    "exit_code": 0,
+    "tests": {
+      "tests/test_reference.py::test_full_algebra_audit[gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_full_algebra_audit[two_gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_reduced_cycles_are_not_a_standalone_full_basis[gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_reduced_cycles_are_not_a_standalone_full_basis[two_gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_corrupted_cycle_is_rejected[gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_corrupted_cycle_is_rejected[two_gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_ansatz_cutoff_and_monotonicity": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_reference_probability_validation": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_label_parser": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_manifest_and_stage_selection": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[missing_field]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[unknown_field]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[wrong_stage]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[not_run]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[failed]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[empty_gates]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[duplicate_gate]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[unknown_node]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[missing_evidence]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[path_escape]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[blocked]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[wrong_bool]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[empty_nodes]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[optional_only]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_open_paper_items_allow_scoped_success": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[skipped]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[xfail]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[failed]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[missing]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[teardown_failure]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_pilot_and_campaign_require_budget": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_sequential_sessions_and_resume": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[nonzero]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[malformed]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[not_run]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[skip]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[fail_test]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[no_status]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[control_edit]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[fixture_edit]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[timeout]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_resume_rejects_workspace_changes": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_prerequisite_skipping_and_budget_denied_before_codex": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_dry_run_is_read_only": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_repository_lock_blocks_second_runner": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_actual_report_records_skip_and_xfail": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_tmux_launcher_keeps_completed_pane": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_revalidate_allows_resume_after_pending_edits": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_revalidate_rejects_old_gate_regression": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_interrupt_terminates_child_group_and_records_stop": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_campaign_budget_rejects_unbounded_or_unknown_fields": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_dirty_main_is_preserved_without_codex": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failed_feature_requires_explicit_resume": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_atomic_push_failure_and_retry_do_not_repeat_implementation": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_remote_advancement_blocks_candidate_merge": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_commit_hook_mutation_is_not_merged": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_sol_high_reasoning_forwarded_and_recorded": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_hard_reasoning_rejected_before_launch": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_backends.py::test_installed_qldpc_matches_pinned_source": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_backends.py::test_locked_dependencies_import_and_match_installed_bytes": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_backends.py::test_qldpc_rejects_Y_basis": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_backends.py::test_relay_rejects_historical_keyword": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_backends.py::test_relay_tiny_explicit_gamma_syndrome_interface": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_backends.py::test_reviewed_upstream_api_signatures": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_backends.py::test_stim_strict_detector_failure_is_not_hidden": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_manifest.py::test_algebra_only_allows_unresolved_sections": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_manifest.py::test_invalid_types_versions_and_modes[changes0]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_manifest.py::test_invalid_types_versions_and_modes[changes1]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_manifest.py::test_invalid_types_versions_and_modes[changes2]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_manifest.py::test_invalid_types_versions_and_modes[changes3]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_manifest.py::test_paper_exact_rejects_unresolved_definitions": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_manifest.py::test_self_asserted_resolution_is_rejected": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_manifest.py::test_unknown_section_fields_fail_closed[decoder_mapping]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_manifest.py::test_unknown_section_fields_fail_closed[fault_population]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_manifest.py::test_unknown_section_fields_fail_closed[observable]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_manifest.py::test_unknown_section_fields_fail_closed[schedule]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_manifest.py::test_unknown_top_level_field_is_rejected": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_manifest.py::test_unverified_profile_is_not_certified_in_algebra_mode[decoder_mapping]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_manifest.py::test_unverified_profile_is_not_certified_in_algebra_mode[fault_population]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_manifest.py::test_unverified_profile_is_not_certified_in_algebra_mode[observable]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_manifest.py::test_unverified_profile_is_not_certified_in_algebra_mode[schedule]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_source_audit.py::test_changed_blob_bytes_are_rejected": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_source_audit.py::test_locked_commits_blobs_and_worktree_bytes": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_source_audit.py::test_missing_pinned_blob_is_rejected": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_source_audit.py::test_reference_commit_cannot_be_replaced": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      }
+    }
+  }
+}
