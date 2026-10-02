@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "phase": "11",
+  "implementation": "thin API binding plus independently derived bounded mathematical oracle; no external source changes/copies",
+  "backend": {
+    "repo": "trmue/relay",
+    "commit": "d185194ba0cb4101ced4340d82b2ee6d42f225f0",
+    "license": "Apache-2.0; IBM 2025 source headers",
+    "source_lock": "locks/source-lock.json",
+    "environment_lock": "locks/environment-lock.json",
+    "inspected_files": {
+      "LICENSE.txt": {
+        "git_blob": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "bytes": 11357
+      },
+      "Cargo.lock": {
+        "git_blob": "e4259f67c65bb94ce2f7b869b44e371f774a5182",
+        "sha256": "35765b77b4df5d6a3287deae975cf03f21914578d5f7ffb6396ed555394c98ce",
+        "bytes": 35956
+      },
+      "crates/relay_bp/src/bp/min_sum.rs": {
+        "git_blob": "2a1d94fee6569bb0a808148021b6f055637c1c6d",
+        "sha256": "427fbc52666e69d2257811a1ec8b857a5f8a747264b0f42fd83870fc97582174",
+        "bytes": 35304
+      },
+      "crates/relay_bp/src/bp/relay.rs": {
+        "git_blob": "20237a8f591935cf5f39f487b62f1245dc515246",
+        "sha256": "cd476d5871b46662aa3f524c2d6c484fb9ff9005a99db263bb92416a3b2a05dc",
+        "bytes": 20105
+      },
+      "crates/relay_bp/src/decoder.rs": {
+        "git_blob": "e2c576f41644e1420d940959a87e5f6ac528ad68",
+        "sha256": "2ba057836399c55e535ad4fc405fb9a0ae2605e39bfadfb8a6517adffe22687c",
+        "bytes": 7345
+      },
+      "crates/relay_bp_py/src/bp/relay.rs": {
+        "git_blob": "b151413fd801ce07f2ca8b8efec438373c6c13b7",
+        "sha256": "ad9ae19b2c044e160169cbc2f459d6dbc6bce947da7dce406498534d700d626c",
+        "bytes": 6002
+      },
+      "crates/relay_bp_py/src/decoder.rs": {
+        "git_blob": "a4420781726955dde0a3c2ce8163ced6c5b0c977",
+        "sha256": "1fe636b214c72bbf391b729572b1825128ff97ea2befb9112f9037cf4f551446",
+        "bytes": 4428
+      }
+    }
+  },
+  "paper_sources": "locks/paper-sources.json",
+  "inspected_paper_sections": [
+    "TdG 2506.03094v1 PDF A.7/Table 7 p.61",
+    "Relay 2506.01779v1 PDF Eqs.1--4 pp.2--3 and Algorithm 1 p.8"
+  ],
+  "reference_relay_table7_sha256": "243671935843cae2d8216d2550498ed60da4f7bee4bb9f095975ee6e8817c198",
+  "historical_mapping": "unresolved; do not expose historical Table-7 backend",
+  "history_sources": "locked initial release 1290a2c, posterior reset fix 1b41b68 and memory reset fix 3f9a801 in locks/source-lock.json",
+  "open_items": [
+    "O1",
+    "O2",
+    "O3",
+    "O4",
+    "O5"
+  ],
+  "paper_exact": false
+}
