@@ -88,11 +88,11 @@ Implemented in the separate `feature/model-reasoning` worktree. Verification: `c
 
 ## Next action
 
-Phase 08 supplies the physical one-to-one gross adapter and full named K47
-validation; its final regression and handoff verification are recorded below.
-Next prompt: `prompts/09_shift_automorphism.md`, only in a new
-controller-authorized session after phase-08 acceptance/publication.
-This session stops at 08. Strict paper-equivalent sampling remains blocked
+Phase 09 supplies real gross Tanner-edge shift transfers, role/frame flows,
+full K24 C10 harness and joint fault validation in a named reconstruction.
+Next prompt: `prompts/10_two_gross_extension.md`, only in a new
+controller-authorized session after phase-09 acceptance/publication.
+This session stops at 09. Strict paper-equivalent sampling remains blocked
 by O1--O5; no later phase or Git publication was run.
 
 ## Phase 00 source audit completed (2026-10-02)
@@ -1405,3 +1405,153 @@ Short reproducible rerun: set PYTHONPATH and the local cache variable as above;
 run the eight-node phase command, then the exporter sequentially in tour_de_gross.
 Next prompt: `prompts/09_shift_automorphism.md`, only in a new controller session
 after independent acceptance and publication. Stop here.
+
+## Phase 09 physical gross shift (2026-10-03)
+
+Branch: `feature/09_shift_automorphism`. Worktree:
+`/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/.codex-pipeline/tour-de-gross/worktrees/09_shift_automorphism`.
+Main checkout: `/home/quantum_teresheys/workspace/tour_de_gross_design_bundle`.
+Publication: **not attempted; controller owns acceptance rerun, commit, merge
+and atomic push**. The worktree was initially clean. No reference fixtures,
+AGENTS, pipeline controls or external source checkouts were modified. External
+sources remain in the canonical shared `external_libs` directory. No long
+sampling, solver, cluster submission, decoder integration or later phase ran.
+
+Deliverables: `circuits/shift.py`, `flows/shift.py`, `noise/shift.py`,
+`bench/rates.py`, `tests/test_physical_shifts.py`,
+`tools/audit_physical_shifts.py`, `docs/PHYSICAL_SHIFTS.md` and
+`locks/shift-sources.json`. The existing source lock and independent scientific
+fixtures are retained. The source paper was read at its v1 URL, specifically
+§2.2 and A.2; A.7 and the repository contracts define the channel/normalization.
+No donor code was copied or modified.
+
+Profile `gross_B1_B0_x_plus_measure_prepare_v1` uses real installed data/check
+sites and verified B1/B0 Tanner routes, implementing physical x translation.
+Each transfer has two actual CX layers and a vacated-source Z readout. Transfer
+detectors, intermediate check-site data roles, data/check frames and the physical
+site permutation are explicit. Readout reuse tracks the **output destination
+site's** prior measurement. Every ordinary Fig.4b syndrome CNOT follows the
+transfers; repeated syndrome detectors transport the preceding check before
+comparison. All 24 named input logical degrees are scored against transported
+output Paulis and noiseless reference qubits. Every physical X/Z fault remains
+a joint column with all primitive multiplicities/admission/group maps.
+
+Timing is 14 body ticks per instruction, plus one initial noisy check-preparation
+tick: C10 has **141 ticks**. The reconstruction declares one-tick terminal
+X-check MX/R measure/prepare bundles, with **separate** readout and reset noise
+locations. Z checks reuse their measured state with an X frame. This bundle's
+device duration and paper-exact lowering remain O3, and are not a claim of a
+uniquely sourced original circuit. A device taking two ticks for the bundle
+requires a distinct timing profile. `paper_exact` fails closed. Reporting is
+`P_circuit/C`; the normalization test uses synthetic input, never Table-6 fit
+rates or fabricated observations.
+
+Coverage: exact signed transfer propagation and small full Choi tests include
+X/Z/Y, both signs, nonzero destination states and a changed vacated-site bit.
+The production gross routes are also checked on all 144 physical data degrees
+using 288 independent Choi correlations outside the BB codespace. Material
+negatives omit a reverse CX/frame, corrupt a flow offset, remove a physical
+gate or request invalid routing/profile/boundaries. C10 uses strict Stim DEM
+with gauge disabled plus raw record-sign checks. Every transfer fault has a
+computed signature; independent forward/probability-one Stim injection uses
+first/middle/last phase/gate/role strata and IX/ZI/XX/YZ joint words. This is
+bounded large-circuit coverage, not exhaustive injection of every expanded
+copy. All 1440 first-transfer readout-flip primitives must retain zero logical
+signature after the recorded reuse correction. The inherited A06 tests cover
+complete logical actions, signed quotient witnesses, inverses, commuting x/y,
+logical sixth powers and row/column conventions.
+
+Completed validation: first negative node **1 passed in 4.50s**. Initial small
+attempts failed: a signed conjugation expectation was wrong, and the nonzero
+destination Choi oracle then exposed the real reused-site frame bug. The
+corrected smallest B06 reproducer passed **1 in 0.21s**. A C10 attempt then
+stopped with **1 passed / 1 setup error in 10.72s** because the inherited
+controller cache was read-only in this sandbox. No test pass was inferred from
+that incomplete run. With a writable local cache, the cold timing node passed
+**1 in 41.80s**, then the affected phase/A06 run passed **13 in 114.34s**.
+After adding all-144-data Choi coverage, its smallest node passed **1 in 0.71s**.
+The final source also checks all 1440 reused-readout zero-logical signatures.
+
+The single completed final regression passed **246 in 858.68s**, with no skips
+or xfails. It includes all eight exact acceptance node IDs, reference and
+pipeline regressions, unchanged small exhaustive gate/Bell oracles and the
+cache corruption/interruption/invalidation tests. The final shift fault node
+took 63.69s; inspection identified model copy/group validation, forward Pauli
+propagation/per-fault Stim compilation and three profile emissions/strict DEMs
+as its hot paths. No identical suite/export jobs ran concurrently and no
+expensive solver or benchmark retry occurred. Earlier failed/partial logs are
+retained, not counted as passes.
+
+Final export ran once, sequentially after regression. It contains **241776 raw
+joint primitives**, **403920 include-all equal-q copies**, **70993 decoder
+groups**, H **4464 x 403920** and Lambda **24 x 403920**. All 106 representative
+raw faults agree with independent forward propagation and probability-one
+Stim injection. All three noise profiles have strict gauge-disabled DEMs with
+4464 detectors and 24 observables. Table-6 gross-shift N=483840 differs by
+**-79920**; excluding joint-zero copies would instead give 389880. Counts by
+primitive kind, phase and role are exported. No population padding, forced
+merging, discarded X/Z correlations or sampled rates were introduced.
+
+Cold timing-node setup/check was 41.80s; its warm counterpart in regression
+was 14.31s. These are combined harness/location/model/check timings, not pure
+model timings. Export found the existing numerical key intact: initial model
+load 2.81s, warm load 3.00s, changed-p reweight 4.01s, native array export 1.47s.
+Export harness/location/validation took 11.94s and independent fault strata
+22.15s. Across p changes, H/Lambda, raw/group signatures and every copy,
+ordinal/admission/group map are identical; only probabilities change. The new
+shift circuit and location/role/frame ledger create their own key. Test/doc
+edits do not invalidate numerical work; the inherited tiny cache regressions
+validate changed inputs/implementations and damaged/partial artifacts. No
+pytest result was cached. The controller's canonical cache path was read-only
+here, so all completed local work uses `GROSS_DESIGN_CACHE_DIR="$PWD/cache/faults"`.
+
+Actual validation commands used `tour_de_gross`; prepend
+`PYTHONPATH="$PWD/src"` for feature imports and the writable cache variable
+above for model tests. Commands with superseded failures are listed as such:
+
+```bash
+# Positive constructor/schedule, toy-frame debugging, JUnit inspection and
+# import-origin probes also ran as conda Python stdin scripts.
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_physical_shifts.py::test_negative_shift_profiles_routing_frame_and_noise_boundaries
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_physical_shifts.py  # initial failed signed/Choi attempt
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_physical_shifts.py::test_B06_two_transfer_Choi_signed_Paulis_and_recorded_frame  # failed first; corrected reruns passed
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_physical_shifts.py tests/test_shifts.py  # initial failed/partial; completed writable-cache rerun passed
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_physical_shifts.py::test_shift_timing_C10_real_permutation_roles_K24_and_rate
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq --durations=15 --junitxml=evidence/phase09/final.xml
+conda run --no-capture-output -n tour_de_gross python tools/audit_physical_shifts.py --output-dir evidence/phase09/export --cache-dir "$PWD/cache/faults"
+conda run --no-capture-output -n tour_de_gross python -m compileall -q src/gross_design_bandle tools/audit_physical_shifts.py
+conda run --no-capture-output -n tour_de_gross python -m pip check
+conda run --no-capture-output -n tour_de_gross python /tmp/phase09_handoff.py
+git diff --check
+git diff --exit-code -- reference AGENTS.md prompts/scripts
+```
+
+Evidence is local, nonempty and repository-relative:
+`evidence/phase09/{negative_first.txt,phase_first.txt,B06_rerun.txt,
+phase_rerun.txt,B06_rerun_2.txt,phase_rerun_2.txt,timing_cache_rerun.txt,
+phase_local_cache.txt,B06_full_physical.txt,final.txt,final.xml,
+acceptance-gates.json,audit-export.txt,imports.txt,pip-check.txt,
+handoff-checks.json,handoff-checks.txt,timing-summary.json}`.
+`evidence/phase09/export/index.json` hashes 30 artifacts, including raw/ideal/
+noisy circuits, role/frame/location ledgers, logical action, joint sparse
+native CSC matrices/signatures/maps and the N discrepancy. Handoff validation
+matched source hashes, all export checksums and every mapped node to completed
+JUnit passes; main is clean and fixtures/controls/AGENTS unchanged. Compilation,
+feature-module imports, dependency consistency and whitespace checks passed.
+
+O1: published inter K23 rows remain undefined. O2: historical Relay parameters,
+priors and columns remain unverified. O3: the chosen shift representative,
+one-tick cross-basis bundle, serialized scheduling/lowering and boundary noise
+are an explicit reconstruction, not frozen paper equivalence. O4: Table-6
+primitive population/admission policy is unresolved; the -79920 discrepancy
+is not repaired by changing fixtures. O5: original statistical grids/counts/
+bootstrap data are unavailable. None supplies a missing definition for this
+named independent gross construction. No rate, decoder or distance claim is
+made, and strict paper-exact mode remains blocked.
+
+Short reproducible sequence: export PYTHONPATH and the local cache as above;
+run `python -m pytest -q tests/test_physical_shifts.py tests/test_shifts.py`,
+then `python tools/audit_physical_shifts.py --output-dir evidence/phase09/export
+--cache-dir "$PWD/cache/faults"`, both with `conda run --no-capture-output -n
+tour_de_gross`. Next prompt: `prompts/10_two_gross_extension.md`, only in a new
+controller session after independent acceptance and publication. Stop at 09.
