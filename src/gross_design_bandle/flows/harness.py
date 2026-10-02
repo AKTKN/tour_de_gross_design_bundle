@@ -55,7 +55,9 @@ class BenchmarkHarness:
     physical_body: stim.Circuit
     split_mode: str
 
-    def validate(self):
+    def validate(self, *, flow_oracle='stim_reference'):
+        if flow_oracle not in ('stim_reference', 'signed_affine'):
+            raise ValueError('unknown flow oracle')
         cert = self.logical_generators
         expected = set(range(cert['rank']))
         emitted = {int(i.gate_args_copy()[0]) for i in self.circuit.flattened() if i.name == 'OBSERVABLE_INCLUDE'}
@@ -68,8 +70,12 @@ class BenchmarkHarness:
             raise ValueError('named physical parity coverage mismatch')
         if len(self.outcome_ids) != self.circuit.num_measurements or len(set(self.outcome_ids)) != len(self.outcome_ids):
             raise ValueError('symbolic measurement ledger mismatch')
-        flows = verify_deterministic(self.circuit)
         dem = self.circuit.detector_error_model(allow_gauge_detectors=False)
+        if flow_oracle == 'stim_reference':
+            from .stabilizer_flows import _verify_reference_signs
+            flows = _verify_reference_signs(self.circuit)
+        else:
+            flows = verify_deterministic(self.circuit)
         if dem.num_observables != self.logical_generators['rank']:
             raise ValueError('strict DEM observable rank/count mismatch')
         return {'exact_flows': flows, 'strict_dem_detectors': dem.num_detectors,

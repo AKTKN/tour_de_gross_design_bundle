@@ -2,6 +2,11 @@
 
 A test should identify its oracle, scope, expected result and failure artifact. A passing rank test is not a distance proof; a passing noiseless test is not a logical-error-rate reproduction.
 
+For run order, minimal changed-behavior coverage, Stim-first large checks,
+numerical cache/storage and retry rules, follow `docs/VALIDATION_WORKFLOW.md`.
+The levels below define scientific coverage; they do not require reimplementing
+Stim or repeating exhaustive small oracles on every large circuit.
+
 ## Delivered tests
 
 `python -m pytest -q tests/test_reference.py` currently runs nine tests. `tools/audit_reference.py` checks the two code definitions, 12-pair logical bases, selected graph cycles and omitted-cycle membership in the combined binary span, commutation and one-logical-loss ranks for X, XX, Y and the algebraic inter-XX reconstruction, and physical-shift-induced logical matrices. Results are in `evidence/algebra_audit.json`. These utilities use NumPy; Stim, Relay and qLDPC were not installed or executed in this environment. The delivered audit is phase-blind for the deformed-check rank calculations and does not implement the ideal instrument or the physical Bell schedule.

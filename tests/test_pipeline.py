@@ -107,6 +107,21 @@ def test_open_paper_items_allow_scoped_success(repository):
     assert pipeline.validate_result(repository, stage, result, SCHEMA) == ['tests/test_phase.py::test_positive']
 
 
+def test_prior_evidence_stays_in_retained_worktree(repository, tmp_path):
+    stage = pipeline.load_manifest(repository)['stages'][0]
+    result = sample_result(repository, stage)
+    original = tmp_path / 'retained-feature'
+    (original / 'evidence').mkdir(parents=True)
+    (original / 'evidence/acceptance.txt').write_text('actual retained evidence\n')
+    result['evidence_paths'] = ['evidence/acceptance.txt']
+    with pytest.raises(pipeline.PipelineError, match='Missing or empty evidence'):
+        pipeline.validate_result(repository, stage, result, SCHEMA)
+    assert pipeline.validate_result(repository, stage, result, SCHEMA, evidence_root=original) == ['tests/test_phase.py::test_positive']
+    (original / 'evidence/acceptance.txt').unlink()
+    with pytest.raises(pipeline.PipelineError, match='Missing or empty evidence'):
+        pipeline.validate_result(repository, stage, result, SCHEMA, evidence_root=original)
+
+
 @pytest.mark.parametrize('outcome', ['skipped', 'xfail', 'failed', 'missing', 'teardown_failure'])
 def test_skipped_or_missing_actual_test_rejected(outcome):
     phases = {'setup': 'passed', 'call': 'passed', 'teardown': 'passed'}
@@ -313,6 +328,46 @@ def test_revalidate_rejects_old_gate_regression(repository, fake_tools):
     commit_manual_main_edit(repository)
     resumed = invoke(repository, fake_tools, '--through', '01', '--revalidate')
     assert resumed.returncode == 1 and 'revalidation failed' in resumed.stderr
+    assert submission_file(repository).read_text().splitlines() == ['00']
+
+
+def test_reviewed_controls_revalidate_without_starting_next_phase(repository, fake_tools):
+    assert invoke(repository, fake_tools, '--through', '00').returncode == 0
+    with (repository / 'prompts/scripts/codex_stage_footer.md').open('a') as f:
+        f.write('\nReviewed maintenance policy\n')
+    commit_manual_main_edit(repository)
+    refused = invoke(repository, fake_tools, '--through', '01', '--revalidate')
+    assert refused.returncode == 1 and 'controls changed' in refused.stderr
+    reviewed = invoke(repository, fake_tools, '--through', '01', '--revalidate',
+                      '--reviewed-controls', '--revalidate-only')
+    assert reviewed.returncode == 0, reviewed.stdout + reviewed.stderr
+    assert submission_file(repository).read_text().splitlines() == ['00']
+    entry = pipeline.read_json(repository / pipeline.STATE / 'accepted.json')[0]
+    report = Path(entry['reviewed_controls_report'])
+    assert report.is_file() and (report.parent / 'accepted-before-review.json').is_file()
+
+
+def test_reviewed_controls_cannot_accept_failed_prior_gate(repository, fake_tools):
+    assert invoke(repository, fake_tools, '--through', '00').returncode == 0
+    before = (repository / pipeline.STATE / 'accepted.json').read_bytes()
+    (repository / 'tests/test_phase.py').write_text('def test_positive(): assert False\n')
+    commit_manual_main_edit(repository)
+    result = invoke(repository, fake_tools, '--through', '01', '--revalidate',
+                    '--reviewed-controls', '--revalidate-only')
+    assert result.returncode == 1 and 'revalidation failed' in result.stderr
+    assert (repository / pipeline.STATE / 'accepted.json').read_bytes() == before
+    assert submission_file(repository).read_text().splitlines() == ['00']
+
+
+def test_reviewed_controls_cannot_adopt_changed_reference(repository, fake_tools):
+    assert invoke(repository, fake_tools, '--through', '00').returncode == 0
+    before = (repository / pipeline.STATE / 'accepted.json').read_bytes()
+    (repository / 'reference/fixture.json').write_text('{"changed":true}\n')
+    commit_manual_main_edit(repository)
+    result = invoke(repository, fake_tools, '--through', '01', '--revalidate',
+                    '--reviewed-controls', '--revalidate-only')
+    assert result.returncode == 1 and 'Reference fixtures changed' in result.stderr
+    assert (repository / pipeline.STATE / 'accepted.json').read_bytes() == before
     assert submission_file(repository).read_text().splitlines() == ['00']
 
 

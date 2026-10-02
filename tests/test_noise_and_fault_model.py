@@ -203,7 +203,13 @@ def gross_models():
 def test_D03_gross_memory_X1_deterministic_strata(gross_models,tmp_path):
     for operation,(m,policy) in gross_models.items():
         evidence = validate_faults(m,exhaustive=False,counterexample_path=tmp_path/f'{operation}-counterexample.json')
-        assert evidence['all_agree'] and evidence['checked_raw_primitives']>30
+        assert evidence['all_agree']
+        rounds = sorted({l.round for l in m.locations})
+        anchors = {rounds[0],rounds[len(rounds)//2],rounds[-1]}
+        expected = {(l.phase,l.gate,l.role,l.round) for l in m.locations if l.round in anchors}
+        actual = {(t['location']['phase'],t['location']['gate'],t['location']['role'],t['location']['round'])
+                  for t in evidence['trials']}
+        assert actual == expected
         phases = {t['location']['phase'] for t in evidence['trials']}
         assert phases == ({'memory'} if operation=='memory' else {'edge_initialize','deformed','split'})
         assert policy['paper_exact'] is False

@@ -16,6 +16,32 @@ Implement a shift through check-qubit sites using two real two-CNOT transfer sta
 
 Implement B06/A06 and noise-boundary tests, including faults during both transfers and during the following syndrome cycle. Check the quoted 14-step instruction accounting and benchmark C=10 repeated gross instructions with P_circuit/C reporting.
 
+## Efficient validation and artifact reuse
+
+Read `docs/VALIDATION_WORKFLOW.md` before writing tests. Use the minimum set of
+meaningful tests for this phase: one positive behavior check and its material
+negative cases, sharing expensive fixtures. Avoid assertions about serialization
+spelling, duplicate random seeds and re-exhausting unchanged primitives.
+
+Use strict Stim DEM plus raw reference-record signs for large C10/C18 harnesses;
+keep independent signed propagation and exhaustive Bell/gate oracles on small
+fixtures. Preserve all named logical rows, joint X/Z faults and admission maps.
+Run the smallest failing node with `pytest -xq` first, then the affected phase.
+Run final regression and export once after source stabilizes, sequentially.
+Do not repeatedly restart a full suite/export after an unrelated assertion fix.
+Cache numerical artifacts, never a test pass. Do not mark incomplete runs passed.
+
+Use `build_fault_model(..., cache_dir=...)` or the controller-provided
+`GROSS_DESIGN_CACHE_DIR`. Reuse physical signatures across probabilities/profiles
+and structural matrices across p changes. Export with
+`bench.artifacts.export_fault_model`; native CSC/sparse-signature/map arrays and
+checksummed manifests replace expanded catalogue JSON and repeated ZIP writes.
+Keep legacy JSON/NPZ opt-in for a real consumer. Hash relevant numerical inputs
+and implementations, not all test/doc files for numerical-cache invalidation.
+Record cold/warm timing, cache reuse/invalidation and changed coverage in STATUS.
+Implementation/test limits are 10800s/1800s; these never enlarge pilot/campaign
+budgets or authorize automatic retries.
+
 ## Acceptance
 
 Physical circuit equals the permutation oracle ideally; every transfer fault has a valid signature; all role/reset/frame changes are explicit; no metadata-only noisy implementation.

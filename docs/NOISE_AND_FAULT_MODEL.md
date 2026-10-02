@@ -1,5 +1,12 @@
 # Phase 06 independent circuit noise and primitive catalogue
 
+Maintenance update: fault builders accept `cache_dir` (or
+`GROSS_DESIGN_CACHE_DIR`; `False` forces cold construction). Numerical artifacts
+use `bench.artifacts` CSC/map arrays, sparse joint signatures and checksummed
+manifests, with read-only mmap loading. The exporter defaults to this reusable
+format; `--legacy-json` explicitly requests the older expanded JSON/NPZ too.
+See `docs/VALIDATION_WORKFLOW.md` for invalidation, validation and retry policy.
+
 This implementation constructs joint detector/logical-action matrices for the
 independent gross memory and X1 benchmarks. It does not establish Figure-15
 equivalence, Table-6 population equivalence, distance or logical error rates.

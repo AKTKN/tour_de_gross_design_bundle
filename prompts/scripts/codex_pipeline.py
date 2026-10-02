@@ -104,7 +104,7 @@ def stage_index(stages, value):
     raise PipelineError(f'Unknown stage: {value}')
 
 
-def validate_result(root, stage, result, schema):
+def validate_result(root, stage, result, schema, *, evidence_root=None):
     validate_schema(result, schema)
     require(result['stage_id'] == stage['id'], 'Stage ID mismatch')
     require(result['status'] == 'success' and result['next_stage_safe'] is True,
@@ -126,7 +126,10 @@ def validate_result(root, stage, result, schema):
             nodes.add(node)
     for name in result['changed_files']:
         local_path(root, name)
-    for name in result['evidence_paths'] + stage['required_paths']:
+    for name in result['evidence_paths']:
+        path = local_path(evidence_root or root, name)
+        require(path.is_file() and path.stat().st_size > 0, f'Missing or empty evidence: {name}')
+    for name in stage['required_paths']:
         path = local_path(root, name)
         require(path.is_file() and path.stat().st_size > 0, f'Missing or empty evidence: {name}')
     return sorted(nodes)
@@ -256,8 +259,9 @@ def run_pipeline(args, root, manifest):
             return
         require(not args.retry_publish, 'No publication is pending')
         for entry in accepted:
-            require(entry['pipeline_signature'] == signature, 'Pipeline controls changed; review/archive state before restarting')
-            require(entry['prompt_sha256'] == digest(root / stages[int(entry['stage_id'])]['prompt']), 'Accepted prompt changed')
+            if not args.reviewed_controls:
+                require(entry['pipeline_signature'] == signature, 'Pipeline controls changed; use --revalidate --reviewed-controls after explicit review')
+                require(entry['prompt_sha256'] == digest(root / stages[int(entry['stage_id'])]['prompt']), 'Accepted prompt changed')
         workspace_changed = bool(accepted and accepted[-1]['workspace_sha256'] != fingerprint(root))
         require(not workspace_changed or args.revalidate, 'Workspace changed since last acceptance; use --revalidate to rerun prior acceptance checks or review/archive state')
         start = stage_index(stages, args.from_stage) if args.from_stage else len(accepted)
@@ -278,25 +282,40 @@ def run_pipeline(args, root, manifest):
         if args.revalidate and accepted:
             nodes = set()
             for entry in accepted:
-                nodes.update(validate_result(root, stages[int(entry['stage_id'])], read_json(entry['result_path']), schema))
+                nodes.update(validate_result(root, stages[int(entry['stage_id'])], read_json(entry['result_path']), schema,
+                                             evidence_root=Path(entry['worktree'])))
             report = run_dir / 'revalidate-pytest.json'
             command = ['conda', 'run', '--no-capture-output', '-n', manifest['environment'], 'python',
                        str(root / 'prompts/scripts/pipeline_check_tests.py'), str(report), 'tests/test_reference.py', *sorted(nodes)]
-            require(run_command(command, root, run_dir / 'revalidate-pytest.log', args.test_timeout) == 0, 'Prior acceptance revalidation failed')
-            validate_test_report(read_json(report), sorted(nodes))
-            require(pipeline_signature(root) == signature, 'Revalidation changed pipeline controls')
             protected = accepted[-1]['reference_hashes']
             require({p.name: digest(p) for p in (root / 'reference').glob('*') if p.is_file()} == protected,
                     'Reference fixtures changed since acceptance; stop for source-backed review')
+            revalidation_env = dict(os.environ, PYTHONPATH=str(root / 'src') + os.pathsep + os.environ.get('PYTHONPATH', ''),
+                                    GROSS_DESIGN_CACHE_DIR=str(root / 'cache' / 'faults'))
+            require(run_command(command, root, run_dir / 'revalidate-pytest.log', args.test_timeout, env=revalidation_env) == 0, 'Prior acceptance revalidation failed')
+            validate_test_report(read_json(report), sorted(nodes))
+            require(pipeline_signature(root) == signature, 'Revalidation changed pipeline controls')
+            require({p.name: digest(p) for p in (root / 'reference').glob('*') if p.is_file()} == protected,
+                    'Reference fixtures changed since acceptance; stop for source-backed review')
+            if args.reviewed_controls:
+                write_json(run_dir / 'accepted-before-review.json', read_json(accepted_path))
+                for entry in accepted:
+                    entry['pipeline_signature'] = signature
+                    entry['prompt_sha256'] = digest(root / stages[int(entry['stage_id'])]['prompt'])
+                    entry['reviewed_controls_report'] = str(report)
             accepted[-1]['workspace_sha256'] = fingerprint(root)
             accepted[-1]['revalidation_report'] = str(report)
             write_json(accepted_path, accepted)
+        if args.revalidate_only:
+            print('Revalidation complete; no implementation session launched.', flush=True)
+            return
         for stage in stages[start:end + 1]:
             phase = run_dir / stage['id']
             phase.mkdir()
             feature = workflow.prepare(stage, resume=args.resume_feature)
             workspace = Path(feature['worktree'])
-            workspace_env = dict(os.environ, PYTHONPATH=str(workspace / 'src') + os.pathsep + os.environ.get('PYTHONPATH', ''))
+            workspace_env = dict(os.environ, PYTHONPATH=str(workspace / 'src') + os.pathsep + os.environ.get('PYTHONPATH', ''),
+                                 GROSS_DESIGN_CACHE_DIR=str(root / 'cache' / 'faults'))
             result_path = phase / 'result.json'
             before_status = digest(workspace / 'STATUS.md')
             before_head = git_output(workspace, 'rev-parse', 'HEAD')
@@ -380,11 +399,13 @@ def main(argv=None):
     parser.add_argument('--status', action='store_true')
     parser.add_argument('--revalidate', action='store_true', help='Rerun prior accepted gates after workspace edits, without new Codex calls for those phases')
     parser.add_argument('--resume-feature', action='store_true', help='Resume a preserved failed feature worktree after review')
+    parser.add_argument('--reviewed-controls', action='store_true', help='With --revalidate, adopt explicitly reviewed prompt/control changes after prior gates pass')
+    parser.add_argument('--revalidate-only', action='store_true', help='With --revalidate, stop after prior acceptance checks; never launch Codex')
     parser.add_argument('--retry-publish', action='store_true', help='Retry a validated merge/push without invoking Codex; stop afterwards')
     parser.add_argument('--allow-pilot', action='store_true')
     parser.add_argument('--campaign-budget', type=Path)
-    parser.add_argument('--stage-timeout', type=int, default=3600)
-    parser.add_argument('--test-timeout', type=int, default=600)
+    parser.add_argument('--stage-timeout', type=int, default=10800)
+    parser.add_argument('--test-timeout', type=int, default=1800)
     parser.add_argument('--sandbox', choices=['workspace-write', 'read-only', 'danger-full-access'], default='workspace-write')
     parser.add_argument('--model', help='Optional model override; otherwise use installed Codex configuration')
     parser.add_argument('--reasoning-effort', choices=['low', 'medium', 'high', 'xhigh', 'max'],
@@ -408,6 +429,8 @@ def main(argv=None):
             print('No stages launched. Pilot 12 requires --allow-pilot; campaign 13 requires --campaign-budget.')
             return 0
         require(args.stage_timeout > 0 and args.test_timeout > 0, 'Timeouts must be positive')
+        require(not (args.reviewed_controls or args.revalidate_only) or args.revalidate,
+                '--reviewed-controls and --revalidate-only require --revalidate')
         if args.preflight:
             preflight(root, manifest)
         else:

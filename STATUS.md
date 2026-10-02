@@ -1023,3 +1023,71 @@ Short rerun: from this worktree use the phase pytest command, noise exporter,
 independent reference audit, full pytest and pip check above. Stop after phase
 06. Next prompt: `prompts/07_inmodule_XX_Y.md`, only in a new
 controller-authorized session after acceptance/publication.
+
+
+## Validation/cache maintenance completed (2026-10-02)
+
+User-authorized preparation before resuming phase 07; scope prompt:
+`prompts/maintenance_validation_cache.md`. Branch `feature/validation-cache`,
+worktree `.codex-pipeline/tour-de-gross/worktrees/validation-cache`, based on clean
+validated main `02f7f2f`. Canonical main was kept clean during implementation.
+The original failed phase-07 worktree and all its edits/logs remain preserved.
+
+Added explicit two-level fault caching: physical joint signatures reusable across
+profiles, and structural models reusable across p. Keys include circuit/records,
+locations, population policies, relevant implementation bytes and library versions.
+Cold models are validated before atomic publication; warm reads verify identity
+and all checksums. Interrupted/corrupt entries are quarantined/rebuilt. Test
+passes are never cached. The controller supplies a canonical shared cache.
+
+Native artifacts preserve sparse H/Lambda, all copy/admission/group/probability
+maps and sparse signature set-bit arrays, with non-pickle, read-only mmap loads.
+The noise exporter uses content-addressed reusable numeric artifacts by default;
+expanded JSON/NPZ is opt-in. Tiny negative tests cover invalidation, interrupted
+writes, corrupted matrices/signatures, p changes, logical-only and joint-zero
+columns. No correlations, copies, detectors or observables were dropped.
+
+Large benchmark flow validation now uses strict Stim determinacy and raw
+reference signs; the independent signed tracker remains available for small
+oracles. Constant wrong signs and random/offset-corrupt parities are rejected.
+Removed duplicate first-round tableau checks and repeated large random seeds.
+Large fault strata retain every phase/gate/role and first/middle/last round, using
+four representative joint words; unchanged tiny gate/Bell fixtures still exhaust
+all words. The optional all_words audit remains. Arbitrary sample-count thresholds
+were replaced by actual stratum coverage. No unproved distance claim was added.
+
+Remaining prompts 07--13 and the common footer now require smallest-failure-first,
+then affected-phase, then one final sequential regression/export; no concurrent
+identical heavy jobs. Default phase/test timeouts are 10800s/1800s (3h/30min).
+Pilot/campaign budgets and fail-closed O1--O5 are unchanged. Reviewed control
+migration reruns prior gates, archives old accepted records and can stop without
+launching Codex. A revalidation bug was fixed: local prior evidence is checked
+in its retained original worktree, while tests execute on current main.
+
+Actual validation, all Python in tour_de_gross with PYTHONPATH=$PWD/src:
+
+- `python -m pytest -xq tests/test_fault_cache.py --durations=10`: 17 passed.
+- `python -m pytest -xq tests/test_fault_cache.py tests/test_pipeline.py tests/test_ideal_protocol.py tests/test_physical_scheduling.py --durations=10 --junitxml=evidence/validation_cache/focused.xml`: 97 passed in 75.88s.
+- `python -m pytest -xq tests/test_fault_cache.py tests/test_noise_and_fault_model.py --durations=10 --junitxml=evidence/validation_cache/cache-noise.xml`: 25 passed in 34.61s.
+- `python -m pytest -xq --durations=15 --junitxml=evidence/validation_cache/final.xml`: 212 passed in 250.82s, no skips/xfails. This preceded the last controller-only retained-evidence fix.
+- `python -m pytest -xq tests/test_pipeline.py --junitxml=evidence/validation_cache/controller-final.xml`: 53 passed in 26.44s on final controller source.
+- `python tools/benchmark_fault_cache.py --output evidence/validation_cache/c10-cache-timing.json`: cold/warm equality on gross memory C10, N=218160. Cold 13.10s, warm 1.85s, p-only change 2.73s; harness/locations separately 12.80s. First numeric export 0.80s, intact reuse 0.32s. Numeric output 26383199 bytes versus the retained dense-signature development baseline 60672700 bytes. These timings do not establish XX/Y or end-to-end pipeline speed.
+- `python tools/audit_noise_and_fault_model.py --output-dir evidence/validation_cache/artifacts --cache-dir /home/quantum_teresheys/workspace/tour_de_gross_design_bundle/cache/faults`: completed memory/X1 C10, all three strict noise-profile DEMs, two independent populations each and bounded independent fault strata; all indexed file sizes/hashes verified. No rates were sampled.
+- `python tools/audit_reference.py --output evidence/validation_cache/independent-audit.json`: exactly matches delivered independent audit.
+- `python -m pip check`: no broken requirements. Feature import path/Stim 1.16.0 saved in imports.txt.
+- `bash -n` for all pipeline shell scripts; `git diff --check`; normal read-only fetch confirmed synchronized main.
+
+Evidence is local under `evidence/validation_cache/`, including each actual log/XML,
+C10 dense-baseline and final timing JSON, native artifacts/index, independent audit,
+pip/import checks and the recovery-preparation script. Small tracked report:
+`validation/maintenance_validation_cache.json`. No external checkout/dependency or
+scientific fixture was modified. No Monte Carlo, solver, cluster, next model phase
+or tmux restart ran. O1--O5 and phase-07 final acceptance remain unresolved.
+
+Publication at handoff preparation: validated feature candidate, normal commit,
+main merge and atomic push next; actual outcome recorded in the local
+`evidence/validation_cache/publication.json`. Preserve the failed worktree. Carry
+its source into a fresh reviewed-main worktree and revalidate prior controller
+gates with `--revalidate --reviewed-controls --revalidate-only`, without launching
+an implementation session. Next phase is still `prompts/07_inmodule_XX_Y.md`;
+stop after this maintenance task. Phase 07 has not passed acceptance.
