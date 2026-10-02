@@ -148,6 +148,7 @@ root=pathlib.Path(args[args.index('-C')+1])
 phase=re.search(r'Complete only phase (\\d\\d)',prompt).group(1)
 mode=os.environ.get('FAKE_MODE','success')
 common=pathlib.Path(subprocess.check_output(['git','rev-parse','--git-common-dir'],cwd=root,text=True).strip()).resolve()
+(common.parent/'.codex-pipeline/tour-de-gross/last-codex-args.json').write_text(json.dumps(args))
 with (common.parent/'.codex-pipeline/tour-de-gross/submitted.txt').open('a') as f:f.write(phase+'\\n')
 if mode=='nonzero':sys.exit(7)
 if mode=='timeout':time.sleep(10)
@@ -423,3 +424,20 @@ def test_commit_hook_mutation_is_not_merged(repository, fake_tools):
     assert result.returncode == 1 and 'Commit hooks changed' in result.stderr
     assert not (repository / pipeline.STATE / 'accepted.json').exists()
     assert not subprocess.check_output(['git', 'ls-remote', 'origin', 'refs/heads/feature/*'], cwd=repository, text=True)
+
+
+def test_sol_high_reasoning_forwarded_and_recorded(repository, fake_tools):
+    result = invoke(repository, fake_tools, '--through', '00', '--model', 'gpt-6.1-sol', '--reasoning-effort', 'high')
+    assert result.returncode == 0, result.stdout + result.stderr
+    args = pipeline.read_json(repository / pipeline.STATE / 'last-codex-args.json')
+    assert args[args.index('--model') + 1] == 'gpt-6.1-sol'
+    assert 'model_reasoning_effort="high"' in args
+    manifest = pipeline.read_json(next((repository / pipeline.STATE / 'runs').glob('*/run.json')))
+    assert manifest['model_override'] == 'gpt-6.1-sol'
+    assert manifest['reasoning_effort_override'] == 'high'
+
+
+def test_hard_reasoning_rejected_before_launch(repository, fake_tools):
+    result = invoke(repository, fake_tools, '--reasoning-effort', 'hard', '--through', '00')
+    assert result.returncode == 2 and 'invalid choice' in result.stderr
+    assert not submission_file(repository).exists()
