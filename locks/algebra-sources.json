@@ -1,0 +1,35 @@
+{
+  "scope": "phase 01 independently written algebra; donor used only as a matrix oracle; no copied or modified source",
+  "paper": "arXiv:2506.03094v1 PDF Eqs. (27)--(38); PDF hash in locks/paper-sources.json",
+  "donor": {
+    "repo": "qLDPCOrg/qLDPC",
+    "url": "https://github.com/qLDPCOrg/qLDPC",
+    "directory": "/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/external_libs/qLDPC",
+    "commit": "60fc2cf465e880d6e64afacc933d33455d787bf4",
+    "license": "Apache-2.0; qLDPC Authors/Infleqtion attribution in COPYRIGHT",
+    "files": {
+      "src/qldpc/codes/quantum.py": {
+        "sha256": "77ea6959f4e3a7f2dae6aef0d8ae9aad798cec192a7212ddd66ff3403e3634ba",
+        "bytes": 125134,
+        "git_blob": "00f28e469a9efb0d4253f083100695bc72b4cdbb"
+      },
+      "LICENSE": {
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "bytes": 11358,
+        "git_blob": "d645695673349e3947e8e5ae42332d0ac3164cd7"
+      },
+      "COPYRIGHT": {
+        "sha256": "7088a3caed41e3792395b285059a1fc02a3ed397f3a3f23959ec48b520bc5677",
+        "bytes": 327,
+        "git_blob": "1c72423339f8ac4282b9d0e93da794d0c71f518f"
+      }
+    }
+  },
+  "independent_oracles": {
+    "tools/audit_reference.py": "0ec97065cc32e3e7ce5e646e7c13e283aa1401cc19806d53356742b5f3e6b39b",
+    "evidence/algebra_audit.json": "0de5709b9e3e2d044a41dc790507fdbf4e4275a32703c77e586b99dab8495ee9",
+    "SHA256SUMS.delivery.txt": "60b2660c17d69d3d19c0f2db592fc7229e3d0f7295c9367f2170cf969a15a26b",
+    "reference/gross.json": "937872cf0cb56785484d0622836c1711e4ece1a1c1b8bafb64a7852535341080",
+    "reference/two_gross.json": "9aaf8a1515a3021c217d6735932c07f3e5293b9af94818aa83f13e46c6faddd1"
+  }
+}

@@ -88,7 +88,11 @@ Implemented in the separate `feature/model-reasoning` worktree. Verification: `c
 
 ## Next action
 
-Phase 00 is complete for source/import auditing and algebra-only declarations. Next implementation prompt is `prompts/01_algebra_and_codes.md`, only in a new controller-authorized session after phase-00 acceptance and publication. This session stops at 00; strict paper-equivalent sampling remains blocked by O1--O5.
+Phase 01 is complete for exact signed/GF(2) algebra, immutable BB code data,
+convention adapters and logical shift quotients. Next implementation prompt is
+`prompts/02_graphs_and_deformation.md`, only in a new controller-authorized
+session after phase-01 acceptance and publication. This session stops at 01;
+strict paper-equivalent sampling remains blocked by O1--O5.
 
 ## Phase 00 source audit completed (2026-10-02)
 
@@ -197,3 +201,101 @@ Additionally ran `conda run --no-capture-output -n tour_de_gross python /tmp/pha
 O1--O5 remain open as documented in BACKEND_AUDIT: inter K23 generators; historical Relay semantics/priors/columns; physical schedule/shift/lowering/boundaries; primitive population/multiplicity/admission; original data/grids/bootstrap. No original Figure-15 physical surgery/shift release was established, and the memory-builder reuse license remains unresolved. These items prevent strict paper-equivalent sampling; none is assumed resolved or required to complete this source/import/declaration phase. Optional compiler/GAP/integration backends, production circuits, solvers and sampling were not run.
 
 Publication outcome: **not attempted; controller owns acceptance, commit, merge and atomic push**. This session stops after phase 00. Next prompt is `prompts/01_algebra_and_codes.md` only in a subsequent authorized session after controller acceptance/publication; this run authorizes phases through 00 only. To reproduce validation, rerun the first four commands above from the same feature worktree with the preserved environment/checkouts. No later phase was started.
+
+## Phase 01 algebra and codes completed (2026-10-02)
+
+Branch: `feature/01_algebra_and_codes`. Worktree:
+`/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/.codex-pipeline/tour-de-gross/worktrees/01_algebra_and_codes`.
+Main checkout: `/home/quantum_teresheys/workspace/tour_de_gross_design_bundle`.
+Publication outcome: **not attempted; controller owns acceptance rerun, commit,
+merge and atomic push**. The feature worktree was initially clean. No reference,
+AGENTS, pipeline-control or independent-audit edits, external patches, network
+writes, solvers, physical scheduling, sampling or cluster jobs occurred.
+
+Implemented strict GF(2) rank/RREF/kernel/solve/inverse/span and centralizer
+quotient primitives; signed Pauli multiplication/dagger/commutation and Clifford
+conjugation; immutable `BBCodeSpec`/`CodeData`, block-qualified qubit/check IDs,
+canonical JSON identities and validated serialization; frozen gross/two-gross
+loading and reconstruction of the four base logicals and all twelve pairs;
+explicit independently verified qubit/X-check/Z-check convention maps; and full
+24x24 physical-support shift actions with exact signed stabilizer witnesses.
+The independent delivered audit remains unchanged. The 18-qubit debugging
+fixture is a local 3x3 BB construction with ranks 7/7 and four derived pairs,
+labels 1--4; it explicitly rejects X7 and claims no distance or LPU geometry.
+
+Provenance and semantics are in `docs/ALGEBRA_CONVENTIONS.md` and
+`locks/algebra-sources.json`. New implementation code is independently written;
+no donor implementation was copied. Actual pinned qLDPC BBCode matrices were
+constructed and checked in both x/y and y/x dictionary orders, including the
+nonidentity column/check permutations. The inspected source is
+`src/qldpc/codes/quantum.py` at commit
+`60fc2cf465e880d6e64afacc933d33455d787bf4`, Git blob
+`00f28e469a9efb0d4253f083100695bc72b4cdbb`; SHA-256 and inspected Apache-2.0
+license/COPYRIGHT hashes are recorded. The source checkout remains in the
+canonical shared external directory. No SlidingWindowDecoder code was reused.
+The paper was read from the already downloaded pinned v1 PDF, specifically
+Eqs. (27)--(38); no source-backed fixture correction was identified.
+
+Commands actually run from this feature worktree in `tour_de_gross`:
+
+```bash
+conda run --no-capture-output -n tour_de_gross python -m pip install --no-build-isolation -e .
+conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_algebra.py tests/test_codes.py tests/test_shifts.py
+conda run --no-capture-output -n tour_de_gross python tools/audit_algebra.py --output evidence/phase01/code-algebra.json
+conda run --no-capture-output -n tour_de_gross python tools/audit_reference.py --output evidence/phase01/independent-audit.json
+conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_algebra.py tests/test_codes.py tests/test_shifts.py tests/test_reference.py tests/test_pipeline.py tests/test_backends.py tests/test_source_audit.py tests/test_manifest.py
+conda run --no-capture-output -n tour_de_gross python -m pytest --collect-only -q tests/test_algebra.py tests/test_codes.py tests/test_shifts.py
+conda run --no-capture-output -n tour_de_gross python -m pip check
+conda run --no-capture-output -n tour_de_gross python /tmp/phase01_handoff.py
+git diff --check
+```
+
+Also ran two bounded `conda run --no-capture-output -n tour_de_gross python -`
+heredocs: an initial rank/shift/qLDPC matrix/debug-fixture probe (all successful),
+and the read-only source-hash/provenance lock writer. Read-only shell inspection
+used `cat`, `rg`, `sed`, `git status/branch/rev-parse/ls-tree` for the contracts,
+local paper text, delivered oracle and pinned donor. The handoff helper verifies
+protected bytes against clean main, external tree cleanliness, import paths,
+source/PDF hashes, exact collected node coverage, evidence and the unchanged
+controller's result schema/gate validation; it does not run or publish a phase.
+
+Actual validation: initial **24 passed in 49.67s**; after adding provenance and
+shift-certificate serialization/negative cases, final **111 passed in 83.53s**,
+with no skips/xfails. This is 26 new phase tests plus all 85 phase-00/reference/
+pipeline regressions. A01 independently checks all signed one-/two-qubit products
+and supported Clifford conjugations against dense matrices, Hermitian squares,
+and all 2x3 GF(2) maps/RHS vectors. A02 checks 66/66 and 138/138 ranks, all twelve
+canonical pairs, serialized identities, block separation, both actual donor
+orders and independent check-row maps. A06 checks full X/Z actions, signed
+quotient witnesses, inverses, commuting x/y shifts, sixth powers and row/column
+conventions. Physical x^6 remains a nonidentity permutation on ell=12 while
+its logical quotient is identity. Negative cases reject imaginary checks,
+nonbinary inputs, malformed code/register/schema/convention data, corrupted
+frozen fixtures, incorrect data/check permutations and invalid shift inputs.
+No implementation/validation test failed. Pip reports no broken requirements;
+whitespace checking passes. Existing backend regressions retain their tiny
+phase-00 scope; they do not establish production Stim/Relay integration here.
+
+Nonempty local evidence: `evidence/phase01/{pytest-phase01.txt,pytest-final.txt,
+collected-nodeids.txt,code-algebra.json,independent-audit.json,audit-algebra.txt,
+audit-reference.txt,pip-check.txt,guards.json,acceptance-gates.json,result.json,
+handoff-validation.json}`. Algebra evidence includes complete serialized code
+data and signed shift span witnesses. The independent audit matches the delivered
+JSON exactly. All four gates A01/A02/A06/negative_tests map to existing exact
+pytest node IDs in `acceptance-gates.json` and the completion JSON. Generated
+evidence remains local/ignored under the existing policy.
+
+O1--O5 remain unresolved: O1 inter-module published K23 observable generators;
+O2 historical Relay semantics/priors/columns; O3 physical scheduling, shift
+representative, lowering and boundaries; O4 primitive multiplicities/admission;
+O5 original data/counts/grids/bootstrap. None is assumed resolved or required
+for this independent algebra phase. Strict paper manifests remain blocked by
+all five. Donor memory-builder reuse licensing also remains open. The new
+18-qubit fixture has no claimed code-distance lower bound. No physical circuit,
+ideal surgery instrument or Figure-15 sampling is implemented or claimed here.
+
+Short rerun: execute the two audit commands, the full eight-file pytest command
+and pip check above from this worktree in `tour_de_gross`. Stop after phase 01.
+Next prompt: `prompts/02_graphs_and_deformation.md` only in a subsequent
+controller-authorized session after phase-01 validation/publication. No later
+phase was started by this session.
