@@ -10,7 +10,7 @@ The theory/design report, module architecture, reproduction contract, validation
 
 ## Not implemented / not run
 
-Phase 04 supplies physical noiseless gross X1 circuits, single/Bell primitives and independently validated schedules. Phase 05 supplies an exact signed detector/observable compiler and ideal gross memory/X1 benchmark harness. Phase 06 supplies three distinct noise channels, primitive catalogues, joint H/Lambda matrices and gross memory/X1 audit exports. Phases 07--08 now supply direct gross XX/Y and Fig. 13(b) two-block C10 instruments, independent noisy harnesses and compact joint fault exports; phase 08 uses the full named K47 profile and leaves published inter K23 unavailable on O1. Phase 09 supplies physical gross shifts; phase 10 exercises the shared implementation on two-gross C18 idle/shift/in-module surgery and explicit inter C17/C18 extensions, with bounded A.8 inputs prepared but no solver launched. No distance proof, reproduction Relay adapter or Monte Carlo reproduction has been completed. The original delivery did not install or execute Stim, qLDPC or Relay; phase 00 subsequently pinned and tested tiny backend APIs. Phases 01--02 implemented signed algebra and deformations; phase 03 validates an ideal measurement instrument through gross X1, with explicit limits recorded below. The delivered algebra audit is not a circuit-distance certification and its rank calculations are phase-blind.
+Phase 04 supplies physical noiseless gross X1 circuits, single/Bell primitives and independently validated schedules. Phase 05 supplies an exact signed detector/observable compiler and ideal gross memory/X1 benchmark harness. Phase 06 supplies three distinct noise channels, primitive catalogues, joint H/Lambda matrices and gross memory/X1 audit exports. Phases 07--08 now supply direct gross XX/Y and Fig. 13(b) two-block C10 instruments, independent noisy harnesses and compact joint fault exports; phase 08 uses the full named K47 profile and leaves published inter K23 unavailable on O1. Phase 09 supplies physical gross shifts; phase 10 exercises the shared implementation on two-gross C18 idle/shift/in-module surgery and explicit inter C17/C18 extensions, with bounded A.8 inputs prepared but no solver launched. Phase 11 supplies a source-pinned current-Relay joint adapter with float32/float64 fixed-vector validation, auditable priors/parameters, explicit graph profiles and counted failures. Historical Table-7 compatibility remains unresolved on O2. No distance proof or Monte Carlo reproduction has been completed. The original delivery did not install or execute Stim, qLDPC or Relay; phase 00 subsequently pinned and tested tiny backend APIs. Phases 01--02 implemented signed algebra and deformations; phase 03 validates an ideal measurement instrument through gross X1, with explicit limits recorded below. The delivered algebra audit is not a circuit-distance certification and its rank calculations are phase-blind.
 
 ## Specification blockers for exact reproduction
 
@@ -88,12 +88,12 @@ Implemented in the separate `feature/model-reasoning` worktree. Verification: `c
 
 ## Next action
 
-Phase 10 supplies shared two-gross C18 idle/shift and in-module surgery,
-explicit inter C17/C18 extension profiles, joint fault artifacts and bounded
-A.8 inputs. Next prompt: `prompts/11_relay_adapter.md`, only in a new
-controller-authorized session after phase-10 acceptance/publication.
-This session stops at 10. Strict paper-equivalent sampling remains blocked
-by O1--O5; no later phase or Git publication was run.
+Phase 11 supplies a validated current-Relay joint adapter; historical Table-7
+compatibility remains open. Next prompt: `prompts/12_sampling_and_analysis.md`,
+only after phase-11 controller validation/publication and a new explicit
+authorization beyond the current through-11 interval, with its pilot budget.
+This session stops at 11. Strict paper-equivalent sampling remains blocked
+by O1--O5; no later phase, pilot or Git publication was run.
 
 ## Phase 00 source audit completed (2026-10-02)
 
@@ -1767,3 +1767,150 @@ timeout 1800s conda run --no-capture-output -n tour_de_gross python tools/audit_
 
 Next prompt: `prompts/11_relay_adapter.md`, submitted by the controller only
 after phase-10 validation/publication. This session stops at phase 10.
+
+## Phase 11 joint Relay integration completed (2026-10-03)
+
+Branch: `feature/11_relay_adapter`. Worktree:
+`/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/.codex-pipeline/tour-de-gross/worktrees/11_relay_adapter`.
+Main checkout: `/home/quantum_teresheys/workspace/tour_de_gross_design_bundle`,
+verified clean. The initial feature worktree was clean; no existing edits were
+replaced. Publication: **not attempted; controller owns rerun, commit, merge and
+atomic push**. External source remains unmodified in the canonical shared
+`/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/external_libs`.
+No external fork was needed for this thin binding and independent mathematical
+oracle. No reference fixtures, AGENTS or pipeline controls changed.
+
+Implemented `bench/relay.py`: joint sparse H, fixed priors and named Lambda
+rows; audited backend/binary pin; float32/float64; gamma0/explicit or seeded
+gammas; maximum sets/iterations; supported stopping and minimum-prior-cost
+candidate selection; independent Hc=sigma verification; counted malformed,
+residual-syndrome, nonconvergence and logical failures with no discard/fallback.
+Separate `preserve_columns` and `joint_signature_xor` decoder-graph profiles
+retain an explicit input-to-decoder map. Sampling still addresses the original
+admitted copies. Group priors XOR-compose the fixed input vector rather than
+following the sampling probability. All joint X/Z and logical-only columns
+remain represented; equal H with different Lambda cannot be merged.
+
+`validation/relay.py` is a bounded independent recurrence oracle, derived from
+Relay v1 PDF Eqs. (1)--(4)/Algorithm 1; no donor code copied. Tests compare every
+accessible first-leg prefix and selected returned posteriors/corrections,
+candidate cost replacement/ties, caps and stopping on a four-variable trap.
+Later-leg intermediate states are oracle-only because the binding does not
+expose them. Explicit gamma row indexing starts at leg 1, modulo row count.
+Seeded streams hash (root seed, stable shot ID) into independent Rust seeds and
+reconstruct each shot's backend; scalar/batch/reordered worker allocation
+agree, with distinct random posterior outputs for the same syndrome under
+independent IDs. Explicit mode exercises the actual native detailed batch API.
+
+`docs/RELAY_ADAPTER.md`, `locks/relay-adapter-sources.json` and
+`tools/audit_relay_adapter.py` document and verify licenses, seven exact source
+blobs/hashes, installed build, raw Table-7 data and actual current settings.
+**Source-backed prose correction:** phase-00 documentation described the
+alpha default as a ramp; actual source has alpha=None -> 1 and alpha=0 -> ramp.
+The new documentation and a ramp vector record the correction; fixtures are
+unchanged. The historical ewainit/gamma/rng_width/extra max_iter/prior/column
+mapping remains unproved. A historical or paper-exact adapter request fails
+closed on O2. No guessed historical translation is exposed.
+
+Decoder priors are fixed and copied/read-only, with no weight/p update API.
+Evidence uses a fixed .003 vector at sampling p=.03 and .04. This is an
+independent policy, not a recovered paper prior. Uniform scaling is homogeneous
+in exact real arithmetic for the unclipped equations. Two finite-prior vectors
+are checked for both precisions, without asserting universal floating-point
+invariance. Manifests explicitly retain this limitation.
+
+Changed coverage: five meaningful phase nodes cover E03/E04/E05 and material
+negative cases, using one shared small Bell-reference fault fixture. Fixed
+injections cover no fault, X/Y/Z and an undetectable logical-only fault. These
+are deterministic test vectors, not random sampling or rate observations.
+The circuit export scores all five vectors: one observable failure (the
+logical-only fault), no discarded shot, invalid return or nonconvergence.
+Negative vectors independently demonstrate contradictory/inconsistent returns
+and an unsatisfiable syndrome with capped nonconvergence.
+
+Completed runs, all using `tour_de_gross` and feature imports: first negative
+**1 passed in 0.58s**; initial affected phase **5 in 0.31s**; strengthened
+recurrence **1 in 0.28s**; strengthened stream test **1 in 0.65s**; affected
+stable **5 in 0.67s**; source-build negative **1 in 0.64s**; final affected
+**5 in 0.33s**. One final scoped regression **115 passed in 31.76s**, no skips
+or xfails, then one sequential artifact export passed. No failing/interrupted
+run or expensive retry occurred. The regression includes phase 11, reference,
+pipeline, backend/source/manifest, fault-cache/storage and small independent
+signed Bell/gate and joint-population checks. Unchanged large C10/C18 physical
+harnesses were not re-exhausted: no physical/noise implementation changed.
+Pipeline tests use isolated temporary repositories/fake commands, not project
+publication. Compilation and pip dependency consistency passed.
+
+Compact export uses `bench.artifacts.export_fault_model` plus checksummed native
+arrays for decoder priors/gammas, grouped CSC H/Lambda and variable maps. The
+39 nonempty files in `export/index.json` have verified hashes and source
+identities; no expanded catalogue JSON/NPZ or repeated ZIP writes were added.
+Pure uncached tiny model: **0.002802s**; initial existing-key read **0.003897s**;
+warm **0.003700s**; changed-p **0.003504s**; native export **0.003253s**. The
+initial numerical key was already present from phase tests. Warm/changed-p H,
+Lambda, signatures and every copy/admission/group map agree; only probabilities
+change. Adapter/test/doc changes do not invalidate physical fault keys. The
+regression executes inherited cold/warm, physical/implementation invalidation,
+corruption and interruption tests; cached numerical arrays never cache a test
+pass. Local cache was explicitly `$PWD/cache/faults`, within the writable
+feature worktree, rather than the controller cache outside writable roots.
+
+Actual validation commands (the shell invocations prepended
+`PYTHONPATH="$PWD/src" GROSS_DESIGN_CACHE_DIR="$PWD/cache/faults"` where
+applicable; outputs were saved under `evidence/phase11/`):
+
+```bash
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_relay_adapter.py::test_E03_negative_returns_and_nonconvergence --junitxml=evidence/phase11/negative-first.xml
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_relay_adapter.py --durations=6 --junitxml=evidence/phase11/affected.xml
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_relay_adapter.py::test_E04_fixed_gamma_recurrence_candidates_and_prior_policy --junitxml=evidence/phase11/recurrence-strengthened.xml
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_relay_adapter.py::test_E05_scalar_native_batch_and_independent_streams --junitxml=evidence/phase11/streams-strengthened.xml
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_relay_adapter.py --durations=6 --junitxml=evidence/phase11/affected-stable.xml
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_relay_adapter.py::test_negative_parameters_profiles_and_graphs --junitxml=evidence/phase11/backend-pin-negative.xml
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_relay_adapter.py --durations=6 --junitxml=evidence/phase11/affected-final.xml
+ timeout 1800s conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_relay_adapter.py tests/test_backends.py tests/test_source_audit.py tests/test_manifest.py tests/test_reference.py tests/test_pipeline.py tests/test_fault_cache.py tests/test_noise_and_fault_model.py::test_D03_exhaustive_gate_templates_and_joint_Bell_faults tests/test_noise_and_fault_model.py::test_E02_admission_logical_only_zero_columns_hyperedges_and_joint_grouping tests/test_noise_and_fault_model.py::test_negative_profiles_admission_maps_and_corrupt_signatures --durations=12 --junitxml=evidence/phase11/regression-final.xml
+conda run --no-capture-output -n tour_de_gross python tools/audit_relay_adapter.py --output-dir evidence/phase11/export --cache-dir "$PWD/cache/faults"
+conda run --no-capture-output -n tour_de_gross python -m compileall -q src/gross_design_bandle/bench/relay.py src/gross_design_bandle/validation/relay.py tools/audit_relay_adapter.py
+conda run --no-capture-output -n tour_de_gross python -m pip check
+conda run --no-capture-output -n tour_de_gross python evidence/phase11/validate_handoff.py
+git diff --check
+git diff --exit-code -- reference AGENTS.md prompts/scripts
+```
+
+Three bounded conda Python `-c` diagnostic probes examined trap/candidate
+trajectories before the strengthened test vectors; they ran no solver or
+Monte Carlo. A conda Python stdin provenance script wrote the new source lock
+from the inspected pinned Git blobs. The exporter independently re-verifies
+those blobs and the retained Table-7 fixture hash; neither diagnostic is
+substituted for an acceptance test.
+
+Evidence: `evidence/phase11/` scoped JUnit files and `.txt` logs,
+`regression-final.xml`, `regression-final.txt`, `export.txt`, `pip-check.txt`,
+`acceptance-gates.json`, `handoff-checks.json`; `export/index.json`,
+`export/source-verification.json`, `export/cache-and-timing.json`,
+`export/small-circuit-scoring.json`, both precision recurrence artifacts,
+`export/decoder_inputs/`, `export/grouped_decoder_inputs/`, and native
+`export/small_Bell_model/` arrays/manifests. Exact gates name all five existing
+pytest nodes; all are present and passed in the final regression.
+
+O1: published inter K23 named rows unresolved. O2: original historical
+Table-7 executable/parameters, priors and column policy unresolved; only the
+current implementation is verified. O3: original schedule/lowering/shift and
+boundary choices unresolved. O4: original Table-6 primitive population and
+admission/merging unresolved. O5: original grids/counts/bootstrap data unresolved.
+These do not require an assumption for this independently labeled adapter.
+Strict paper configuration remains closed. No integer/fixed-point/historical
+Relay, optional compiler, statistical campaign, solver, cluster job, network
+write or later phase was executed.
+
+Short reproduction (no sampling or subsequent phase):
+
+```bash
+export PYTHONPATH="$PWD/src"
+export GROSS_DESIGN_CACHE_DIR="$PWD/cache/faults"
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_relay_adapter.py
+conda run --no-capture-output -n tour_de_gross python tools/audit_relay_adapter.py --output-dir evidence/phase11/export --cache-dir "$GROSS_DESIGN_CACHE_DIR"
+```
+
+Next prompt is `prompts/12_sampling_and_analysis.md`, requiring a new explicit
+phase-12 authorization and the bounded pilot context after controller
+acceptance/publication. The present through-11 authorization ends here.
