@@ -36,7 +36,19 @@ def check_tableau(schedule, check, *, composite=False):
     expected = to_stim_pauli(check.pauli,register)
     if backward != expected:
         raise ValueError(f'physical readout measures wrong signed Pauli: {check.id}')
-    if tableau(expected)!=expected:
+    # A Bell-mediated check is nondemolition on the prepared ancilla
+    # subspace. Its bare data Pauli can acquire Z on BOTH Bell halves under
+    # the interactions; after undoing Bell preparation this is a known +Z
+    # reset factor. Requiring a bare operator identity on arbitrary ancilla
+    # inputs would incorrectly reject such a valid joint measurement.
+    preserved = tableau.inverse()(expected)
+    for o in ops:
+        if o.gate in ('R','RX'):
+            q = register.index(o.qubits[0])
+            if preserved[q] not in (0,1 if o.gate=='RX' else 3):
+                raise ValueError('physical check does not preserve its measured Pauli on prepared ancillas')
+            preserved[q] = 0
+    if preserved != expected:
         raise ValueError('physical check does not preserve its measured Pauli')
     return {'check_id':check.id,'signed_readout_matches':True,'nondemolition':True,
             'oracle':'exact Stim signed Clifford tableau, inverse readout propagation'}

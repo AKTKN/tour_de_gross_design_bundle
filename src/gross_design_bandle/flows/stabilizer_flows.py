@@ -44,17 +44,27 @@ class SignedTracker:
         self.measurements = []
         self.constraints = []
         self.observables = {}
+        self._known_rows = None
+        self._known_basis = None
 
     def known(self, p):
-        basis = {}
-        for row in self.rows:
-            mask = row.x | (row.z << self.n)
-            while mask:
-                pivot = mask.bit_length()-1
-                if pivot not in basis:
-                    basis[pivot] = row
-                    break
-                row = row.mul(basis[pivot]); mask = row.x | (row.z << self.n)
+        # Consecutive deterministic readouts do not change the signed group.
+        # Compare the complete immutable rows (including phase/affine value),
+        # so resets, gates, random measurements and direct oracle row edits all
+        # invalidate the cache without relying on a mutation counter.
+        rows = tuple(self.rows)
+        if rows != self._known_rows:
+            basis = {}
+            for row in rows:
+                mask = row.x | (row.z << self.n)
+                while mask:
+                    pivot = mask.bit_length()-1
+                    if pivot not in basis:
+                        basis[pivot] = row
+                        break
+                    row = row.mul(basis[pivot]); mask = row.x | (row.z << self.n)
+            self._known_rows, self._known_basis = rows, basis
+        basis = self._known_basis
         residual = p
         mask = residual.x | (residual.z << self.n)
         while mask:

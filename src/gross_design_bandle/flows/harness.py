@@ -1,4 +1,4 @@
-"""A.7-style deterministic gross memory/X1 harness around physical bodies.
+"""A.7-style deterministic gross memory/X1/XX/Y harness around physical bodies.
 
 Ideal encoding, final MPP closure and reference qubits are explicit boundaries.
 The physical body retains the phase04 native schedule. A raw instrument API is
@@ -11,11 +11,11 @@ import numpy as np
 from gross_design_bandle.algebra import gf2
 from gross_design_bandle.surgery.frame import Parity
 from gross_design_bandle.circuits.memory import memory_schedule
-from gross_design_bandle.circuits.protocol import build_physical_x1
+from gross_design_bandle.circuits.protocol import build_physical_inmodule
 from .records import RecordProgram
 from .observables import LogicalBasisAdapter, correlation
 from .boundaries import input_boundary, mpp
-from .stabilizer_flows import verify_deterministic
+from .stabilizer_flows import verify_deterministic, _verify_reference_signs
 
 
 def xor(parities):
@@ -55,9 +55,9 @@ class BenchmarkHarness:
     physical_body: stim.Circuit
     split_mode: str
 
-    def validate(self, *, flow_oracle='stim_reference'):
-        if flow_oracle not in ('stim_reference', 'signed_affine'):
-            raise ValueError('unknown flow oracle')
+    def validate(self, *, flow_oracle="stim_reference"):
+        if flow_oracle not in ("signed_affine", "stim_reference"):
+            raise ValueError("unknown exact flow oracle")
         cert = self.logical_generators
         expected = set(range(cert['rank']))
         emitted = {int(i.gate_args_copy()[0]) for i in self.circuit.flattened() if i.name == 'OBSERVABLE_INCLUDE'}
@@ -71,18 +71,14 @@ class BenchmarkHarness:
         if len(self.outcome_ids) != self.circuit.num_measurements or len(set(self.outcome_ids)) != len(self.outcome_ids):
             raise ValueError('symbolic measurement ledger mismatch')
         dem = self.circuit.detector_error_model(allow_gauge_detectors=False)
-        if flow_oracle == 'stim_reference':
-            from .stabilizer_flows import _verify_reference_signs
-            flows = _verify_reference_signs(self.circuit)
-        else:
-            flows = verify_deterministic(self.circuit)
+        flows = (verify_deterministic if flow_oracle == "signed_affine" else _verify_reference_signs)(self.circuit)
         if dem.num_observables != self.logical_generators['rank']:
             raise ValueError('strict DEM observable rank/count mismatch')
         return {'exact_flows': flows, 'strict_dem_detectors': dem.num_detectors,
                 'strict_dem_observables': dem.num_observables, 'gauge_workaround': False}
 
     def to_dict(self):
-        return {'schema_version': 1, 'scope': 'noiseless single-block A.7-style gross memory/X1 benchmark',
+        return {'schema_version': 1, 'scope': 'noiseless single-block A.7-style gross memory/X1/XX/Y benchmark',
             'register': list(self.register), 'symbolic_outcomes': list(self.outcome_ids),
             'annotations': list(self.annotations), 'logical_generators': self.logical_generators,
             'boundaries': self.boundary_policy, 'split_mode': self.split_mode,
@@ -104,8 +100,8 @@ class TruthTableInstrument:
 
 
 def build_benchmark(code, *, operation='memory', rounds=1, deformation=None, split_mode='frame'):
-    if code.spec.name != 'gross' or operation not in ('memory', 'X1'):
-        raise ValueError('validated physical harness scope is gross memory/X1')
+    if code.spec.name != 'gross' or operation not in ('memory', 'X1', 'X1*X7', 'Y1'):
+        raise ValueError('validated physical harness scope is gross memory/X1/XX/Y')
     if not isinstance(rounds, int) or isinstance(rounds, bool) or rounds < 1:
         raise ValueError('rounds must be a positive integer')
     if split_mode not in ('frame', 'active'):
@@ -113,10 +109,10 @@ def build_benchmark(code, *, operation='memory', rounds=1, deformation=None, spl
     if operation == 'memory' and deformation is not None:
         raise ValueError('memory does not take a deformation')
     basis = LogicalBasisAdapter.single_block(code, operation)
-    if operation == 'X1':
+    if operation != 'memory':
         if deformation is None or deformation.lpu.codes != (code,) or deformation.lpu.ports.target != basis.x[0]:
-            raise ValueError('X1 harness requires the same block and exact signed X1 deformation')
-        physical = build_physical_x1(deformation, rounds)
+            raise ValueError('surgery harness requires the same block and exact signed target deformation')
+        physical = build_physical_inmodule(deformation, rounds)
         pregister = physical.register
     else:
         schedule = memory_schedule(code, rounds)
@@ -153,12 +149,13 @@ def build_benchmark(code, *, operation='memory', rounds=1, deformation=None, spl
         c = stim.Circuit(); c.append('R', [register.index(q) for q in edges]); c.append('TICK')
         program.chunk(c); body += c
         last = {}
+        cycle_readouts = physical.cycle.readouts()
         for r in range(rounds):
             ids = tuple(i.replace('deformed/0/', f'deformed/{r}/') for i in physical.cycle.outcomes)
             c = remap(physical.cycle.to_stim(), physical.cycle.register, register)
             program.chunk(c, ids); body += c
             current = {check.id:Parity(tuple(i.replace('deformed/0/', f'deformed/{r}/')
-                       for i in physical.cycle.readouts()[f'{check.id}/0'])) for check in physical.cycle.checks}
+                       for i in cycle_readouts[f'{check.id}/0'])) for check in physical.cycle.checks}
             for check in physical.cycle.checks:
                 if r or not check.id.startswith('vertex:'):
                     detector(f'deformed/{r}/{check.id}', current[check.id] ^ (last[check.id] if r else Parity()),
@@ -184,8 +181,9 @@ def build_benchmark(code, *, operation='memory', rounds=1, deformation=None, spl
         c = remap(physical.terminal.to_stim(), physical.terminal.register, register)
         program.chunk(c, physical.terminal.outcomes); body += c
         last_old = {}
+        terminal_readouts = physical.terminal.readouts()
         for j,(id, p) in enumerate(zip(code.check_ids, code.checks)):
-            corrected = Parity(physical.terminal.readouts()[f'{id}/0'])
+            corrected = Parity(terminal_readouts[f'{id}/0'])
             if split_mode == 'frame':
                 corrected ^= frame_parity(frame, p)
             last_old[id] = corrected
@@ -203,10 +201,10 @@ def build_benchmark(code, *, operation='memory', rounds=1, deformation=None, spl
         detector(outcome, corrected ^ last_old[id], 'final_closure', 'noiseless old check equals preceding physical original check')
     # All terminal correlations commute, even though their data Paulis do not.
     for k,(name, p) in enumerate(zip(basis.names, basis.generators)):
-        if operation == 'X1' and k == 0:
+        if operation != 'memory' and k == 0:
             joint = p
         else:
-            i = k if k < code.k else k-code.k+(operation == 'X1')
+            i = k if k < code.k else k-code.k+(operation != 'memory')
             joint = correlation(p, 'X' if k < code.k else 'Z', refs[i], register)
         terminal_paulis.append(joint.to_dict())
         outcome = f'logical_terminal/{name}'
@@ -214,14 +212,14 @@ def build_benchmark(code, *, operation='memory', rounds=1, deformation=None, spl
         parity = Parity((outcome,))
         if frame is not None and split_mode == 'frame':
             parity ^= frame_parity(frame, p)
-        if operation == 'X1' and k == 0:
+        if operation != 'memory' and k == 0:
             detector('target_terminal_consistency', parity ^ measured_target, 'final_closure',
-                     'signed vertex product is measured X1; split ports commute with target')
+                     'signed vertex product is the signed measured target; split ports commute with target')
         else:
             scored.append((k, name, parity))
     for k, name, parity in sorted(scored):
         program.mark(name, 'observable', parity, 'logical_action',
-                     'known + target measurement' if operation == 'X1' and k == 0 else
+                     'known + target measurement' if operation != 'memory' and k == 0 else
                      'encoded Bell correlation with ideal reference, corrected by tracked split frame', k)
     lowered = program.lower()
     certificate = basis.certificate(code)
@@ -236,7 +234,7 @@ def build_benchmark(code, *, operation='memory', rounds=1, deformation=None, spl
          'ideal_reference_qubits':list(refs.values()), 'strict_paper_equivalence':False,
          'reset_output_flows': [{'name':id, 'output_pauli':p.to_dict(), 'value':Parity().to_dict()}
                                 for id,p in zip(code.check_ids,code.checks)],
-         'measured_slot': basis.x[0].to_dict() if operation == 'X1' else None,
-         'edge_reset_Z_qubits': list(edges) if operation == 'X1' else [],
+         'measured_slot': basis.x[0].to_dict() if operation != 'memory' else None,
+         'edge_reset_Z_qubits': list(edges) if operation != 'memory' else [],
          'initial_logical_correlations': [correlation(p,axis,refs[i],register).to_dict()
               for i in refs for p,axis in ((basis.x[i],'X'),(basis.z[i],'Z'))]}, body, split_mode)

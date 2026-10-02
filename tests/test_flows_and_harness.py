@@ -303,9 +303,11 @@ def test_negative_missing_unknown_duplicate_records_and_unresolved_profiles(harn
         verify_deterministic(stim.Circuit('M 0\nDETECTOR rec[-2]'))
     with pytest.raises(ValueError,match='O1'):
         LogicalBasisAdapter.single_block(c,'published_inter_K23')
-    for operation in ('Y1','X1*X7','inter_XX'):
-        with pytest.raises(ValueError,match='scope'):
+    for operation in ('Y1','X1*X7'):
+        with pytest.raises(ValueError,match='same block'):
             build_benchmark(c,operation=operation,deformation=df)
+    with pytest.raises(ValueError,match='scope'):
+        build_benchmark(c,operation='inter_XX',deformation=df)
     with pytest.raises(ValueError,match='positive'):
         build_benchmark(c,rounds=True)
     with pytest.raises(ValueError,match='same block'):

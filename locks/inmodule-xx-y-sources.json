@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "phase": "07",
+  "implementation": "Independently extends the validated local physical, flow and fault engines; no donor code copied or modified",
+  "paper": {
+    "arxiv": "2506.03094v1",
+    "sha256": "78599e80971cd05ba2d8ba0c1c6c0d62b7d3ccdbe482ab4578770d70e8631c73",
+    "definitions": ["Appendix A.3 full LPU", "A.4 signed measurement and split", "A.5 Bell schedule and Eq. (67)", "A.7 joint centralizer harness and Table 6"],
+    "local_inspection": "evidence/phase07/paper-appendix.txt",
+    "license": "Scientific definitions cited; no implementation copied or PDF redistributed"
+  },
+  "backend": {"distribution": "stim", "version": "1.16.0", "license": "Apache-2.0", "pin": "locks/package-artifacts.json"},
+  "inherited_sources": ["locks/physical-scheduling-sources.json", "locks/flows-and-harness-sources.json", "locks/noise-and-fault-sources.json"],
+  "fixtures": "Unchanged reference/gross.json and reference/table6.csv with inherited frozen hash guards",
+  "external_source_root": "/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/external_libs",
+  "open_items": ["O1", "O2", "O3", "O4", "O5"],
+  "policy": "Gross C10, native controlled Pauli schedule, explicit Bell partition/XOR, software split frame, include_all independent equal-q copies and joint-signature grouping; independently labelled boundaries"
+}
