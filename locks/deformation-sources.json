@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "implementation": "Independently written phase-02 algebraic graphs, ports and signed deformation certificates; no donor source copied or modified",
+  "paper": {
+    "arxiv": "2506.03094v1",
+    "url": "https://arxiv.org/pdf/2506.03094v1",
+    "sha256": "78599e80971cd05ba2d8ba0c1c6c0d62b7d3ccdbe482ab4578770d70e8631c73",
+    "inspected_sections": ["PDF A.1 four basis conditions and Eqs. (31)--(36)", "PDF A.3 Eqs. (39)--(64) and selected half cycles", "PDF A.4 Fig. 13(b)"],
+    "license": "Paper cited for scientific definitions; PDF not redistributed; no source implementation copied"
+  },
+  "fixtures": {
+    "reference/gross.json": "937872cf0cb56785484d0622836c1711e4ece1a1c1b8bafb64a7852535341080",
+    "reference/two_gross.json": "9aaf8a1515a3021c217d6735932c07f3e5293b9af94818aa83f13e46c6faddd1"
+  },
+  "independent_oracle": "Unmodified delivered tools/audit_reference.py and evidence/algebra_audit.json (binary only); signed products independently checked by Pauli multiplication",
+  "open_items": {
+    "O1": "Published inter K23 observable generators unresolved; merged k23 is not action-row rank",
+    "O2": "Historical Relay semantics and priors/column policy unresolved",
+    "O3": "Physical schedule, shift representative, lowering and boundaries unresolved",
+    "O4": "Primitive fault multiplicities and admission/merging policy unresolved",
+    "O5": "Original data/counts/grids/bootstrap unresolved"
+  },
+  "distance_claim": "None; no solver or distance search run"
+}
