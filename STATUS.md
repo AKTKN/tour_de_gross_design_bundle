@@ -80,6 +80,12 @@ This workflow change was implemented on `feature/phase-branch-workflow` in `/hom
 
 Verification: **56 passed in 37.57s**, with no skips. Bash syntax, Python compilation and the read-only phase-plan check passed. Acceptance command: `conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_pipeline.py tests/test_reference.py`. Tests run real Git operations against temporary local bare remotes, fake Codex, and an isolated tmux server. They cover independent phase branches/worktrees, clean main, validation-before-merge, remote refs, failed validation, atomic push rejection/retry, commit-hook mutation and remote advancement. No live implementation model request, scientific sampling or upstream donor write was run. Logs are local under `evidence/branch_workflow/`.
 
+## Per-run model and reasoning override (2026-10-02)
+
+Added `--reasoning-effort {low,medium,high,xhigh,max}` alongside the existing `--model` option. For this request use `--model gpt-6.1-sol --reasoning-effort high`; `hard` is not an accepted effort value. The runner forwards an explicit `model_reasoning_effort="high"` CLI override and records model/effort overrides in run metadata. Omitted values inherit Codex settings. The user's global config remains unchanged (observed model `gpt-6.1-sol`, effort `medium`). Installed CLI now reports 0.160.0; its local model cache lists Sol and high reasoning. Local cache/login information does not establish live model access.
+
+Implemented in the separate `feature/model-reasoning` worktree. Verification: `conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_pipeline.py tests/test_reference.py` — **58 passed in 25.03s**, no skips. New tests check actual CLI argument forwarding/metadata with fake Codex and reject `hard` before launch. `--dry-run --through 00 --model gpt-6.1-sol --reasoning-effort high` passed. Local evidence: `evidence/model_reasoning/pytest.txt`. No live model request or implementation phase was launched; O1–O5 remain open and prompt 00 is still next.
+
 ## Next action
 
 Run `prompts/00_source_audit.md` in the target development repository. Do not skip to a long simulation prompt. Record a source-lock check and backend capability matrix first.

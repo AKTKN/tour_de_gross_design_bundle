@@ -70,7 +70,24 @@ To use another session name, set `CODEX_TMUX_SESSION`, for example `CODEX_TMUX_S
 
 Acceptance requires a valid result schema, matching stage ID, explicit success, no blocking issue, all required reported commands passed, exact coverage of configured gates, existing nonempty evidence and an updated STATUS. The controller reruns each mapped exact pytest node ID, reference regressions and pipeline regressions in `tour_de_gross`. Every mapped node must have passed setup/call/teardown; skips, xfails, missing nodes, timeouts and failures stop advancement. Positive and negative scientific tests must be meaningful and mapped to the correct phase scope. The mechanical gate verifies execution, coverage and reported artifacts; it cannot prove the tests' scientific adequacy or exact paper equivalence. O1–O5 can remain open for independent construction; a source definition needed by the current phase must block it. No Table-6 fit evaluation is treated as sampled data.
 
-Defaults bound each Codex phase to 3600 seconds and each controller test run to 600 seconds; override with `--stage-timeout SECONDS` and `--test-timeout SECONDS`. These are process-group timeouts, not automatic retries. Use `--model NAME` only when you want to override the installed Codex configuration.
+Defaults bound each Codex phase to 3600 seconds and each controller test run to 600 seconds; override with `--stage-timeout SECONDS` and `--test-timeout SECONDS`. These are process-group timeouts, not automatic retries. Use `--model NAME` and `--reasoning-effort LEVEL` to override the installed Codex configuration for this run. Supported runner effort values are `low`, `medium`, `high`, `xhigh` and `max`; the backend must support your selected value. Omitting either option inherits that setting from Codex. Run metadata records explicit overrides; your global config is preserved.
+
+For GPT-6.1-Sol with high reasoning, start phase 00 using:
+
+```bash
+prompts/scripts/start_codex_pipeline_tmux.sh --through 00 \
+  --model gpt-6.1-sol --reasoning-effort high
+```
+
+Use `--through 11` for the previously defined implementation interval. `hard` is not a reasoning-effort value; use `high`. The local CLI model cache lists `gpt-6.1-sol` and high effort. This does not establish live account access; a read-only live check is:
+
+```bash
+codex exec --model gpt-6.1-sol -c 'model_reasoning_effort="high"' \
+  --sandbox read-only --ephemeral \
+  'Do not use tools or modify files. Reply exactly CODEX_OK.'
+```
+
+[Official model documentation](https://developers.openai.com/api/docs/models/gpt-6.1-sol) specifies the model ID and supported effort levels. [Codex configuration](https://learn.chatgpt.com/docs/config-file/config-basic) documents model/effort overrides.
 
 The default sandbox is `workspace-write`, with this Conda environment added as a writable directory and network access enabled for source inspection/downloads. External source checkouts remain under `external_libs/`; fork before modifying them. Phase agents must leave Git commits, merges and publication to the controller. They still cannot write external upstream repositories, rewrite history, change pipeline controls, or run unbounded work. Sandbox execution can still fail because of host policies; choose `--sandbox` explicitly if your environment requires another supported mode. The scripts do not automatically bypass the sandbox. Feature commits and pushes are explicitly authorized by this workflow. Scientific fixture modifications remain blocked. Unauthorized control/fixture/history edits stop acceptance, and the controller preserves them for review.
 

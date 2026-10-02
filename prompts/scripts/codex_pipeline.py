@@ -272,6 +272,7 @@ def run_pipeline(args, root, manifest):
         write_json(run_dir / 'run.json', {'from': stages[start]['id'], 'through': stages[end]['id'],
                                          'pilot': args.allow_pilot, 'campaign_budget': budget,
                                          'pipeline_signature': signature, 'sandbox': args.sandbox,
+                                         'model_override': args.model, 'reasoning_effort_override': args.reasoning_effort,
                                          'stage_timeout_seconds': args.stage_timeout, 'test_timeout_seconds': args.test_timeout})
         schema = read_json(root / 'prompts/scripts/codex_stage_result_schema.json')
         if args.revalidate and accepted:
@@ -328,6 +329,8 @@ def run_pipeline(args, root, manifest):
                        '--output-last-message', str(result_path)]
             if args.model:
                 command += ['--model', args.model]
+            if args.reasoning_effort:
+                command += ['--config', f'model_reasoning_effort="{args.reasoning_effort}"']
             command += ['-']
             require(run_command(command, workspace, phase / 'codex.log', min(args.stage_timeout, budget['max_wall_seconds']) if stage['id'] == '13' else args.stage_timeout, stdin=prompt, env=workspace_env) == 0,
                     f'Codex failed in phase {stage["id"]}; see {phase}')
@@ -384,6 +387,8 @@ def main(argv=None):
     parser.add_argument('--test-timeout', type=int, default=600)
     parser.add_argument('--sandbox', choices=['workspace-write', 'read-only', 'danger-full-access'], default='workspace-write')
     parser.add_argument('--model', help='Optional model override; otherwise use installed Codex configuration')
+    parser.add_argument('--reasoning-effort', choices=['low', 'medium', 'high', 'xhigh', 'max'],
+                        help='Per-run Codex model_reasoning_effort override; otherwise inherit installed configuration')
     args = parser.parse_args(argv)
     root = args.root.resolve()
     try:
@@ -399,6 +404,7 @@ def main(argv=None):
             require(start <= end, 'Invalid stage interval')
             for stage in manifest['stages'][start:end + 1]:
                 print(f'{stage["id"]} {stage["prompt"]} [{stage["permission"]}] gates={",".join(stage["gates"])}')
+            print(f'Model override: {args.model or "inherit Codex config"}; reasoning effort: {args.reasoning_effort or "inherit Codex config"}')
             print('No stages launched. Pilot 12 requires --allow-pilot; campaign 13 requires --campaign-budget.')
             return 0
         require(args.stage_timeout > 0 and args.test_timeout > 0, 'Timeouts must be positive')
