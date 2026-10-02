@@ -1,0 +1,455 @@
+{
+  "stage_id": "12",
+  "branch": "feature/12_sampling_and_analysis",
+  "base_commit": "ab1ffe0624c1e5bd919149d0511ae6d154fbf8c9",
+  "result": {
+    "stage_id": "12",
+    "status": "success",
+    "next_stage_safe": true,
+    "summary": "Completed phase 12 on feature/12_sampling_and_analysis in the supplied worktree. The samplers, result records, spectra, fits, and bounded pilot are validated. The retained tiny Bell pilot is execution evidence only; it is not a gross rate estimate. The controller owns commit, merge, and publication.",
+    "tests": [
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_sampling_analysis.py::test_negative_sampling_and_result_corruption",
+        "result": "passed",
+        "required": true,
+        "notes": "An initial run failed on a test regex; the corrected test passed."
+      },
+      {
+        "command": "GROSS_DESIGN_CACHE_DIR=\"$PWD/cache/faults\" conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_sampling_analysis.py::test_F03_gross_idle_deterministic_joint_path",
+        "result": "passed",
+        "required": true,
+        "notes": "The first phase run stopped because an inherited cache path was read-only; this rerun used the worktree cache."
+      },
+      {
+        "command": "GROSS_DESIGN_CACHE_DIR=\"$PWD/cache/faults\" conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_sampling_analysis.py",
+        "result": "passed",
+        "required": true,
+        "notes": "6 passed."
+      },
+      {
+        "command": "GROSS_DESIGN_CACHE_DIR=\"$PWD/cache/faults\" timeout 1800s conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_sampling_analysis.py tests/test_relay_adapter.py tests/test_fault_cache.py tests/test_reference.py tests/test_pipeline.py --junitxml=evidence/phase12/final-regression.xml",
+        "result": "passed",
+        "required": true,
+        "notes": "91 passed in 29.44s."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python -m compileall -q src/gross_design_bandle/bench/analysis.py src/gross_design_bandle/bench/results.py src/gross_design_bandle/bench/sampling.py tools/audit_sampling.py tests/test_sampling_analysis.py",
+        "result": "passed",
+        "required": false,
+        "notes": "Compilation passed."
+      },
+      {
+        "command": "git diff --check && git diff --exit-code -- reference AGENTS.md prompts/scripts",
+        "result": "passed",
+        "required": false,
+        "notes": "No whitespace errors or guarded-file changes."
+      }
+    ],
+    "acceptance_checks": [
+      {
+        "gate": "F03",
+        "test_nodeids": [
+          "tests/test_sampling_analysis.py::test_F03_exact_subsets_and_bernoulli_mixture",
+          "tests/test_sampling_analysis.py::test_F03_gross_idle_deterministic_joint_path"
+        ]
+      },
+      {
+        "gate": "F04",
+        "test_nodeids": [
+          "tests/test_sampling_analysis.py::test_F04_spectrum_tails_selection_and_fits"
+        ]
+      },
+      {
+        "gate": "F05",
+        "test_nodeids": [
+          "tests/test_sampling_analysis.py::test_F05_chunk_streams_resume_and_priors"
+        ]
+      },
+      {
+        "gate": "bounded_pilot",
+        "test_nodeids": [
+          "tests/test_sampling_analysis.py::test_bounded_pilot_enforcement"
+        ]
+      },
+      {
+        "gate": "negative_tests",
+        "test_nodeids": [
+          "tests/test_sampling_analysis.py::test_negative_sampling_and_result_corruption"
+        ]
+      }
+    ],
+    "changed_files": [
+      "STATUS.md",
+      "docs/VALIDATION_PLAN.md",
+      "docs/SAMPLING.md",
+      "prompts/12_sampling_and_analysis.md",
+      "src/gross_design_bandle/bench/analysis.py",
+      "src/gross_design_bandle/bench/results.py",
+      "src/gross_design_bandle/bench/sampling.py",
+      "tests/test_sampling_analysis.py",
+      "tools/audit_sampling.py"
+    ],
+    "evidence_paths": [
+      "evidence/phase12/final-regression.xml",
+      "evidence/phase12/final-regression.txt",
+      "evidence/phase12/export-final/run-manifest.json",
+      "evidence/phase12/export-final/chunks.jsonl",
+      "evidence/phase12/export-final/pilot-report.json",
+      "evidence/phase12/export-final/analysis-summary.json"
+    ],
+    "unresolved_items": [
+      "O1: published inter-module K23 observable rows",
+      "O2: historical Relay parameter semantics",
+      "O3: paper-exact schedule and boundaries",
+      "O4: Table-6 primitive catalogue convention",
+      "O5: original grids, counts, and bootstrap settings",
+      "No real holdout extrapolation check was run; the holdout interface was tested with synthetic counts."
+    ],
+    "blocking_issue": null
+  },
+  "controller_pytest": {
+    "exit_code": 0,
+    "tests": {
+      "tests/test_reference.py::test_full_algebra_audit[gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_full_algebra_audit[two_gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_reduced_cycles_are_not_a_standalone_full_basis[gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_reduced_cycles_are_not_a_standalone_full_basis[two_gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_corrupted_cycle_is_rejected[gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_corrupted_cycle_is_rejected[two_gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_ansatz_cutoff_and_monotonicity": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_reference_probability_validation": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_label_parser": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_manifest_and_stage_selection": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[missing_field]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[unknown_field]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[wrong_stage]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[not_run]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[failed]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[empty_gates]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[duplicate_gate]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[unknown_node]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[missing_evidence]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[path_escape]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[blocked]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[wrong_bool]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[empty_nodes]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[optional_only]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_open_paper_items_allow_scoped_success": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_prior_evidence_stays_in_retained_worktree": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[skipped]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[xfail]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[failed]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[missing]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[teardown_failure]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_pilot_and_campaign_require_budget": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_sequential_sessions_and_resume": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[nonzero]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[malformed]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[not_run]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[skip]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[fail_test]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[no_status]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[control_edit]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[fixture_edit]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[timeout]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_resume_rejects_workspace_changes": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_prerequisite_skipping_and_budget_denied_before_codex": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_dry_run_is_read_only": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_repository_lock_blocks_second_runner": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_actual_report_records_skip_and_xfail": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_tmux_launcher_keeps_completed_pane": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_revalidate_allows_resume_after_pending_edits": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_revalidate_rejects_old_gate_regression": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_reviewed_controls_revalidate_without_starting_next_phase": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_reviewed_controls_cannot_accept_failed_prior_gate": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_reviewed_controls_cannot_adopt_changed_reference": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_interrupt_terminates_child_group_and_records_stop": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_campaign_budget_rejects_unbounded_or_unknown_fields": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_dirty_main_is_preserved_without_codex": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failed_feature_requires_explicit_resume": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_atomic_push_failure_and_retry_do_not_repeat_implementation": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_remote_advancement_blocks_candidate_merge": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_commit_hook_mutation_is_not_merged": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_sol_high_reasoning_forwarded_and_recorded": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_hard_reasoning_rejected_before_launch": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_sampling_analysis.py::test_F03_exact_subsets_and_bernoulli_mixture": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_sampling_analysis.py::test_F03_gross_idle_deterministic_joint_path": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_sampling_analysis.py::test_F04_spectrum_tails_selection_and_fits": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_sampling_analysis.py::test_F05_chunk_streams_resume_and_priors": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_sampling_analysis.py::test_bounded_pilot_enforcement": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_sampling_analysis.py::test_negative_sampling_and_result_corruption": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      }
+    }
+  }
+}
