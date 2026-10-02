@@ -1,0 +1,117 @@
+{
+  "scope": "Algebraic fixture audit only; no Stim circuits, distance certification, or decoding executed.",
+  "results": [
+    {
+      "code": "gross",
+      "n": 144,
+      "rank_Hx": 66,
+      "rank_Hz": 66,
+      "logical_qubits": 12,
+      "chosen_port_weight": 12,
+      "logical_shift_matrices_match": true,
+      "row_X_action_convention": "diag(M_transpose, M), derived from PDF Eq. 34 basis",
+      "surgery_checks": [
+        {
+          "operation": "X",
+          "vertices": 12,
+          "edge_qubits": 18,
+          "selected_cycle_checks": 5,
+          "cycle_rank": 5,
+          "full_graph_cycle_rank": 7,
+          "merged_logical_qubits": 11,
+          "all_checks_commute": true,
+          "all_graph_cycles_in_binary_stabilizer_span": true
+        },
+        {
+          "operation": "XX",
+          "vertices": 23,
+          "edge_qubits": 47,
+          "selected_cycle_checks": 19,
+          "cycle_rank": 19,
+          "full_graph_cycle_rank": 25,
+          "merged_logical_qubits": 11,
+          "all_checks_commute": true,
+          "all_graph_cycles_in_binary_stabilizer_span": true
+        },
+        {
+          "operation": "Y",
+          "vertices": 23,
+          "edge_qubits": 47,
+          "selected_cycle_checks": 19,
+          "cycle_rank": 19,
+          "full_graph_cycle_rank": 25,
+          "merged_logical_qubits": 11,
+          "all_checks_commute": true,
+          "all_graph_cycles_in_binary_stabilizer_span": true
+        },
+        {
+          "operation": "inter_XX",
+          "vertices": 35,
+          "edge_qubits": 58,
+          "selected_cycle_checks": 20,
+          "cycle_rank": 20,
+          "full_graph_cycle_rank": 24,
+          "merged_logical_qubits": 23,
+          "all_checks_commute": true,
+          "all_graph_cycles_in_binary_stabilizer_span": true
+        }
+      ]
+    },
+    {
+      "code": "two_gross",
+      "n": 288,
+      "rank_Hx": 138,
+      "rank_Hz": 138,
+      "logical_qubits": 12,
+      "chosen_port_weight": 20,
+      "logical_shift_matrices_match": true,
+      "row_X_action_convention": "diag(M_transpose, M), derived from PDF Eq. 34 basis",
+      "surgery_checks": [
+        {
+          "operation": "X",
+          "vertices": 20,
+          "edge_qubits": 32,
+          "selected_cycle_checks": 11,
+          "cycle_rank": 11,
+          "full_graph_cycle_rank": 13,
+          "merged_logical_qubits": 11,
+          "all_checks_commute": true,
+          "all_graph_cycles_in_binary_stabilizer_span": true
+        },
+        {
+          "operation": "XX",
+          "vertices": 39,
+          "edge_qubits": 81,
+          "selected_cycle_checks": 37,
+          "cycle_rank": 37,
+          "full_graph_cycle_rank": 43,
+          "merged_logical_qubits": 11,
+          "all_checks_commute": true,
+          "all_graph_cycles_in_binary_stabilizer_span": true
+        },
+        {
+          "operation": "Y",
+          "vertices": 39,
+          "edge_qubits": 81,
+          "selected_cycle_checks": 37,
+          "cycle_rank": 37,
+          "full_graph_cycle_rank": 43,
+          "merged_logical_qubits": 11,
+          "all_checks_commute": true,
+          "all_graph_cycles_in_binary_stabilizer_span": true
+        },
+        {
+          "operation": "inter_XX",
+          "vertices": 57,
+          "edge_qubits": 98,
+          "selected_cycle_checks": 38,
+          "cycle_rank": 38,
+          "full_graph_cycle_rank": 42,
+          "merged_logical_qubits": 23,
+          "all_checks_commute": true,
+          "all_graph_cycles_in_binary_stabilizer_span": true
+        }
+      ]
+    }
+  ]
+}

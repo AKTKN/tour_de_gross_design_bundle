@@ -1,0 +1,43 @@
+{
+  "reviewed_on": "2026-10-02",
+  "paper": {
+    "arxiv": "2506.03094v1",
+    "pdf_pages": 68,
+    "canonical_numbering": "PDF",
+    "url": "https://arxiv.org/abs/2506.03094v1"
+  },
+  "repositories": [
+    {
+      "repo": "qiskit-community/bicycle-architecture-compiler",
+      "observed_commit": "c99eb046f10b38de2412468ccded14ca38f1ee4c",
+      "role": "Logical ISA and resource-estimation reference; no physical generator established by the inspected README"
+    },
+    {
+      "repo": "qLDPCOrg/qLDPC",
+      "observed_commit": "60fc2cf465e880d6e64afacc933d33455d787bf4",
+      "role": "BB algebra and experimental CSS surgery/Stim components; independent validation required",
+      "files": {
+        "README.md": "c5f2e695e78a7d8fc65993ceabfc9b63377ba786",
+        "src/qldpc/experimental/surgery/__init__.py": "58b3910248aaf3259c34ed57c31df8f9a5c647f3",
+        "src/qldpc/experimental/surgery/circuit.py": "ced89b47188704f00126bc53d8c108c533cad631"
+      }
+    },
+    {
+      "repo": "gongaa/SlidingWindowDecoder",
+      "observed_commit": "05d6b1f478f2b044effdc7477278647dfb99db07",
+      "role": "BB memory CNOT schedule donor, not A.7 harness/noise by default",
+      "files": {
+        "src/build_circuit.py": "25ce719a27c3f31caa74789bcafb7271d78ec9f6"
+      }
+    },
+    {
+      "repo": "trmue/relay",
+      "observed_commit": "d185194ba0cb4101ced4340d82b2ee6d42f225f0",
+      "role": "Relay backend; Table-7 semantic mapping not yet validated",
+      "files": {
+        "pyproject.toml": "e766cad3abddaed748097f62a7c82dfd6620ca3e"
+      }
+    }
+  ],
+  "note": "Observed upstream commits are provenance, not a tested full dependency lock. Phase 00 must verify file blobs and freeze the environment."
+}

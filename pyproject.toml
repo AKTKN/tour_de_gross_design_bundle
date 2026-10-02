@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gross-design-bandle"
+version = "0.0.1"
+description = "Tour de gross BB surgery design and simulation package scaffold"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["numpy>=1.24", "scipy>=1.10"]
+
+[project.optional-dependencies]
+audit = ["pytest>=7"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["gross_design_bandle*"]

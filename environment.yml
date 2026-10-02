@@ -1,0 +1,8 @@
+name: tour_de_gross
+channels:
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - -r requirements-audit-lock.txt

@@ -1,0 +1,28 @@
+{
+  "source": "arXiv:2506.03094v1 PDF Table 7, page 61",
+  "historical_raw_parameters": {
+    "ewainit_discount_factor": 0.875,
+    "num_sets": 600,
+    "pre_iter": 80,
+    "set_num_iters": 60,
+    "stop_nconv": 5,
+    "max_iter": 60,
+    "ms_scaling_factor": 1
+  },
+  "families": {
+    "gross_inter": {
+      "gamma": 0.75,
+      "rng_width": 0.41
+    },
+    "gross_other": {
+      "gamma": 0.79,
+      "rng_width": 0.45
+    },
+    "two_gross": {
+      "gamma": 0.673,
+      "rng_width": 0.488
+    }
+  },
+  "resolved_current_backend_parameters": null,
+  "mapping_status": "UNVERIFIED: do not pass historical keys blindly to current RelayDecoderF32"
+}

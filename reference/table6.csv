@@ -1,0 +1,9 @@
+series,log_f0,gamma_fit,w0,K_published,N_expanded,rate_divisor
+gross_idle,-31.02,8.66,5,24,210960,10
+gross_shift,-28.63,7.13,5,24,483840,10
+gross_X,-23.97,6.31,5,23,324526,1
+gross_XX,-22.06,5.87,5,23,398717,1
+gross_Y,-19.49,4.65,5,23,400117,1
+gross_inter_XX,-18.32,5.19,5,23,743456,1
+two_gross_idle,-95.83,25.78,9,24,762912,18
+two_gross_shift,-108.53,28.22,9,24,1748736,18

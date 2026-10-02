@@ -1,0 +1,52 @@
+# Python, build tools, environments and editors
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+.ipynb_checkpoints/
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# Generated simulation outputs and local scratch
+artifacts/
+runs/
+results/
+cache/
+.cache/
+logs/
+tmp/
+*.log
+
+# Keep the curated delivery evidence; future runs stay local
+/evidence/*
+!/evidence/algebra_audit.json
+!/evidence/delivery_checks.json
+!/evidence/pytest_reference.txt
+!/evidence/reference_fits.csv
+
+# Local external checkouts; retain only the policy document
+/external_libs/*
+!/external_libs/README.md
+
+# Rebuildable report output
+/report/*.pdf
+/report/*.aux
+/report/*.out
+/report/*.toc
+/report/*.fls
+/report/*.fdb_latexmk
+/report/*.synctex.gz

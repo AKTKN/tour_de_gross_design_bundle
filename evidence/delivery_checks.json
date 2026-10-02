@@ -1,0 +1,24 @@
+{
+  "delivery_scope": "Theory/design and independently executed algebraic reference checks; physical Stim/Relay/Monte Carlo pipeline remains planned.",
+  "python": "3.13.5",
+  "utility_tests_passed": 9,
+  "report_pages": 12,
+  "report_sections": 4,
+  "bibliography_entries": 13,
+  "codex_prompt_count": 14,
+  "pdf_compilation": "pdflatex, two passes; no overfull boxes or undefined references",
+  "pdf_visual_review": "All pages reviewed using Poppler renders; final bibliography page re-rendered after compaction",
+  "actual_evidence": [
+    "evidence/algebra_audit.json",
+    "evidence/pytest_reference.txt",
+    "evidence/reference_fits.csv"
+  ],
+  "not_executed": [
+    "Stim circuit generation/execution",
+    "qLDPC execution",
+    "Relay execution",
+    "signed circuit-instrument checks",
+    "distance certification",
+    "Monte Carlo replication"
+  ]
+}

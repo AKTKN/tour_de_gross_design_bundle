@@ -1,0 +1,397 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=24mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{newtxtext,newtxmath}
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{booktabs,tabularx,array}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{pdftitle={Generalized lattice surgery for bivariate bicycle codes},pdfauthor={Technical design report},pdfsubject={Circuit-generation and simulation design for Tour de gross, Appendix A.7},pdfkeywords={QEC, bivariate bicycle, lattice surgery, Stim, Relay-BP}}
+\pdfstringdefDisableCommands{\def\lx{X}\def\lz{Z}\def\ly{Y}\def\otimes{ x }\def\mathsf#1{#1}\def\overline#1{#1}}
+\usepackage{fancyhdr}
+\pagestyle{fancy}\fancyhf{}\fancyhead[L]{Generalized BB surgery: theory and implementation design}\fancyhead[R]{\thepage}
+\setlength{\headheight}{14pt}
+\setlength{\parskip}{3pt}
+\setlength{\parindent}{1em}
+\setlength{\emergencystretch}{2em}
+\newcommand{\F}{\mathbb{F}_2}
+\newcommand{\lx}{\overline{X}}
+\newcommand{\lz}{\overline{Z}}
+\newcommand{\ly}{\overline{Y}}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\wt}{\operatorname{wt}}
+\newcommand{\Span}{\operatorname{span}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\symp}[2]{\left\langle #1,#2\right\rangle_{\rm s}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\title{Generalized lattice surgery for bivariate bicycle codes:\\a circuit-generation and simulation design for \emph{Tour de gross}}
+\author{Technical design report}
+\date{2 October 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+Reproducing a logical-operation benchmark requires agreement at several levels: the encoded observable, the auxiliary code deformation, the physical syndrome-extraction circuit, its fault population, and the decoding and statistical conventions. We develop a modular design for generating Stim circuits for the in-module and inter-module measurements and physical shift automorphisms studied in Appendix A.7 of \emph{Tour de gross}. The construction is organized around a graph-incidence description of generalized lattice surgery, signed Pauli ports, local stabilizer dressing, and explicit split-frame updates. This description separates algebraic correctness from physical scheduling and circuit-level fault tolerance, and yields concrete validation tests. We specialize the framework to the gross and two-gross logical processing units, identify reusable components in existing software, and specify integration with joint-sector Relay-BP decoding and fixed-weight failure-spectrum sampling. Accompanying reference data have been checked by an independent algebraic audit. Physical Stim surgery generation, decoder integration and Monte Carlo replication remain implementation tasks. The design records unresolved benchmark conventions rather than assigning them undocumented defaults, particularly the inter-module logical-action observable set and the historical Relay parameter mapping.
+\end{abstract}
+
+\section{Introduction}
+
+Bivariate bicycle (BB) codes provide a useful setting in which to study the passage from a quantum memory to a processor. A memory experiment fixes a stabilizer code and repeats one syndrome-extraction schedule. A processor must additionally implement logical operations while maintaining a well-defined account of the quantum information, measured outcomes and faults at transitions between codes. The bicycle architecture of Yoder \emph{et al.}\ combines BB memory blocks with logical processing units (LPUs), code--code adapters and shift automorphisms to obtain an explicit logical instruction set~\cite{tdg}. Its finite-size constructions therefore make a particularly concrete target for a reusable physical-circuit generator.
+
+The target of this report is the 68-page PDF of arXiv:2506.03094v1, specifically Appendix A.7 and Figure 15. All references to equations and pages of that paper use its PDF numbering. The requested measurement representatives are the in-module product $\lx_1\lx_7$, the in-module Pauli $\ly_1$, and the inter-module product $\lx_1\otimes\lx_1$. Physical shift automorphisms form a fourth instruction family. The simpler in-module $\lx_1$ measurement and idle instruction provide essential construction and simulation controls. Figure 15 contains all six gross-code series, but its two-gross series are idle and shift only. Two-gross measurement circuits are consequently part of the proposed package's scope, while their simulated error rates constitute an extension rather than a reproduction of an additional Figure-15 curve~\cite{tdg}.
+
+Generalized lattice surgery can be understood as temporarily making a logical Pauli into a product of measurable local checks. Earlier qLDPC-surgery constructions and their refinements supply the broader setting~\cite{cohen,cross}. The gauging formulation makes the auxiliary graph and its degrees of freedom particularly explicit~\cite{gauging}; universal adapters explain how related constructions can connect separate codeblocks~\cite{adapters}. For the present finite-size target, these general ideas must be instantiated with the particular logical representatives, selected cycle checks and bridge geometry of \emph{Tour de gross}. A generic surgery graph that measures the same Pauli need not produce the same physical circuit or logical error rate.
+
+Several existing software components are relevant, but they operate at different layers. The bicycle architecture compiler describes logical instruction compilation and resource estimates~\cite{compiler}. The \texttt{SlidingWindowDecoder} repository contains a concrete BB memory-circuit builder~\cite{swd}. Current \texttt{qLDPC} exposes experimental surgery construction and Stim assembly interfaces in addition to BB-code algebra~\cite{qldpc}. Stim supplies stabilizer-circuit analysis and sampling~\cite{stim}, while the public Relay implementation supplies a compiled decoding backend~\cite{relay,relaysoftware}. The aim is to reuse appropriate components without inheriting incompatible preparation, noise, observable or decoding conventions.
+
+The proposed architecture follows the scientific dependencies. It first produces a certificate-bearing code deformation; it then compiles that deformation into physical check measurements and a legal schedule; finally it attaches an ideal benchmark harness, a fault model and a decoder. This ordering gives useful intermediate outcomes even before a large sampling campaign is possible. It also makes it possible to distinguish an algebraically valid construction, a validated physical circuit, a statistical replication using a current backend, and an exact reconstruction of the published configuration.
+
+\section{General framework of generalized lattice surgery}
+\label{sec:framework}
+
+\subsection{Signed Pauli representation and the measurement objective}
+
+Let $\mathcal S$ be the stabilizer group of an $[[n,k,d]]$ code and let $L$ be a nontrivial Hermitian logical Pauli. The ideal operation is the quantum instrument with projectors
+\begin{equation}
+ \Pi_m=\frac{I+(-1)^m L}{2},\qquad m\in\F.
+ \label{eq:projector}
+\end{equation}
+Conditioned on outcome $m$, an input density matrix is transformed into $\Pi_m\rho\Pi_m/\operatorname{Tr}(\Pi_m\rho)$. Correctness includes preservation of the information within each eigenspace. For example, measuring $\lx_1$ and $\lx_7$ separately and returning their parity generally destroys more information than measuring their product. Equality of a reported parity is therefore an insufficient unit test.
+
+A circuit generator should represent general Paulis using both binary support and phase. One convenient convention is
+\begin{equation}
+ P=\mathrm{i}^{r}X(x)Z(z),\qquad r\in\mathbb Z_4,\quad x,z\in\F^n.
+\end{equation}
+Multiplication then includes the phase $2z\cdot x'$ when combining $(r,x,z)$ with $(r',x',z')$. The commutation form is
+\begin{equation}
+ \symp{(x,z)}{(x',z')}=x\cdot z'+z\cdot x'\pmod 2.
+\end{equation}
+The Hermiticity condition is $r=x\cdot z\pmod 2$. In particular, $Y=\mathrm{i}XZ$. Retaining only unsigned binary supports is adequate for some rank checks, but not for verifying a $Y$ measurement or the sign of a conditional frame correction.
+
+\subsection{Auxiliary graph, data ports and deformed checks}
+
+Choose a connected auxiliary graph $G=(V,E)$ and let $B\in\F^{|V|\times |E|}$ be its incidence matrix. An edge represents an auxiliary data qubit. A vertex represents an algebraic measurement check, not necessarily one physical measurement qubit. Associate a signed data Pauli $P_v$ with each vertex, with
+\begin{equation}
+ [P_v,P_u]=0,\qquad \prod_{v\in V}P_v=L.
+ \label{eq:ports}
+\end{equation}
+A vertex may carry a multi-qubit port or the identity. Identity ports are useful for subdividing edges in an adapter. Overlapping contributions to a port must be combined with their correct Hermitian phase before the checks are constructed.
+
+Initialize each edge qubit in $\lvert0\rangle$. The vertex checks are
+\begin{equation}
+ g_v=P_v\prod_{e\in E}X_e^{B_{ve}}.
+ \label{eq:vertex}
+\end{equation}
+Every edge occurs at two endpoints, so
+\begin{equation}
+ \prod_{v\in V}g_v=L.
+ \label{eq:product}
+\end{equation}
+Consequently, the parity of the vertex-check outcomes measures $L$. This is the central identity behind the gauging description of logical measurement~\cite{gauging,tdg}.
+
+The original checks must also be modified. For an original stabilizer $s_j$, define its anticommutation pattern with the ports by
+\begin{equation}
+ a_j(v)=\symp{s_j}{P_v}.
+\end{equation}
+Since $s_j$ commutes with $L$, the parity of $a_j$ is even. For a connected graph, every even vertex set is a boundary, so there is an edge vector $t_j$ satisfying
+\begin{equation}
+ B t_j=a_j.
+ \label{eq:dresssolve}
+\end{equation}
+The dressed stabilizer is
+\begin{equation}
+ \widetilde{s}_j=s_j Z(t_j).
+ \label{eq:dressed}
+\end{equation}
+Its anticommutation with the data part of $g_v$ is canceled by its anticommutation on the edge qubits. Dressed original checks commute with one another because their additional support is exclusively $Z$ on previously disjoint auxiliary data qubits.
+
+For each selected cycle $c_u\in\ker B$, introduce a cycle check
+\begin{equation}
+ h_u=Z(c_u),\qquad Bc_u=0.
+ \label{eq:cycle}
+\end{equation}
+These commute with the vertex checks because a cycle has even degree at every vertex. Collecting the selected cycles into a matrix $C$ gives $BC^{\mathsf T}=0$. A generic implementation can begin with a full cycle basis. A finite-size optimized construction can measure fewer cycles when the omitted edge-only checks follow from the combined group of dressed original checks and selected cycles. This distinction is important for the published LPUs.
+
+For an $X$-type measurement on a CSS code, let $P$ have the binary $X$ ports as rows, and let $T$ contain the dressing vectors for the original $Z$ checks. A useful specialization is
+\begin{equation}
+ H'_X=\begin{pmatrix}H_X&0\\P&B\end{pmatrix},\qquad
+ H'_Z=\begin{pmatrix}H_Z&T\\0&C\end{pmatrix},
+ \label{eq:css}
+\end{equation}
+with
+\begin{equation}
+ BT^{\mathsf T}=P H_Z^{\mathsf T},\qquad BC^{\mathsf T}=0.
+\end{equation}
+This block form is useful for a construction oracle, but the common implementation should use signed symplectic checks so that mixed-Pauli measurements use the same infrastructure.
+
+\subsection{Why the protocol measures only the intended logical}
+
+The protocol consists of initializing the edge qubits, measuring vertex checks together with dressed original and cycle checks for a specified number of rounds, and then measuring every edge qubit in $Z$. The last step disentangles the auxiliary system, up to a data Pauli that is recorded as a frame update~\cite{gauging,tdg}.
+
+The ideal instrument can be verified directly. Write the vertex measurement outcomes as $s\in\F^{|V|}$ and the final edge outcomes as $z\in\F^{|E|}$. When all cycle constraints hold, $z$ is a cut: there exists $t\in\F^{|V|}$ such that $B^{\mathsf T}t=z$. For mutually commuting ports, define $P(t)=\prod_v P_v^{t_v}$. Expanding the vertex projectors gives the data Kraus operator
+\begin{align}
+ K_{s,z}
+ &=\langle z|\prod_v\frac{I+(-1)^{s_v}g_v}{2}|0\rangle_E\\
+ &=2^{-|V|}\sum_{x:\,B^{\mathsf T}x=z}(-1)^{s\cdot x}P(x).
+\end{align}
+Connectedness implies $\ker B^{\mathsf T}=\Span\{\boldsymbol1\}$, so the sum has the two terms $x=t$ and $x=t+\boldsymbol1$. Hence
+\begin{equation}
+ K_{s,z}=2^{1-|V|}(-1)^{s\cdot t}P(t)\Pi_m,
+ \qquad m=\boldsymbol1^{\mathsf T}s.
+ \label{eq:kraus}
+\end{equation}
+Applying or tracking $P(t)$ leaves exactly the desired projector, up to an outcome-dependent scalar. Dressed original checks and valid cycle checks are compatible with this derivation: they initially have their prescribed eigenvalues and commute with the vertex measurements.
+
+Equation~\eqref{eq:kraus} gives a compact, independent test oracle. Fix a root vertex and set its component of $t$ to zero. Each remaining component is the parity of $z$ along a path from the root. Changing the root can multiply the frame by $L$, which acts only as a scalar on the projected eigenspace. Changing a path is immaterial when the intervening cycle parity is zero. In noisy operation these relations are enforced only after incorporating the decoder's inferred faults; the software must not assume that raw erroneous edge outcomes satisfy all cycle constraints.
+
+As a minimal example, two ports $P_1$ and $P_2$ connected by a single edge give $g_1=P_1X_e$ and $g_2=P_2X_e$. With the first vertex as root, the edge outcome $z_e$ gives the frame $P_2^{z_e}$, and $s_1\oplus s_2$ is the outcome of $P_1P_2$. Enumerating all branches of this two-vertex example is an effective test of sign, outcome and frame conventions before introducing a BB code.
+
+\subsection{From algebraic checks to physical measurements}
+
+The auxiliary construction specifies observables, not a syndrome-extraction schedule. A physical compiler must assign measurement qubits, controlled-Pauli interactions, initialization and readout operations. A standard check measurement prepares one ancilla in $\lvert+\rangle$, applies controlled data Paulis and measures the ancilla in $X$. For a high-weight check, the support may instead be divided between two ancillas prepared in a Bell state. Both ancillas are read in $X$, and the algebraic check outcome is the parity of their results~\cite{tdg}.
+
+The Bell halves must have disjoint data support and their preparation must precede the data interactions. More generally, simultaneously measuring commuting checks requires correct interaction ordering. Two globally commuting checks may anticommute on each of two shared data qubits. Reversing their relative order on only one overlap can create an unwanted ancilla coupling, even when the schedule has no qubit collisions. Appendix A.5 supplies the corresponding overlap-order condition and a staged graph-coloring construction. Both conditions belong in the schedule validator; an ordinary edge-coloring routine is not a complete syndrome-circuit compiler~\cite{tdg}.
+
+The gate alphabet also has to be fixed. A controlled-$Y$ operation may be locally Clifford-equivalent to a CNOT, but decomposing it into extra timed and noisy one-qubit gates changes a circuit-noise experiment. The compiler should retain a physical gate policy that states which transformations are native, which are compiled, and how their noise and idle exposure are counted. Ideal equivalence tests and a matching noise ledger are required before alternative lowerings are used in a reproduction profile.
+
+\subsection{Distance and circuit validity as separate obligations}
+
+The algebraic identities establish a measurement mechanism. Fault tolerance additionally depends on the auxiliary graph, dressing weights, repeated rounds, schedule and noise model. The gauging framework supplies sufficient graph conditions for protected logical measurement, while \emph{Tour de gross} verifies its finite-size constructions using phenomenological optimization and circuit-fault searches~\cite{gauging,tdg}.
+
+Appendix A.8 separates a spatial problem, involving the distance of the deformed code, from a temporal problem involving errors that anticommute with the measured Pauli. For implementation, the temporal commuting set should be the concrete one specified there: the deformed checks with the vertex checks omitted. The optimization is
+\begin{equation}
+ \min_{p}\wt(p)\quad\text{subject to}\quad
+ M J p^{\mathsf T}=0,\qquad \ell J p^{\mathsf T}=1,
+ \label{eq:distance}
+\end{equation}
+where $J$ is the symplectic form, $\ell$ represents $L$, and $M$ contains that specified set. The measured $L$ must not itself be added to $M$, because doing so makes the anticommutation constraint inconsistent. This operational definition is preferable to blindly calling a generic group-center routine that may retain the measured central element. Pauli weight is $\sum_i(x_i\lor z_i)$, so a $Y$ error contributes one, not two.
+
+For the in-module LPUs, the paper reports intrinsic spatial and temporal quantities $d_s^*=d_t^*=12$ for gross and $18$ for two-gross. A protocol using only $C$ merged rounds also has the temporal limit $d_t=\min(C,d_t^*)$; these intrinsic LPU values must therefore be distinguished from the distance of a finite-$C$ experiment. Its circuit-distance entries are upper bounds obtained by finding fault configurations, including bounds of ten for gross and eighteen for two-gross in-module instructions; the two-gross inter-module circuit bound is seventeen. These different statuses should be separate data fields. A successful rank test, a solver timeout, or the absence of a lower-weight witness is not a proof of circuit distance~\cite{tdg}.
+
+\section{Bivariate bicycle examples: in-module and inter-module operations}
+\label{sec:bb}
+
+\subsection{Code convention and logical basis}
+
+Use the toric polynomial convention of the paper's Appendix A.1:
+\begin{equation}
+ \mathcal R=\F[x,y]/\langle x^{\ell}-1,y^m-1\rangle,\qquad
+ A=1+y+x^3y^{-1},\quad B=1+x+x^{-1}y^{-3}.
+ \label{eq:bbpoly}
+\end{equation}
+The gross code has $(\ell,m)=(12,6)$ and parameters $[[144,12,12]]$; two-gross has $(12,12)$ and parameters $[[288,12,18]]$. Each cell contains $L$ and $R$ data positions and $X$- and $Z$-check positions. An $X$ check at monomial $\alpha$ acts on $L$ data $\alpha A$ and $R$ data $\alpha B$. A $Z$ check acts on $\alpha B^{\mathsf T}$ and $\alpha A^{\mathsf T}$, where transposition inverts monomials~\cite{tdg,bravyi}.
+
+For binary circulant representations this gives $H_X=[A\ B]$ and $H_Z=[B^{\mathsf T}\ A^{\mathsf T}]$. The independent audit supplied with this report finds ranks $66$ and $66$ for gross, and $138$ and $138$ for two-gross, giving twelve logical qubits in each case. These are computed rank checks, not new distance determinations. The same audit verifies the twelve canonical logical pairs specified by the paper.
+
+The native LPU is designed around $\lx_1=X(p,q)$ and $\lx_7=X(r,s)$ together with their shifted $ZX$-dual operators $\lz_1$ and $\lz_7$. The exact four support polynomials, the twelve-pair basis shifts, and the dual map are included in the accompanying JSON. The chosen representatives have weight twelve for gross and twenty for two-gross. The latter choice is intentional even though the code distance is eighteen: the representatives satisfy the overlap and neighboring-check conditions needed by the fixed LPU~\cite{tdg}.
+
+Existing BB libraries often start from a different polynomial presentation of the same code. Such a library can be reused after a check-row and data-column permutation, and any required logical basis change, have been verified. Substituting the paper's logical polynomials into an unrelated index convention can produce a plausible-looking but incorrect port map. Equality of $n$, $k$ and a claimed distance does not validate this substitution.
+
+\subsection{The two half-LPUs and their selected cycles}
+
+Construct a graph $G_l$ on the support of $\lx_1$ and a graph $G_r$ on the support of $\lx_7$. The finite-size supports are chosen so that relevant neighboring original checks meet the support in pairs. Connecting each such pair provides an edge qubit that allows that original check to acquire a local dressing. The gross halves have twelve vertices and eighteen edges each. The two-gross halves begin with thirty such edges and add two specified expansion edges, giving twenty vertices and thirty-two edges~\cite{tdg}.
+
+The two halves use different reduced cycle sets. Gross uses five explicitly measured cycles on the left and three on the right, although each half has graph cycle rank seven. Two-gross uses eleven and nine, respectively, although each half has graph cycle rank thirteen. These omissions exploit dependencies involving the original code. A module that insists that the selected cycle rows span $\ker B$ by themselves will incorrectly reject the published construction; a module that omits arbitrary cycles without a combined stabilizer-span check can introduce unwanted logical degrees of freedom.
+
+To form the full LPU, one vertex of each half is identified, and the remaining halves are connected by a ladder of bridge edges. The gross bridge contains eleven edges; two-gross contains seventeen. Neighboring bridge edges and the half-graph paths form square cycles, with one additional triangle adjacent to the identified vertex. The identified vertex has a high-weight check and is implemented with two Bell-prepared measurement qubits. The resulting census is summarized in Table~\ref{tab:lpu}~\cite{tdg}.
+
+\begin{table}[tb]
+\centering
+\caption{Reference full-LPU census. Graph vertices are algebraic checks. The shared check uses two physical ancillas, so the physical total is $|E|+(|V|+1)+\#\text{cycle checks}$. The graph-cycle dimension exceeds the number of explicitly measured cycle checks.}
+\label{tab:lpu}
+\begin{tabular}{lrr}
+\toprule
+Quantity & Gross & Two-gross\\\midrule
+Graph vertices $|V|$ & 23 & 39\\
+Edge data qubits $|E|$ & 47 & 81\\
+Explicit cycle checks & 19 & 37\\
+Full graph-cycle dimension & 25 & 43\\
+Bridge edge qubits & 11 & 17\\
+Physical LPU qubits & 90 & 158\\\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{In-module \texorpdfstring{$X$, $XX$ and $Y$}{X, XX and Y} measurements}
+
+One half-LPU supports the nontrivial elements of $\langle\lx_1,\lz_7\rangle$, and the other supports those of $\langle\lx_7,\lz_1\rangle$. The active data ports and old-check extensions depend on the requested Pauli, even when the installed hardware remains fixed. The $\lx_1$ control therefore uses a single half-LPU. Measuring $\lx_1\lx_7$ or $\ly_1$ uses the full LPU~\cite{tdg}.
+
+For $\lx_1\lx_7$, activate the corresponding $X$ ports in both halves. Their product is the desired two-logical-qubit Pauli. The bridge makes the auxiliary graph connected, ensuring that the vertex outcomes reveal only this one product rather than two separate logical eigenvalues. The deformed stabilizer code should retain eleven logical qubits; the instrument test must additionally verify preservation of coherence within each product eigenspace.
+
+For $\ly_1=\mathrm{i}\lx_1\lz_1$, activate the $X$-type ports associated with $\lx_1$ and the dual $Z$-type ports associated with $\lz_1$. Their unique anticommuting physical overlap is combined into a Hermitian $Y$ port. The resulting checks can be mixed-Pauli even though the underlying memory is CSS. This is the main reason to place general signed Pauli handling below the operation-specific modules rather than add a special case to an $X/Z$-only circuit builder.
+
+The physical protocol initializes the active edge data in $\lvert0\rangle$, performs $C$ rounds of the deformed checks, then reads the edge data in $Z$ and returns to the original check set. The split frame follows Equation~\eqref{eq:kraus}. The gross reference measurement circuits use $C=10$. Two-gross in-module constructions use $C=18$, but their numerical measurement curves are an extension of the particular Figure-15 plot~\cite{tdg}.
+
+The supplied algebra audit checks the gross and two-gross $X$, $XX$ and $Y$ deformations. In each case, the transcribed cycle paths are valid, every omitted graph-cycle constraint belongs to the combined binary stabilizer span, all binary symplectic check commutators vanish, the product of the ports has the requested binary support, and the merged rank gives eleven remaining logical qubits. These checks substantiate the reference transcription. They do not yet verify the signed physical instrument, the Bell measurement implementation, or circuit-level performance.
+
+\subsection{Inter-module \texorpdfstring{$\lx_1\otimes\lx_1$}{X1 x X1} measurement}
+
+The simulated code--code adapter in the paper is the one-to-one Bell-check construction in Figure 13(b). Each selected half-LPU retains its bridge data qubits. Corresponding bridge qubits on the two modules are joined through new Bell-mediated checks, and the bridge-cycle checks are also combined across modules. The in-module triangular bridge checks are omitted in this inter-module configuration. The alternative many-to-one adapter shown in Figure 13(c) is not the Figure-15 benchmark~\cite{tdg}.
+
+For $\lx_1\otimes\lx_1$, an explicit algebraic graph is obtained by subdividing every inter-module bridge connection. Each new subdivision vertex has identity data port; its vertex check is $X$ on the two adjacent physical bridge qubits. Those qubits remain separate and belong to their respective modules. Two neighboring bridge connections, together with one path edge in each half-LPU, form a six-edge cycle. Its $Z$ check is one joint observable realized through a Bell pair, rather than two independently measured local factors. This graph description and the physical Bell partition should be stored separately.
+
+For the selected left halves, the reconstructed gross graph has $35$ vertices, $58$ edge data qubits and $20$ selected cycle checks. The corresponding two-gross graph has $57$, $98$ and $38$. The accompanying audit checks that these reconstructed graphs give commuting deformations and retain $23$ logical qubits from the two input blocks' $24$. These are active-graph counts derived in this report; they are distinct from the installed full-LPU totals in Table~\ref{tab:lpu}.
+
+The benchmark observable definition requires a separate decision. Appendix A.7 states that a logical measurement on $k$ encoded qubits is scored using $K=2k-1$ independent logical-action generators commuting with the measured Pauli. For two full BB blocks this prescription gives $K=47$, whereas Table 6 prints $K=23$ for the inter-module series. The reviewed text does not identify a specific 23-row restriction that resolves the discrepancy. The package should therefore preserve the published number as reference data, provide a clearly named full-two-block-centralizer profile, and leave strict inter-module reproduction conditional on recovering the original observable set. The merged-code dimension $23$ does not itself justify choosing only $23$ logical-action rows.
+
+\subsection{Physical shift automorphisms}
+
+Multiplication of physical support labels by a monomial implements a code automorphism. For a simulator, its logical action should be derived directly from the physical permutation and the chosen canonical basis. If $\pi$ denotes a physical shift, the row coefficients of an image $\pi(\lx_i)$ in the logical $X$ basis are obtained from its symplectic pairing with the logical $Z$ basis. This procedure avoids ambiguous transposes or an incorrect lifting of a printed six-dimensional matrix.
+
+Using the literal basis of the paper's Eq. (34), the delivered audit obtains row-$X$ actions $\diag(M^{\mathsf T},M)$ from the printed six-by-six $M$ matrices for both $x$ and $y$, in both code sizes. This statement fixes the report's row-action convention; a column-vector computational-basis convention uses the corresponding transpose. The audit checks the logical sixth powers. A physical shift by six cells can still be a nontrivial permutation even when its logical action is trivial.
+
+The physical instruction is more than this permutation. The paper transfers data into neighboring check-qubit sites and then back into shifted data sites. A transfer into a destination known to be $\lvert0\rangle$ uses two CNOTs, followed by measurement of the vacated source. The two transfers comprise four CNOT layers and two measurement layers; adding syndrome extraction gives the quoted fourteen-step instruction~\cite{tdg}. The circuit generator must track which sites currently hold the code data, their Pauli frames and the new measurement records. An ideal relabeling is useful as a unit-test oracle, but it has none of the transfer faults responsible for the noisy shift benchmark.
+
+\section{Implementation details and validation plan}
+\label{sec:implementation}
+
+\subsection{Package boundaries and reusable software}
+
+A practical organization is a circuit-generation package, \texttt{bb\_surgery}, and a simulation package, \texttt{bb\_surgery\_bench}, maintained in one repository. The generation package should not depend on Relay or statistical plotting. It exports validated circuits and complete scientific metadata. The benchmark package consumes those immutable artifacts, constructs the decoder view and samples or analyzes failures. Table~\ref{tab:modules} lists the principal intermediate objects.
+
+\begin{table}[tb]
+\caption{Principal intermediate representations and their validation responsibilities. The names are proposed local interfaces, not claims about existing upstream APIs.}
+\label{tab:modules}
+\small
+\begin{tabularx}{\linewidth}{@{}p{34mm}YY@{}}
+\toprule
+Object & Contents & Principal invariant\\\midrule
+\texttt{CodeData} & Checks, labels, signed logical basis & Correct GF(2) ranks and symplectic basis\\
+\texttt{AuxiliaryGraph} & Edge IDs, incidence, selected cycles & Connectivity and cycle-boundary identity\\
+\texttt{DeformedCode} & Ports, dressing, checks, span witnesses & Commutation, intended logical constraint\\
+\texttt{ScheduleIR} & Physical operations, roles, lifetimes & Collision and overlap-order conditions\\
+\texttt{CircuitFragment} & Stim body, symbolic outcomes, frame & Correct ideal instrument and flows\\
+\texttt{BenchmarkHarness} & Ideal endpoints and named action rows & Deterministic detector/observable definitions\\
+\texttt{FaultModel} & $H,\Lambda$, priors, primitive provenance & Aligned joint signatures and multiplicities\\
+\texttt{RunManifest} & Hashes, versions, settings, seed streams & Immutable and reproducible interpretation\\\bottomrule
+\end{tabularx}
+\end{table}
+
+Current \texttt{qLDPC} is more relevant than a code-matrix provider alone. Its experimental surgery namespace exports \texttt{build\_gadget}, \texttt{build\_bridge}, and single- and joint-PPM Stim circuit builders. However, the inspected implementation is based on CSS gadget data and has a measurement-oriented observable convention. Its documentation explicitly warns that surgery is experimental and has not received independent expert review~\cite{qldpc}. It is a useful adapter or cross-check backend for algebra and simple circuits, not a substitute for validating the fixed TdG LPU, Bell schedule, mixed-$Y$ checks or complete A.7 action matrix. In particular, retaining only its PPM outcome would not reproduce the multi-observable benchmark.
+
+The \texttt{SlidingWindowDecoder} memory builder exposes a useful concrete CNOT schedule, including staggered $X/Z$ check initialization and readout. Its basis-specific initial/final measurements and conventional depolarizing instructions require replacement for the present experiment~\cite{swd}. Enabling its both-sector detector option does not supply the missing logical reference-state harness. Sliding-window decoding is also separate from the full-circuit Relay baseline used in A.7.
+
+The logical bicycle compiler remains useful for instruction naming, logical composition and later architecture-level integration~\cite{compiler}. It need not be a runtime dependency of the physical generator. Keeping these boundaries explicit also allows alternative implementations to be compared without changing the scientific definition of a benchmark.
+
+\subsection{Circuit fragments, schedules and detector flows}
+
+An implementation should assign every physical outcome a stable symbolic ID. A Bell check maps one algebraic check outcome to two physical IDs and an XOR relation. Relative Stim record offsets are emitted only after fragment composition and repetition expansion are known. This prevents the common error in which adding an ancilla readout shifts all downstream detector references.
+
+Within a repeated region, two measurements of the same unchanged stabilizer give a familiar detector parity. At a merge or split boundary, the deterministic relation can involve original checks, dressed checks, cycle checks and edge readouts. These relations should be derived from signed stabilizer flows rather than string-matching check names. The first individual vertex outcomes are generally random; only proven deterministic combinations may be declared as detectors. Similarly, a raw truth-table circuit with an intentionally random logical outcome should not be forced into a deterministic decoding-harness API.
+
+The benchmark harness follows the paper's ideal initialization and final noiseless stabilizer-round convention. For a unitary on one block it uses encoded halves of twelve Bell pairs so that both types of logical errors are visible. A measurement harness uses the corresponding logical basis and initializes the designated measured degree of freedom in its known eigenstate, following A.7~\cite{tdg}. For $XX$ or $Y$, this requires a logical basis adaptation in the ideal harness; it must not add an unaccounted noisy logical transformation to the tested instruction. The actual endpoint parity realizing each action generator, including frame terms, is stored explicitly. Merely obtaining $K$ deterministic outputs does not establish that they are the intended $K$ outputs.
+
+The generated circuit should be checked with strict detector-error-model extraction, with gauge detectors disallowed. Ideal MPP operations may be used in explicitly ideal preparation, terminal analysis and test oracles. They must not replace the physical noisy surgery body. At least one independent Pauli-propagation path should compare detector and logical signatures for primitive faults, exhaustively for small circuits and systematically across every phase and gate class for large ones.
+
+\subsection{Noise ledger and equal-probability fault population}
+
+Appendix A.7 uses independent equal-probability fault events with $q=p/15$. A primitive event with probability $mp/15$ is replaced by $m$ independent copies. The underlying linearized model assigns preparation and measurement flips probability $p$, each idle Pauli probability $p/3$, and each nonidentity two-qubit Pauli probability $p/15$~\cite{tdg}. Splitting a larger-probability event into copies preserves its probability to first order, not exactly at finite $p$.
+
+For reproducibility, the package should retain three named profiles: the equal-$q$ expansion; the unequal independent-Pauli model before this expansion; and ordinary categorical depolarization. In particular, a \texttt{DEPOLARIZE2} channel chooses mutually exclusive nonidentity Paulis, whereas the paper's independent model permits multiple primitive Pauli events at one gate. Consecutive independent correlated-error terms can represent the latter; an \texttt{ELSE}-conditioned chain instead imposes a different distribution. The distinction should be tested on small circuits where two copies can cancel.
+
+A full physical fault ledger records time, gate kind, qubit roles, Pauli, probability and expansion multiplicity before simplification. A separate sampling-population map specifies which entries are retained in the A.7 fault catalogue. Faults with neither detector nor logical effect may be included or omitted without changing the unconditional channel, but that choice changes $N$ and the conditional spectrum $f(w)$. Likewise, a compact DEM can merge distinct mechanisms. The exact population used for Table 6 must therefore be established, rather than equating $N$ with an arbitrary DEM error count.
+
+Let $H\in\F^{M\times N}$ and $\Lambda\in\F^{K\times N}$ give the detector and logical-action signatures of the admitted primitive faults. The notation $\Lambda$ avoids confusion with the BB polynomial $A$. A fault vector $e$ gives
+\begin{equation}
+ \sigma=He,\qquad \lambda=\Lambda e.
+ \label{eq:faultmap}
+\end{equation}
+Every column must have a provenance record. Grouping columns requires agreement of both signatures, not only their detector supports. Even an exact channel-level grouping can alter BP's factor graph and convergence behavior, so the decoder grouping policy is an additional compatibility setting. Padding with dummy faults to force a published $N$ is not an acceptable reconstruction.
+
+\subsection{Relay integration and parameter compatibility}
+
+A.7 jointly decodes the full fault model rather than separating $X$ and $Z$ sectors. Relay returns a candidate correction $c$ for which $Hc=\sigma$, and correction succeeds when $\Lambda c=\Lambda e$~\cite{tdg,relay}. The adapter must check syndrome consistency and retain a separate nonconvergence count. Discarding failed decoding calls would bias the reported logical error rate; adding an OSD fallback or a separate-sector path creates a different decoder profile.
+
+Table 7 uses a historical set of parameter names. Its global settings are an initialization discount of $0.875$, $600$ sets, $80$ pre-iterations, $60$ set iterations, five convergences as the stopping target, a maximum-iteration setting of $60$, and min-sum scaling factor one. The reported $(\gamma,\mathrm{rng\_width})$ values are $(0.75,0.41)$ for gross inter-module measurement, $(0.79,0.45)$ for the other gross instructions, and $(0.673,0.488)$ for two-gross~\cite{tdg}.
+
+The current public Relay examples use names such as \texttt{gamma0}, \texttt{gamma\_dist\_interval}, \texttt{set\_max\_iter} and \texttt{RelayDecoderF32}~\cite{relaysoftware}. A valid mapping requires comparison of the update recurrence, initialization, random-strength convention, candidate selection and stopping behavior; similarity of names is insufficient. The bundle therefore stores the raw Table-7 data and leaves the current-backend mapping unverified. A current-Relay statistical replication is useful, but should carry its own compatibility label when historical equivalence has not been established.
+
+The prior policy must also be fixed. The same decoding function should be used when constructing one spectrum $f(w)$ and integrating it over different $p$. If the decoder is retuned as $p$ changes, the appropriate conditional quantity becomes $f(w;p)$. Uniform-prior scaling invariance can simplify a min-sum implementation, but clipping, finite precision or stopping details can spoil an assumed equivalence. The chosen implementation should be tested rather than relying on that assumption.
+
+\subsection{Sampling and reconstruction of Figure 15}
+
+Direct Monte Carlo draws independent Bernoulli($q$) faults from the validated population. Fixed-weight Monte Carlo instead chooses exactly $w$ distinct indices uniformly and estimates the failure fraction $f(w)$. Selecting with replacement changes the conditioned distribution. Both samplers must use the same primitive population and decoder policy. Sparse XOR accumulation of selected columns can avoid constructing an $N$-bit vector for every fixed-weight shot.
+
+For a fixed decoder, the circuit failure probability is
+\begin{equation}
+ P_{\mathrm{circ}}(p)=\sum_{w=0}^N
+ \binom Nw (p/15)^w(1-p/15)^{N-w}f(w).
+ \label{eq:mixture}
+\end{equation}
+The paper's idle and shift experiments repeat an instruction $C$ times and report $P_{\mathrm{circ}}/C$, with $C=10$ for gross and $18$ for two-gross. Measurement rates are per surgery operation, without this division. This normalization should be a field of the series definition rather than an implicit plotting convention~\cite{tdg}.
+
+The published extrapolation uses
+\begin{equation}
+ f_{\mathrm{ansatz}}(w)=
+ \begin{cases}
+ 0,&w<w_0,\\[2pt]
+ a\left[1-\exp\left(-\dfrac{f_0}{a}
+ \left(\dfrac{w}{w_0}\right)^\gamma\right)\right],&w\geq w_0,
+ \end{cases}
+ \qquad a=1-2^{-K}.
+ \label{eq:ansatz}
+\end{equation}
+Table~\ref{tab:fits} transcribes the reference parameters. The logarithms shown are natural. The fit cutoff is fixed at $w_0=5$ for gross and $9$ for two-gross. This is a model assumption connected to circuit-distance estimates; it is not a proof that the implemented Relay decoder has no failures below that weight. Any such observed failures must remain in the output data.
+
+\begin{table}[tb]
+\centering\small
+\caption{Published Figure-15 fit parameters from Table 6 of Ref.~\cite{tdg}. $N$ refers to its equal-$q$ fault population. The inter-module $K$ entry is transcribed as printed, with the observable-definition issue discussed in Section~\ref{sec:bb}.}
+\label{tab:fits}
+\begin{tabular}{lrrrrr}
+\toprule
+Series & $\log f_0$ & $\gamma$ & $w_0$ & $K$ & $N$\\\midrule
+Gross idle & $-31.02$ & 8.66 & 5 & 24 & 210960\\
+Gross shift & $-28.63$ & 7.13 & 5 & 24 & 483840\\
+Gross $X$ & $-23.97$ & 6.31 & 5 & 23 & 324526\\
+Gross $XX'$ & $-22.06$ & 5.87 & 5 & 23 & 398717\\
+Gross $Y$ & $-19.49$ & 4.65 & 5 & 23 & 400117\\
+Gross inter $X\otimes X$ & $-18.32$ & 5.19 & 5 & 23 & 743456\\
+Two-gross idle & $-95.83$ & 25.78 & 9 & 24 & 762912\\
+Two-gross shift & $-108.53$ & 28.22 & 9 & 24 & 1748736\\\bottomrule
+\end{tabular}
+\end{table}
+
+The published fit excludes gross-$Y$ observations above $w=80$, uses chi-squared minimization, and propagates uncertainty by binomial resampling and refitting. Its shaded bands report the standard deviation of the bootstrap predictions, rather than a generic 95\% confidence interval~\cite{tdg}. These conventions should be retained in a publication-compatible fit profile. A likelihood-based fit, different cutoffs and confidence intervals are useful sensitivity analyses but should be labeled separately. The later \emph{Fail fast} study provides further methodological context for failure-spectrum analysis~\cite{failfast}.
+
+The accompanying fit utility evaluates Equation~\eqref{eq:ansatz} using the rounded Table-6 parameters and numerically integrates Equation~\eqref{eq:mixture}, with a controlled binomial-tail bound. This reconstructs a central-fit reference. It does not generate Monte Carlo points or recover bootstrap bands, which require trial counts and the original fitting data. A fresh statistical replication needs a new sampling campaign and uncertainty analysis.
+
+\subsection{Tests, staged implementation and evidence}
+
+Validation is organized in layers. The first tests exact Pauli algebra, code ranks, logical bases, graph incidence, dressing and cycle redundancy. The second tests the corrected conditional instrument, including branch signs and preservation of unmeasured logical information. The third verifies physical check primitives, Bell partitions, gate ordering and timing. The fourth checks all detector and observable flows. The fifth compares primitive-fault signatures against independent Pauli propagation and validates noise probabilities. Only after these layers pass should a Relay backend and sampling campaign be interpreted as performance evidence.
+
+Negative tests are particularly informative. The suite should reject a cycle that is not closed, an omitted required cycle, separate measurements substituted for a joint product, a missing split frame, a sign error in $Y$, and a collision-free schedule with reversed ordering on one anticommuting overlap. It should also reject an incorrect record offset and a decoder correction with nonzero residual syndrome. These tests check that the validators detect the intended mistakes rather than merely accepting one reference instance.
+
+Distance calculations should run outside default fast CI. A small exact fixture can use complete fault enumeration. Larger phenomenological problems use the A.8 optimization with a saved solver bound, termination reason and checked witness. A circuit-logical search verifies $He=0$ and $\Lambda e\ne0$ for every returned vector, but reports only the resulting upper bound unless a lower bound has also been certified.
+
+The implementation plan starts with a small generic BB example and a gross $\lx_1$ vertical slice. It proceeds through signed algebra and graph certificates, ideal protocol, physical schedule, detector harness and fault catalogue. The full-LPU $XX$ and $Y$ operations, inter-module adapter, physical shifts and two-gross follow as separate bounded phases. Relay integration, sampling/analysis and a user-budgeted reproduction campaign form the final phases. The accompanying fourteen Codex prompts each state a task, acceptance tests, scope limit and handoff requirement; \texttt{AGENTS.md} and \texttt{STATUS.md} prevent a large unsupervised implementation from conflating these stages.
+
+Every generated circuit should carry its code and graph data, schedule, symbolic outcomes, flow definitions, frame updates, primitive fault catalogue, $H/\Lambda$ matrices and a source/version manifest. Every result chunk should reference the immutable circuit hash and record decoder settings, priors, random streams, counts, timing and normalization. Per-chunk deterministic seeds prevent worker allocation or resumption from silently duplicating samples. Threading must be controlled so that process parallelism does not accidentally multiply Relay's internal parallelism.
+
+At delivery, nine utility tests pass. The independent audit covers both code definitions and the $X$, $XX$, $Y$ and reconstructed inter-$XX$ algebra described above. It also checks the support-derived shift matrices and the published full-LPU census. These computations do not include Stim execution, signed physical-instrument validation, distance certification or Relay decoding. The test log and JSON results are supplied so this limited scope is reproducible.
+
+\subsection{Conditions for a reproduction claim}
+
+Five outstanding specification items should remain visible until resolved: the inter-module action-observable rows; the historical-to-current Relay mapping; the concrete schedule, shift representative and boundary lowering; the primitive-fault population convention; and the original counts and fitting settings needed for point-and-band replication. Each can be recorded independently, allowing construction and validation to proceed without presenting a guessed choice as a published one.
+
+The resulting package has a useful purpose beyond exact plot reproduction. Once the reference operation is validated, alternative cycle sets, schedules, decoder policies or two-gross measurement circuits can be studied under explicitly different profiles. This makes the original benchmark a controlled baseline rather than a collection of target numbers to fit. The essential design principle is that every change in a simulated logical error rate should be traceable to a change in the logical operation, physical circuit, fault model, decoder or estimator.
+
+\begingroup\small
+\begin{thebibliography}{99}
+\setlength{\itemsep}{2pt}
+\bibitem{tdg} T.~J.~Yoder, E.~Schoute, P.~Rall, E.~Pritchett, J.~M.~Gambetta, A.~W.~Cross, M.~Carroll, and M.~E.~Beverland, ``Tour de gross: A modular quantum computer based on bivariate bicycle codes,'' arXiv:2506.03094v1 (2025). \url{https://arxiv.org/abs/2506.03094v1}.
+\bibitem{bravyi} S.~Bravyi, A.~W.~Cross, J.~M.~Gambetta, D.~Maslov, P.~Rall, and T.~J.~Yoder, ``High-threshold and low-overhead fault-tolerant quantum memory,'' \emph{Nature} \textbf{627}, 778--782 (2024). arXiv:2308.07915.
+\bibitem{cohen} L.~Z.~Cohen, I.~H.~Kim, S.~D.~Bartlett, and B.~J.~Brown, ``Low-overhead fault-tolerant quantum computing using long-range connectivity,'' \emph{Science Advances} \textbf{8}, eabn1717 (2022).
+\bibitem{cross} A.~W.~Cross, Z.~He, P.~Rall, and T.~J.~Yoder, ``Improved QLDPC Surgery: Logical Measurements and Bridging Codes,'' arXiv:2407.18393 (2024). \url{https://arxiv.org/abs/2407.18393}.
+\bibitem{gauging} D.~J.~Williamson and T.~J.~Yoder, ``Low-overhead fault-tolerant quantum computation by gauging logical operators,'' arXiv:2410.02213 (2024; revised 2026). \url{https://arxiv.org/abs/2410.02213}.
+\bibitem{adapters} E.~Swaroop, T.~Jochym-O'Connor, and T.~J.~Yoder, ``Universal adapters between quantum LDPC codes,'' arXiv:2410.03628 (2024). \url{https://arxiv.org/abs/2410.03628}.
+\bibitem{stim} C.~Gidney, ``Stim: a fast stabilizer circuit simulator,'' \emph{Quantum} \textbf{5}, 497 (2021). \url{https://doi.org/10.22331/q-2021-07-06-497}.
+\bibitem{relay} T.~M\"uller, T.~Alexander, M.~E.~Beverland, M.~B\"uhler, B.~R.~Johnson, T.~Maurer, and D.~Vandeth, ``Improved Belief Propagation Is Sufficient for Real-Time Decoding of Quantum Memory,'' arXiv:2506.01779 (2025). \url{https://arxiv.org/abs/2506.01779}.
+\bibitem{failfast} M.~E.~Beverland, M.~Carroll, A.~W.~Cross, and T.~J.~Yoder, ``Fail fast: techniques to probe rare events in quantum error correction,'' arXiv:2511.15177 (2025). \url{https://arxiv.org/abs/2511.15177}.
+\bibitem{compiler} Qiskit Community, \emph{Bicycle Architecture Compiler}, source repository; reviewed 2 October 2026. \url{https://github.com/qiskit-community/bicycle-architecture-compiler}.
+\bibitem{swd} Gongaa and contributors, \emph{SlidingWindowDecoder}, especially \texttt{src/build\_circuit.py}; source revision \texttt{05d6b1f4}, reviewed 2 October 2026. \url{https://github.com/gongaa/SlidingWindowDecoder}.
+\bibitem{qldpc} M.~A.~Perlin and contributors, \emph{qLDPC}, especially \texttt{qldpc.experimental.surgery}; source revision \texttt{60fc2cf4}, reviewed 2 October 2026. \url{https://github.com/qLDPCOrg/qLDPC}.
+\bibitem{relaysoftware} T.~M\"uller, T.~Alexander and contributors, \emph{Relay-BP}, source revision \texttt{d185194b}, reviewed 2 October 2026. \url{https://github.com/trmue/relay}.
+\end{thebibliography}
+\endgroup
+\end{document}
