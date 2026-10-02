@@ -1,4 +1,4 @@
-"""Noiseless physical in-module bodies; encoding is a separate ideal harness."""
+"""Noiseless physical bodies; encoding is a separate ideal harness."""
 from dataclasses import dataclass, replace
 from collections import Counter, defaultdict
 from gross_design_bandle.surgery.frame import Parity, build_split_frame
@@ -104,16 +104,25 @@ class PhysicalProtocol:
             by_phase[phases[o.time]][o.gate]+=1
         for q,t in idles:
             by_phase[phases[t]]['IDLE']+=1
-        return {'installed_qubits':len(self.register),'active_qubits':len({q for o in ops for q in o.qubits}),
+        result = {'installed_qubits':len(self.register),'allocated_fragment_qubits':len(self.register),
+                'active_qubits':len({q for o in ops for q in o.qubits}),
                 'live_data_intervals':intervals,'live_ancilla_intervals':anc_intervals,
                 'idle_locations':idles,'locations_by_kind':dict(counts),
                 'locations_by_phase':{p:dict(c) for p,c in by_phase.items()},
                 'bell_couplers':self.cycle.ledger()['bell_couplers'],
                 'policy':self.cycle.policy,'fault_catalogue_complete':False,
                 'edge_data_inactive_after_split':list(edges)}
+        if self.deformation.lpu.operation == 'inter_XX':
+            from gross_design_bandle.codes.reference_profiles import reference_fixture
+            result['installed_qubits'] = sum(len(c.qubit_ids)+len(c.check_ids)+
+                reference_fixture(c.spec.name)['expected_full_graph']['physical_lpu_qubits']
+                for c in self.deformation.lpu.codes)+sum(len(c.ancillas) for c in self.cycle.checks
+                    if c.id.startswith('vertex:adapter:'))
+            result['installed_scope'] = 'two full LPUs plus identifying sites; joint cycles reuse bridge-square sites'
+        return result
 
     def to_dict(self):
-        return {'schema_version':1,'scope':'physical noiseless in-module instrument; no detectors or benchmark scoring',
+        return {'schema_version':1,'scope':'physical noiseless instrument; no detectors or benchmark scoring',
                 'operation':self.deformation.lpu.operation,
                 'register':list(self.register),'timing':self.timing,'cycle_hash':self.cycle.hash,
                 'cycle':self.cycle.to_dict(),'schedule_metadata':self.schedule_metadata,
@@ -145,3 +154,25 @@ def build_physical_inmodule(deformation,rounds=10):
     split = tuple(Op(0,'M',(q,),outcome_id=f'split/{e}',phase='split')
                   for e,q in zip(deformation.graph.edge_ids,cycle.data[len(deformation.lpu.ports.target.qubit_ids):]))
     return PhysicalProtocol(deformation,cycle,rounds,split,memory_schedule(deformation.lpu.codes[0]),metadata)
+
+
+def build_physical_inter(deformation, rounds=10):
+    """Fig. 13(b) one-to-one adapter on two distinct gross blocks."""
+    from gross_design_bandle.codes.blocks import CodeBlocks
+    from .memory import memory_checks
+    from .schedule import validate
+    blocks = CodeBlocks(deformation.lpu.codes)
+    if deformation.lpu.operation != 'inter_XX':
+        raise ValueError('inter instrument requires inter_XX deformation')
+    if not isinstance(rounds, int) or isinstance(rounds, bool) or rounds < 1:
+        raise ValueError('round count must be positive integer')
+    cycle, metadata = staged_schedule(deformation)
+    split = tuple(Op(0,'M',(f'edge:{e}',),outcome_id=f'split/{e}',phase='split')
+                  for e in deformation.graph.edge_ids)
+    schedules = tuple(memory_schedule(c) for c in blocks.codes)
+    terminal = Schedule(blocks.qubit_ids,
+                        tuple(check for c in blocks.codes for check in memory_checks(c,blocks.qubit_ids)),
+                        tuple(o for s in schedules for o in s.ops), max(s.duration for s in schedules),
+                        'tdg_two_block_original_verification_v1')
+    validate(terminal)
+    return PhysicalProtocol(deformation,cycle,rounds,split,terminal,metadata)

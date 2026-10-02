@@ -16,6 +16,29 @@ class LogicalBasisAdapter:
     abstract_cliffords: tuple
 
     @classmethod
+    def two_blocks(cls, blocks, profile='full_two_block_centralizer_K47'):
+        if profile == 'published_inter_K23':
+            raise ValueError('published inter K23 rows unresolved O1; no subset is inferred')
+        if profile != 'full_two_block_centralizer_K47':
+            raise ValueError('unknown inter observable profile')
+        a, b = blocks.codes
+        x, z = list(blocks.logical_x), list(blocks.logical_z)
+        xn = [f'{c.block_id}:X{i}' for c in blocks.codes for i in c.logical_labels]
+        zn = [f'{c.block_id}:Z{i}' for c in blocks.codes for i in c.logical_labels]
+        # Logical CX(a:1,b:1): designated X becomes the product, and the
+        # retained b:Z1 becomes Z1 tensor Z1. No individual X1 readout.
+        j = a.k
+        x[0] = x[0]*x[j]; z[j] = z[0]*z[j]
+        xn[0] = f'{a.block_id}:X1*{b.block_id}:X1'
+        zn[j] = f'{a.block_id}:Z1*{b.block_id}:Z1'
+        for i in range(blocks.k):
+            for k in range(blocks.k):
+                if x[i].symplectic(z[k]) != int(i == k) or x[i].symplectic(x[k]) or z[i].symplectic(z[k]):
+                    raise ValueError('inter adapter is not canonical')
+        return cls('inter_XX', tuple(x), tuple(z), tuple(xn), tuple(zn),
+                   (('CX', f'{a.block_id}:1', f'{b.block_id}:1'),))
+
+    @classmethod
     def single_block(cls, code, target='memory'):
         if target not in ('memory', 'X1', 'X1*X7', 'Y1'):
             raise ValueError('unknown single-block logical target; inter K23 is unresolved O1')
@@ -58,11 +81,12 @@ class LogicalBasisAdapter:
             raise ValueError('logical action rank mismatch')
         if self.target != 'memory' and any(not p.commutes(self.x[0]) for p in self.generators):
             raise ValueError('generator outside measured centralizer')
-        return {'profile': 'single_block_a7_ideal_v1', 'target': self.target,
+        return {'profile': 'full_two_block_centralizer_K47' if self.target == 'inter_XX' else 'single_block_a7_ideal_v1', 'target': self.target,
                 'abstract_cliffords': list(self.abstract_cliffords), 'rank': expected,
                 'logical_coordinates': coords.tolist(), 'names': list(self.names),
                 'physical_generators': [p.to_dict() for p in self.generators],
-                'scope': 'named single-block centralizer; physical validation is separate'}
+                'scope': 'named full input centralizer; physical validation is separate',
+                'paper_exact': False, 'O1': 'published inter K23 rows unresolved' if self.target == 'inter_XX' else None}
 
 
 def correlation(pauli, axis, ref, register):
