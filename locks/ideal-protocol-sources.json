@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "implementation": "Independently written phase-03 ideal instrument, signed matrix contraction and symbolic split frame; no external source copied or modified",
+  "paper": {
+    "arxiv": "2506.03094v1",
+    "url": "https://arxiv.org/pdf/2506.03094v1",
+    "sha256": "78599e80971cd05ba2d8ba0c1c6c0d62b7d3ccdbe482ab4578770d70e8631c73",
+    "inspected_sections": ["PDF Appendix A.4 steps 1--4, printed p. 51; projector and root/path correction semantics", "Appendix A.8 gauge-group discussion, printed p. 61"],
+    "license": "Paper cited for scientific definitions; PDF not redistributed; no source implementation copied"
+  },
+  "backend": {
+    "distribution": "stim",
+    "version": "1.16.0",
+    "pin_and_inspected_license": "locks/source-lock.json and locks/environment-lock.json from phase 00",
+    "usage": "Public ideal MPP, Tableau, TableauSimulator, signed PauliString and postselect_observable APIs; no donor circuit source copied"
+  },
+  "independent_oracles": [
+    "Tiny matrix projector contraction independent of the symbolic B^T t=z formula",
+    "Encoded logical/reference Choi stabilizers and direct requested-Pauli projection independent of deformation checks and split frame"
+  ],
+  "fixtures": {
+    "reference/gross.json": "937872cf0cb56785484d0622836c1711e4ece1a1c1b8bafb64a7852535341080"
+  },
+  "open_items": {
+    "O1": "Published inter K23 logical-action generators unresolved",
+    "O2": "Historical Relay semantics and priors/columns unresolved",
+    "O3": "Physical schedule, shift representative, lowering and boundaries unresolved",
+    "O4": "Primitive multiplicities and admission/merging convention unresolved",
+    "O5": "Original data/counts/grids/bootstrap unresolved"
+  },
+  "scope": "B01--B03 and B04_X1 ideal construction only; no gross XX/Y or inter-XX instrument validation, physical schedule, distance, decoder or sampling claim"
+}

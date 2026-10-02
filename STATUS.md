@@ -10,7 +10,7 @@ The theory/design report, module architecture, reproduction contract, validation
 
 ## Not implemented / not run
 
-No production `gross_design_bandle` simulation implementation, physical Stim surgery circuit, Bell schedule, detector/observable compiler, signed instrument verification, distance proof, Relay adapter or Monte Carlo reproduction has been completed. Stim, qLDPC and Relay were not installed or executed in the delivery environment. The algebra audit is not a circuit-distance certification and its rank calculations are phase-blind.
+No production physical Stim surgery circuit, Bell schedule, detector/observable compiler, distance proof, reproduction Relay adapter or Monte Carlo reproduction has been completed. The original delivery did not install or execute Stim, qLDPC or Relay; phase 00 subsequently pinned and tested tiny backend APIs. Phases 01--02 implemented signed algebra and deformations; phase 03 now validates an ideal measurement instrument through gross X1, with explicit limits recorded below. The delivered algebra audit is not a circuit-distance certification and its rank calculations are phase-blind.
 
 ## Specification blockers for exact reproduction
 
@@ -88,11 +88,10 @@ Implemented in the separate `feature/model-reasoning` worktree. Verification: `c
 
 ## Next action
 
-Phase 02 is complete for stable reference graph/port geometry, local dressing,
-signed omitted-cycle certificates and fixed input logical subspaces. Next
-implementation prompt is `prompts/03_ideal_protocol.md`, only in a new
-controller-authorized session after phase-02 acceptance and publication. This
-session stops at 02;
+Phase 03 is complete for the ideal merge/repeat/split instrument and symbolic
+signed split frame through gross X1. Next implementation prompt is
+`prompts/04_physical_scheduling.md`, only in a new controller-authorized session
+after phase-03 acceptance and publication. This session stops at 03;
 strict paper-equivalent sampling remains blocked by O1--O5.
 
 ## Phase 00 source audit completed (2026-10-02)
@@ -419,3 +418,128 @@ collection command and pip check above in `tour_de_gross`. Publication remains
 with the controller. Stop after phase 02. Next prompt:
 `prompts/03_ideal_protocol.md`, only in a new controller-authorized session after
 phase-02 validation/publication. No later phase was started.
+
+## Phase 03 ideal protocol completed (2026-10-02)
+
+Branch: `feature/03_ideal_protocol`. Worktree:
+`/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/.codex-pipeline/tour-de-gross/worktrees/03_ideal_protocol`.
+Main checkout: `/home/quantum_teresheys/workspace/tour_de_gross_design_bundle`,
+verified clean. Publication outcome: **not attempted; the outer controller owns
+acceptance rerun, feature commit, validated merge and atomic push**. The supplied
+feature worktree was initially clean; existing code and scientific fixtures
+were preserved. No AGENTS/pipeline changes, external source patches, downloads,
+network writes, noisy sampling, solver searches or cluster work occurred. The
+editable package was pointed to this feature worktree in `tour_de_gross`.
+
+Implemented an ideal-only prepare/merge/repeat/split/complete state machine,
+absolute symbolic IDs for every measurement, logical-outcome XOR, rooted
+spanning-tree edge parities and signed data frame Q. Frame evaluation checks
+B^T t=z on all edges and rejects noncuts or missing/invalid outcomes. Invalid
+state transitions and root/path validation fail without accepting an incomplete
+protocol. Stim lowering uses explicitly ideal MPPs, including signed Y and
+negative checks; there is no noisy logical MPP substitute or physical schedule.
+Original checks are read after edge Z, before correction; the tests verify their
+frame-dependent outcomes and restoration of the original +1 sector. Reference
+selected cycles and signed omitted-cycle certificates are preserved.
+
+The tiny oracle directly contracts vertex/cycle projectors against |0> edges
+and all final Z branches. The independent expected instrument is projection by
+the requested signed data Pauli. Two vertices exhaust eight branches (XX, YZ
+and negative XX); triangle tests exhaust 64 candidate branches, including 32
+zero noncuts, for every root and all three spanning trees; a dummy identity
+port exhausts 32 branches for every root. All include arbitrary complex and
+maximally reference-entangled inputs, normalization and repeated measurements.
+An ideal Bell-check wavefunction oracle controls disjoint signed data halves
+and contracts both X readouts, with separate outcome IDs and explicit XOR.
+Every Bell branch preserves the expected reference coherence. Negative tests
+detect a missing split frame, XZ substituted for Y=iXZ, a self-consistent wrong
+-Y target, invalid cut/path/outcome data, invalid state transitions and
+unsupported Bell support overlap. Literal independent Stim Pauli words/signs
+check all signed one/two-register Pauli words, including identity readouts.
+
+The 18-qubit BB debugging fixture uses its verified nontrivial derived X1,
+six single-qubit ports, generic dressing and a ring with its full one-cycle
+basis. It is not a scaled TdG LPU, has no X7 label and has no distance claim.
+Exact stabilizer postselection tests every one of 2,048 allowed vertex/cut
+branches with two rounds and four logical reference qubits; corrected full
+states and branch probabilities agree with direct logical projection, and each
+outcome's probabilities sum to 1/2. Gross X1 uses the actual half-LPU and
+prescribed cycles with three ideal rounds. Twelve deterministic seeds for each
+of + eigenstate, - eigenstate and twelve-logical-qubit encoded Choi input yield
+36 bounded ideal stabilizer trajectories. Full data/reference/edge states agree
+with direct X1 projection; all eleven preserved logical X/Z reference pairs and
+all original checks are verified. Every root is compared on every resulting
+branch. Gross branch enumeration is exponential and was not performed; the
+general signed branch identity, documented in `docs/IDEAL_PROTOCOL.md`, proves
+the corrected projector semantics on arbitrary reference-entangled states.
+Gross XX/Y and inter XX instrument checks are not claimed by B04_X1.
+
+Provenance: `locks/ideal-protocol-sources.json` and
+`docs/IDEAL_PROTOCOL.md`. All implementation is independently written; no donor
+source was copied or modified. Read the existing pinned PDF
+`/tmp/phase00-resume-tdg.pdf`, especially A.4 steps 1--4 (printed p. 51), and
+verified its SHA256 against phase 00. Stim 1.16.0 is used only through the
+previously pinned public APIs. The unchanged delivered reference audit remains
+an independent oracle and its output matches the delivery exactly.
+
+Commands actually run (redirected logs are under `evidence/phase03/`):
+
+```bash
+conda run --no-capture-output -n tour_de_gross python -m pip install --no-build-isolation -e .
+conda run --no-capture-output -n tour_de_gross python -c 'from gross_design_bandle.codes import small_debug_code; import gross_design_bandle; c=small_debug_code(); print(gross_design_bandle.__file__); print(c.k, c.logical("X","1").x)'
+conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_ideal_protocol.py
+conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_ideal_protocol.py::test_signed_mpp_lowering_matches_pauli_oracle
+conda run --no-capture-output -n tour_de_gross python -m pytest -q --junitxml=evidence/phase03/pytest-final.xml
+conda run --no-capture-output -n tour_de_gross python tools/audit_ideal_protocol.py --output-dir evidence/phase03/oracles
+conda run --no-capture-output -n tour_de_gross python tools/audit_reference.py --output evidence/phase03/independent-audit.json
+conda run --no-capture-output -n tour_de_gross python -m pytest --collect-only -q tests/test_ideal_protocol.py
+conda run --no-capture-output -n tour_de_gross python -m pip check
+conda run --no-capture-output -n tour_de_gross python /tmp/phase03_handoff.py
+git diff --check
+```
+
+The phase-only command ran three times: initially **10 failed, 4 passed,
+1 error** (empty root parity rejected by strict binary conversion, and a wrong
+local test spelling of the existing generic dressing profile), then **2 failed,
+13 passed** (the test attempted to compare a nested collection of differently
+sized arbitrary/Choi matrices), then **15 passed in 31.21s** after fixes.
+Initial failure logs are retained, not relabeled as successes. The final full
+regression run passed **156 tests in 165.22s**, with no skips or xfails. An
+additional independent literal Pauli-word assertion was added during that run
+and its targeted final test passed **1 test in 0.22s**; the controller will
+rerun the final mapped tree. All fifteen phase nodes are collected and mapped
+exactly to B01, B02, B03, B04_X1 and negative_tests. These successful final runs
+supersede the resolved development failures. The audit checked eight tiny
+branches with zero maximum amplitude and completeness residual. Pip reports
+no broken requirements. Prior tiny backend regressions retain their limited
+phase-00 scope; no physical surgery or reproduction Relay backend is claimed.
+
+Actual nonempty evidence: `evidence/phase03/{pytest-initial.txt,
+pytest-after-empty-parity-fix.txt,pytest-phase03.txt,pytest-literal-pauli.txt,
+pytest-final.txt,pytest-final.xml,collected-nodeids.txt,audit-ideal.txt,
+audit-reference.txt,independent-audit.json,pip-check.txt,guards.json,
+acceptance-gates.json,handoff-validation.json,result.json}`. Symbolic protocols
+and ideal Stim oracle bodies are in `evidence/phase03/oracles/`:
+`two_vertex_YZ.{json,stim}`, `gross_X1.{json,stim}` and `index.json`, including
+byte hashes and actual branch residuals. Evidence remains local under the
+existing ignored-output policy. The handoff helper checks worktree/branch,
+feature import path, clean main, protected source/fixture/control bytes,
+canonical external checkout cleanliness, pinned PDF hash, collected node IDs,
+actual JUnit outcomes and the unchanged controller's result validation.
+
+O1--O5 remain open: O1 published inter K23 action generators; O2 historical
+Relay semantics/priors/columns; O3 concrete schedule, shift representative,
+lowering and ideal/noisy boundaries; O4 primitive multiplicities and
+admission/merging convention; O5 original counts/grids/bootstrap. None is
+assumed resolved or required for this independent ideal instrument. Strict
+paper manifests remain fail-closed. Donor memory-builder reuse licensing also
+remains open and no donor code is used here. Three ideal gross rounds are a
+validation fixture, not the published C=10 noisy benchmark. No physical Bell
+partition/schedule, detector integrity, circuit distance or Figure-15 sampled
+rates are delivered.
+
+Short rerun: from this worktree, run the phase pytest command, ideal export,
+independent reference audit, full pytest and pip check above in `tour_de_gross`.
+Stop after phase 03. Next prompt: `prompts/04_physical_scheduling.md`, only in a
+new controller-authorized session after validation/publication. No later phase
+was started; publication remains with the controller.
