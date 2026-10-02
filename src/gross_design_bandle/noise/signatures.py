@@ -8,6 +8,7 @@ No graphlike decomposition, gauge flags or DEM compaction is used.
 
 def joint_signatures(circuit, faults):
     flat = list(circuit.flattened())
+    nqubits, ndetectors = circuit.num_qubits, circuit.num_detectors
     counts = []; m = d = 0
     for op in flat:
         counts.append((m,d))
@@ -18,10 +19,10 @@ def joint_signatures(circuit, faults):
             m += sum(j==0 or not ts[j-1].is_combiner for j,t in enumerate(ts) if not t.is_combiner)
         elif op.name == 'DETECTOR':
             d += 1
-    sx = [0]*circuit.num_qubits; sz = sx.copy(); records = [0]*m
+    sx = [0]*nqubits; sz = sx.copy(); records = [0]*m
     requested = {}
     for j,(boundary,x,z) in enumerate(faults):
-        if boundary not in range(-1,len(flat)) or min(x,z)<0 or (x|z)>>circuit.num_qubits:
+        if boundary not in range(-1,len(flat)) or min(x,z)<0 or (x|z)>>nqubits:
             raise ValueError('invalid fault boundary/register')
         requested.setdefault(boundary,[]).append((j,x,z))
     signatures = [0]*len(faults)
@@ -39,7 +40,7 @@ def joint_signatures(circuit, faults):
         save(i)
         op = flat[i]; name = op.name; ts = op.targets_copy(); m,d = counts[i]
         if name in ('DETECTOR','OBSERVABLE_INCLUDE'):
-            value = 1 << (d if name=='DETECTOR' else circuit.num_detectors+int(op.gate_args_copy()[0]))
+            value = 1 << (d if name=='DETECTOR' else ndetectors+int(op.gate_args_copy()[0]))
             for t in ts:
                 if not t.is_measurement_record_target or not 0 <= m+t.value < m:
                     raise ValueError('annotation record outside history')

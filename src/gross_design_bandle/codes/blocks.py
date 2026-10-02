@@ -13,8 +13,8 @@ class CodeBlocks:
         object.__setattr__(self, 'codes', tuple(self.codes))
         if len(self.codes) != 2 or len({c.block_id for c in self.codes}) != 2:
             raise ValueError('two distinct explicit block IDs required')
-        if any(c.spec.name != 'gross' for c in self.codes) or self.codes[0].spec != self.codes[1].spec:
-            raise ValueError('inter physical profile requires two gross blocks')
+        if any(c.spec.name not in ('gross', 'two_gross') for c in self.codes) or self.codes[0].spec != self.codes[1].spec:
+            raise ValueError('inter physical profile requires two blocks of the same reference code')
 
     @property
     def block_id(self):

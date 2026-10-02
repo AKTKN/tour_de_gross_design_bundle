@@ -1,13 +1,14 @@
 """Noise provenance for every transfer, reuse, bundle and syndrome boundary."""
 from collections import defaultdict
-from gross_design_bandle.circuits.shift import shift_sequence, PROFILE, TIMING_POLICY
+from gross_design_bandle.circuits.shift import shift_sequence, timing_policy
 from gross_design_bandle.flows.boundaries import input_boundary
 from gross_design_bandle.flows.observables import LogicalBasisAdapter
 from .locations import Location, validate_locations
 
 
-def shift_locations(code, harness, instructions=10, *, profile=PROFILE):
+def shift_locations(code, harness, instructions=10, *, profile=None):
     sequence = shift_sequence(code,instructions,profile=profile)
+    profile = sequence.plan.profile
     if (harness.split_mode!='frame' or harness.boundary_policy.get('profile')!=profile or
         harness.boundary_policy.get('instructions')!=instructions):
         raise ValueError('shift harness/profile/instruction mismatch')
@@ -47,8 +48,8 @@ def shift_locations(code, harness, instructions=10, *, profile=PROFILE):
         result.append(Location(f'{time}/IDLE/{q}',ticks[time],'idle',(index[q],),'I',phase,time,
                                max(0,(time-1)//14),sequence.role_at(q,time)))
     result.sort(key=lambda l:(l.after_instruction,l.id)); validate_locations(harness.circuit,result)
-    return tuple(result), {'profile':PROFILE,'paper_exact':False,'noisy_ticks':sequence.duration,
+    return tuple(result), {'profile':profile,'paper_exact':False,'noisy_ticks':sequence.duration,
         'boundaries':'initial check R noisy; encoded data/references and terminal MPP ideal',
-        'timing_policy':TIMING_POLICY,'idle_policy':'every unoccupied live physical site each tick',
+        'timing_policy':timing_policy(profile),'idle_policy':'every unoccupied live physical site each tick',
         'frames':'classical XOR; no noise channel or metadata replacement for transfers',
         'O4':'all primitive copies retained; joint-zero admission explicitly selectable'}

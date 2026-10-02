@@ -32,6 +32,8 @@ class Location:
 
 def validate_locations(circuit, locations):
     flat = list(circuit.flattened())
+    nqubits = circuit.num_qubits
+    operands = {}
     seen = set()
     arities = {'preparation':1, 'readout':1, 'idle':1, 'two_qubit':2}
     gates = {'preparation':('R','RX','RY'), 'readout':('M','MX','MY'),
@@ -42,7 +44,7 @@ def validate_locations(circuit, locations):
         seen.add(loc.id)
         if loc.kind not in arities or loc.gate not in gates[loc.kind] or len(loc.qubits) != arities[loc.kind]:
             raise ValueError('location kind/gate/arity mismatch')
-        if len(set(loc.qubits)) != len(loc.qubits) or any(type(q) is not int or q not in range(circuit.num_qubits) for q in loc.qubits):
+        if len(set(loc.qubits)) != len(loc.qubits) or any(type(q) is not int or q not in range(nqubits) for q in loc.qubits):
             raise ValueError('invalid physical location qubits')
         if type(loc.after_instruction) is not int or loc.after_instruction not in range(-1,len(flat)):
             raise ValueError('invalid physical insertion boundary')
@@ -50,12 +52,16 @@ def validate_locations(circuit, locations):
             i = loc.after_instruction+(loc.kind=='readout')
             if i not in range(len(flat)) or flat[i].name != loc.gate:
                 raise ValueError('location gate does not match physical boundary')
-            ts = flat[i].targets_copy()
-            if any(t.is_measurement_record_target for t in ts):
-                raise ValueError('classical feedback is not a physical two-qubit location')
-            qs = tuple(t.value for t in ts)
             width = arities[loc.kind]
-            if loc.qubits not in tuple(qs[j:j+width] for j in range(0,len(qs),width)) or len(set(qs)) != len(qs):
+            if (i, width) not in operands:
+                ts = flat[i].targets_copy()
+                if any(t.is_measurement_record_target for t in ts):
+                    raise ValueError('classical feedback is not a physical two-qubit location')
+                qs = tuple(t.value for t in ts)
+                operands[i, width] = (set(qs[j:j+width] for j in range(0,len(qs),width)),
+                                      len(set(qs)) == len(qs))
+            pairs, disjoint = operands[i, width]
+            if loc.qubits not in pairs or not disjoint:
                 raise ValueError('location operands mismatch or non-disjoint batched gates')
         if not loc.phase or not loc.role or type(loc.time) is not int or loc.time < 0 or type(loc.round) is not int or loc.round < 0:
             raise ValueError('missing physical location provenance')

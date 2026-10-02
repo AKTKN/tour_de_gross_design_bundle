@@ -96,9 +96,14 @@ class Schedule:
         return tuple(o.outcome_id for o in self.ordered_ops() if o.outcome_id)
 
     def readouts(self):
-        return {f'{c.id}/{r}': tuple(o.outcome_id for o in self.ordered_ops()
-                  if o.check_id == c.id and o.round == r and o.outcome_id)
-                for c in self.checks for r in sorted({o.round for o in self.ops if o.check_id == c.id})}
+        # Sort once, rather than once per check and round on a large LPU.
+        rounds, outcomes = defaultdict(set), defaultdict(list)
+        for o in self.ordered_ops():
+            rounds[o.check_id].add(o.round)
+            if o.outcome_id:
+                outcomes[o.check_id, o.round].append(o.outcome_id)
+        return {f'{c.id}/{r}': tuple(outcomes[c.id, r])
+                for c in self.checks for r in sorted(rounds[c.id])}
 
     def ledger(self):
         """Candidate locations, not O4 primitive multiplicities or Table-6 N."""
@@ -125,8 +130,9 @@ class Schedule:
 
 def collision_check(schedule):
     occupied = set()
+    register = set(schedule.register)
     for op in schedule.ops:
-        if any(q not in schedule.register for q in op.qubits):
+        if any(q not in register for q in op.qubits):
             raise ValueError('unknown physical qubit')
         for q in op.qubits:
             if (op.time,q) in occupied:
@@ -135,10 +141,11 @@ def collision_check(schedule):
 
 
 def overlap_pairs(checks):
+    supports = tuple(support(c.pauli) for c in checks)
     for i,a in enumerate(checks):
-        sa = support(a.pauli)
-        for b in checks[:i]:
-            sb = support(b.pauli)
+        sa = supports[i]
+        for j,b in enumerate(checks[:i]):
+            sb = supports[j]
             overlap = tuple(q for q in sa.keys() & sb.keys() if sa[q] != sb[q])
             if len(overlap) % 2:
                 raise ValueError(f'noncommuting algebraic checks: {a.id}, {b.id}')
@@ -154,6 +161,7 @@ def validate(schedule):
     rounds = sorted({o.round for o in schedule.ops})
     times = {}
     by_id = {c.id:c for c in schedule.checks}
+    supports = {c.id:support(c.pauli) for c in schedule.checks}
     for op in schedule.ops:
         if op.check_id not in by_id:
             raise ValueError('unowned physical operation')
@@ -165,7 +173,7 @@ def validate(schedule):
             elif op.qubits[0] not in owner.ancillas:
                 raise ValueError('preparation/readout targets wrong physical ancilla')
         if op.data_id is not None:
-            if op.check_id not in by_id or op.data_id not in support(by_id[op.check_id].pauli):
+            if op.check_id not in by_id or op.data_id not in supports[op.check_id]:
                 raise ValueError('unknown check interaction')
             check = by_id[op.check_id]
             if (op.gate,op.qubits) != check.interaction(op.data_id):
@@ -180,7 +188,7 @@ def validate(schedule):
             ops = [o for o in schedule.ops if o.round == r and o.check_id == c.id]
             if not ops:
                 raise ValueError('missing check round')
-            for q in support(c.pauli):
+            for q in supports[c.id]:
                 if (r,c.id,q) not in times:
                     raise ValueError('missing check support interaction')
             preparations = [o for o in ops if o.data_id is None and o.gate == 'CX']

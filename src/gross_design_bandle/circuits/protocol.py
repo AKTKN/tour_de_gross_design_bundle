@@ -157,7 +157,7 @@ def build_physical_inmodule(deformation,rounds=10):
 
 
 def build_physical_inter(deformation, rounds=10):
-    """Fig. 13(b) one-to-one adapter on two distinct gross blocks."""
+    """Fig. 13(b) one-to-one adapter on two distinct reference BB blocks."""
     from gross_design_bandle.codes.blocks import CodeBlocks
     from .memory import memory_checks
     from .schedule import validate

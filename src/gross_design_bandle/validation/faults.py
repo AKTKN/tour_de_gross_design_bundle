@@ -5,7 +5,8 @@ import numpy as np
 from gross_design_bandle.flows.signatures import fault_signature, inject_fixed_fault
 
 
-def validate_faults(model, *, exhaustive, counterexample_path, word_policy='representative'):
+def validate_faults(model, *, exhaustive, counterexample_path, word_policy='representative',
+                    validate_model=True):
     """Check every raw term on small circuits, deterministic strata on large.
 
     Equal-q copies inherit the checked identical Pauli/boundary; copies are
@@ -16,10 +17,19 @@ def validate_faults(model, *, exhaustive, counterexample_path, word_policy='repr
     Use word_policy='all_words' for an explicitly requested deeper audit.
     Individual omitted large locations are not
     claimed as independently checked.
+
+    Full structural validation is the standalone default. A caller owning an
+    unmodified build_fault_model result may set validate_model=False: the public
+    builder validated its cold model, or verified every file checksum/identity
+    on a warm read. This avoids rebuilding the same expanded sparse matrices;
+    every selected independent forward/Stim oracle still executes.
     """
     if word_policy not in ('representative', 'all_words'):
         raise ValueError('unknown stratified fault word policy')
-    model.validate()
+    if type(validate_model) is not bool:
+        raise ValueError('validate_model must be boolean')
+    if validate_model:
+        model.validate()
     chosen = []; strata = {}; rounds = sorted({l.round for l in model.locations})
     anchors = {rounds[0],rounds[len(rounds)//2],rounds[-1]} if rounds else set()
     for j,r in enumerate(model.raw):
@@ -55,4 +65,6 @@ def validate_faults(model, *, exhaustive, counterexample_path, word_policy='repr
         'word_policy':'all_words' if exhaustive else word_policy,
         'checked_raw_primitives':len(trials),'raw_primitives':len(model.raw),'trials':trials,
         'oracles':['independent forward joint Pauli propagation','Stim probability-one joint fault injection'],
-        'all_agree':True,'Monte_Carlo_rates':False}
+        'all_agree':True,'Monte_Carlo_rates':False,
+        'full_model_revalidated':validate_model,
+        'structural_validation':'rechecked here' if validate_model else 'public builder cold validation or checksummed warm read; unmodified model required'}

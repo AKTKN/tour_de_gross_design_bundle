@@ -12,6 +12,7 @@ from .schedule import Op
 from gross_design_bandle.codes.reference_profiles import physical_shift_permutation
 
 PROFILE = 'gross_B1_B0_x_plus_measure_prepare_v1'
+TWO_GROSS_PROFILE = 'two_gross_B1_B0_x_plus_measure_prepare_v1'
 TIMING_POLICY = {
     'name': PROFILE,
     'CX_ticks': 1, 'M_ticks': 1, 'RX_ticks': 1,
@@ -21,6 +22,17 @@ TIMING_POLICY = {
     'initial_check_R_ticks': 1,
     'paper_exact': False,
 }
+
+
+def reconstruction_profile(code, profile=None):
+    expected = {'gross': PROFILE, 'two_gross': TWO_GROSS_PROFILE}.get(code.spec.name)
+    if expected is None or profile not in (None, expected):
+        raise ValueError('unknown reconstruction profile; paper-exact shift unresolved O3')
+    return expected
+
+
+def timing_policy(profile):
+    return {**TIMING_POLICY, 'name': profile}
 
 
 @dataclass(frozen=True)
@@ -68,11 +80,8 @@ class TransferPlan:
                 'scope':'physical routing reconstruction; O3 open'}
 
 
-def transfer_plan(code, *, profile=PROFILE):
-    if profile != PROFILE:
-        raise ValueError('unknown reconstruction profile; paper-exact shift unresolved O3')
-    if code.spec.name != 'gross':
-        raise ValueError('phase09 physical benchmark is gross only')
+def transfer_plan(code, *, profile=None):
+    profile = reconstruction_profile(code, profile)
     s = code.spec; bi,bj = s.B[1],s.B[0]
     delta = (bi[0]-bj[0],bi[1]-bj[1])
     first,second = [],[]
@@ -165,10 +174,10 @@ class ShiftSequence:
         busy = {(o.time,q) for o in self.ops for q in o.qubits}
         return {'idle_locations':[(q,t) for t in range(self.duration) for q in self.register if (t,q) not in busy],
                 'installed_qubits':len(self.register), 'live_sites':[0,self.duration],
-                'timing':self.validate(), 'policy':TIMING_POLICY}
+                'timing':self.validate(), 'policy':timing_policy(self.plan.profile)}
 
 
-def shift_sequence(code, instructions=10, *, profile=PROFILE):
+def shift_sequence(code, instructions=10, *, profile=None):
     if type(instructions) is not int or instructions<1:
         raise ValueError('instructions must be a positive integer')
     plan = transfer_plan(code,profile=profile); memory = memory_schedule(code)

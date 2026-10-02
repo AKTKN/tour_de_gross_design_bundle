@@ -2,16 +2,10 @@
 from gross_design_bandle.surgery.protocol import to_stim_pauli
 
 
-def check_tableau(schedule, check, *, composite=False):
-    """Pull readout XOR backward through actual gates, evaluate reset Paulis.
-
-    Stim.Tableau arithmetic is exact. This does not use Circuit.has_flow's
-    randomized signed check. Intended signed Paulis are an independent input.
-    """
+def _context(schedule, ops):
     import stim
     register = schedule.register
     unitary = stim.Circuit()
-    ops = [o for o in schedule.ordered_ops() if composite or o.check_id==check.id]
     if len({o.round for o in ops})!=1:
         raise ValueError('oracle needs one physical check round')
     for o in ops:
@@ -19,14 +13,19 @@ def check_tableau(schedule, check, *, composite=False):
             unitary.append(o.gate,[register.index(q) for q in o.qubits])
     # Pad tableau to the complete register, including identity-only targets.
     unitary.append('I',[len(register)-1])
+    return register, ops, stim.Tableau.from_circuit(unitary).inverse()
+
+
+def _check_readout(context, check):
+    import stim
+    register, ops, inverse = context
     readout = stim.PauliString(len(register))
     for o in ops:
         if o.gate in ('M','MX') and o.check_id==check.id:
             readout[register.index(o.qubits[0])] = 1 if o.gate=='MX' else 3
             if o.invert:
                 readout *= -1
-    tableau = stim.Tableau.from_circuit(unitary)
-    backward = tableau.inverse()(readout)
+    backward = inverse(readout)
     for o in ops:
         if o.gate in ('R','RX'):
             q = register.index(o.qubits[0])
@@ -41,7 +40,7 @@ def check_tableau(schedule, check, *, composite=False):
     # the interactions; after undoing Bell preparation this is a known +Z
     # reset factor. Requiring a bare operator identity on arbitrary ancilla
     # inputs would incorrectly reject such a valid joint measurement.
-    preserved = tableau.inverse()(expected)
+    preserved = inverse(expected)
     for o in ops:
         if o.gate in ('R','RX'):
             q = register.index(o.qubits[0])
@@ -52,3 +51,20 @@ def check_tableau(schedule, check, *, composite=False):
         raise ValueError('physical check does not preserve its measured Pauli')
     return {'check_id':check.id,'signed_readout_matches':True,'nondemolition':True,
             'oracle':'exact Stim signed Clifford tableau, inverse readout propagation'}
+
+
+def check_tableau(schedule, check, *, composite=False):
+    """Exact readout XOR pullback; independent intended signed Pauli input."""
+    ops = [o for o in schedule.ordered_ops() if composite or o.check_id==check.id]
+    return _check_readout(_context(schedule, ops), check)
+
+
+def check_schedule_tableaus(schedule):
+    """Verify every signed check using one actual composite inverse tableau.
+
+    Only the compiled Clifford is shared. Each check's readout, reset factors,
+    expected signed Pauli and nondemolition test are still checked separately.
+    No result, circuit or tableau is cached across schedules or test runs.
+    """
+    context = _context(schedule, schedule.ordered_ops())
+    return tuple(_check_readout(context, check) for check in schedule.checks)
