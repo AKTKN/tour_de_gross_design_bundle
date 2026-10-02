@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "phase": "04",
+  "implementation": "independently written local physical primitives and scheduler; no donor implementation copied",
+  "paper": {
+    "arxiv": "2506.03094v1",
+    "sha256": "78599e80971cd05ba2d8ba0c1c6c0d62b7d3ccdbe482ab4578770d70e8631c73",
+    "inspected": ["PDF Figures 3, 4, 5", "Appendix A.4", "Appendix A.5 Eqs. (65)--(68) and staged graph coloring"],
+    "source_lock": "locks/paper-sources.json"
+  },
+  "donor_schedule": {
+    "repository": "gongaa/SlidingWindowDecoder",
+    "commit": "05d6b1f478f2b044effdc7477278647dfb99db07",
+    "path": "src/build_circuit.py",
+    "git_blob": "25ce719a27c3f31caa74789bcafb7271d78ec9f6",
+    "sha256": "ba0e867dd6d59035fc41fc2e35b5158a69001c3616e4b62d8f86c4a5abacdb74",
+    "source_root": "/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/external_libs",
+    "license_inspection": "No license notice for builder or repository-level license. utils.py Apache-2.0 does not license builder. Source facts read only; no donor implementation copied or executed.",
+    "use": "AST extraction of twelve (time, sector, side, monomial) facts; independently compared with PDF Figure 4b after literal matrix convention validation",
+    "modified": false,
+    "fork_required_for_modification": true,
+    "source_lock": "locks/source-lock.json"
+  },
+  "stim": {"version": "1.16.0", "license": "Apache-2.0", "source_lock": "locks/package-artifacts.json", "use": "pinned public Circuit and exact signed Tableau APIs"},
+  "fixtures": {"source": "unchanged reference/gross.json and reference/two_gross.json", "hash_guard": "gross_design_bandle.codes.reference_profiles.FROZEN_SHA256"},
+  "scope": "gross X1 noiseless instrument and independent legal schedules; no paper-exact noise or decoder claim",
+  "open_items": ["O1", "O2", "O3", "O4", "O5"]
+}
