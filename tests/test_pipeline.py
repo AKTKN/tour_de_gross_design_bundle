@@ -42,10 +42,28 @@ def repository(tmp_path):
         path = root / name
         path.parent.mkdir(exist_ok=True)
         path.write_text('fixture\n')
-    for command in [['git', 'init', '-b', 'main'], ['git', 'add', '.'],
+    for command in [['git', 'init', '-b', 'main'], ['git', 'config', 'user.name', 'Test'], ['git', 'config', 'user.email', 'test@example.invalid'], ['git', 'add', '.'],
                     ['git', '-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', 'commit', '-m', 'fixture']]:
         subprocess.run(command, cwd=root, check=True, capture_output=True)
+    remote = tmp_path / 'origin.git'
+    subprocess.run(['git', 'init', '--bare', str(remote)], check=True, capture_output=True)
+    subprocess.run(['git', 'remote', 'add', 'origin', str(remote)], cwd=root, check=True, capture_output=True)
+    subprocess.run(['git', 'push', '-u', 'origin', 'main'], cwd=root, check=True, capture_output=True)
     return root
+
+
+def submission_file(root):
+    return root / pipeline.STATE / 'submitted.txt'
+
+
+def pending_workspace(root):
+    return Path(pipeline.read_json(root / pipeline.STATE / 'current-feature.json')['worktree'])
+
+
+def commit_manual_main_edit(root):
+    subprocess.run(['git', 'add', '--all'], cwd=root, check=True, capture_output=True)
+    subprocess.run(['git', 'commit', '-m', 'User reviewed main edit'], cwd=root, check=True, capture_output=True)
+    subprocess.run(['git', 'push', 'origin', 'main'], cwd=root, check=True, capture_output=True)
 
 
 def test_manifest_and_stage_selection():
@@ -119,7 +137,7 @@ def fake_tools(tmp_path):
     conda.write_text('#!' + sys.executable + '\nimport os,sys\na=sys.argv[1:]\nassert a[:4]==["run","--no-capture-output","-n","tour_de_gross"]\nos.execv(sys.executable,[sys.executable]+a[5:])\n')
     codex = bin_dir / 'codex'
     codex.write_text('#!' + sys.executable + '''
-import json,os,pathlib,re,sys,time
+import json,os,pathlib,re,subprocess,sys,time
 args=sys.argv[1:]
 if args==['login','status']:
     print('Fixture login');sys.exit(0)
@@ -129,7 +147,8 @@ prompt=sys.stdin.read()
 root=pathlib.Path(args[args.index('-C')+1])
 phase=re.search(r'Complete only phase (\\d\\d)',prompt).group(1)
 mode=os.environ.get('FAKE_MODE','success')
-with (root/'submitted.txt').open('a') as f:f.write(phase+'\\n')
+common=pathlib.Path(subprocess.check_output(['git','rev-parse','--git-common-dir'],cwd=root,text=True).strip()).resolve()
+with (common.parent/'.codex-pipeline/tour-de-gross/submitted.txt').open('a') as f:f.write(phase+'\\n')
 if mode=='nonzero':sys.exit(7)
 if mode=='timeout':time.sleep(10)
 result=pathlib.Path(args[args.index('--output-last-message')+1])
@@ -162,10 +181,16 @@ def test_sequential_sessions_and_resume(repository, fake_tools):
     assert first.returncode == 0, first.stderr + first.stdout
     second = invoke(repository, fake_tools, '--through', '01')
     assert second.returncode == 0, second.stderr + second.stdout
-    assert (repository / 'submitted.txt').read_text().splitlines() == ['00', '01']
+    assert submission_file(repository).read_text().splitlines() == ['00', '01']
     accepted = pipeline.read_json(repository / pipeline.STATE / 'accepted.json')
     assert [e['stage_id'] for e in accepted] == ['00', '01']
     assert all(Path(e['pytest_report']).is_file() for e in accepted)
+    assert all(e['published'] and e['branch'].startswith('feature/') and Path(e['worktree']).is_dir() for e in accepted)
+    assert subprocess.check_output(['git', 'branch', '--show-current'], cwd=repository, text=True).strip() == 'main'
+    assert subprocess.check_output(['git', 'status', '--porcelain'], cwd=repository, text=True).strip() == ''
+    remote = subprocess.check_output(['git', 'ls-remote', 'origin', 'refs/heads/main'], cwd=repository, text=True).split()[0]
+    assert remote == accepted[-1]['merge_commit']
+    assert (repository / 'validation/phase_00.json').is_file() and (repository / 'validation/phase_01.json').is_file()
 
 
 @pytest.mark.parametrize('mode', ['nonzero', 'malformed', 'not_run', 'skip', 'fail_test', 'no_status',
@@ -173,10 +198,17 @@ def test_sequential_sessions_and_resume(repository, fake_tools):
 def test_failure_stops_before_next_session(repository, fake_tools, mode):
     result = invoke(repository, {**fake_tools, 'FAKE_MODE': mode}, '--through', '01', '--stage-timeout', '1' if mode=='timeout' else '30')
     assert result.returncode == 1, result.stdout
-    assert (repository / 'submitted.txt').read_text().splitlines() == ['00']
+    assert submission_file(repository).read_text().splitlines() == ['00']
     assert not (repository / pipeline.STATE / 'accepted.json').exists()
     assert pipeline.read_json(repository / pipeline.STATE / 'active.json')['state'] == 'stopped'
     assert list((repository / pipeline.STATE / 'runs').glob('*/00/codex.log'))
+    worktree = pending_workspace(repository)
+    assert worktree.is_dir()
+    assert subprocess.check_output(['git', 'status', '--porcelain'], cwd=repository, text=True).strip() == ''
+    local = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=repository, text=True).strip()
+    remote = subprocess.check_output(['git', 'ls-remote', 'origin', 'refs/heads/main'], cwd=repository, text=True).split()[0]
+    assert local == remote
+    assert not subprocess.check_output(['git', 'ls-remote', 'origin', 'refs/heads/feature/*'], cwd=repository, text=True)
 
 
 def test_resume_rejects_workspace_changes(repository, fake_tools):
@@ -184,7 +216,7 @@ def test_resume_rejects_workspace_changes(repository, fake_tools):
     (repository / 'STATUS.md').write_text('Changed independently\n')
     result = invoke(repository, fake_tools, '--through', '01')
     assert result.returncode == 1 and 'Workspace changed' in result.stderr
-    assert (repository / 'submitted.txt').read_text().splitlines() == ['00']
+    assert submission_file(repository).read_text().splitlines() == ['00']
 
 
 def test_prerequisite_skipping_and_budget_denied_before_codex(repository, fake_tools):
@@ -192,7 +224,7 @@ def test_prerequisite_skipping_and_budget_denied_before_codex(repository, fake_t
     assert result.returncode == 1 and 'skip prerequisites' in result.stderr
     result = invoke(repository, fake_tools, '--through', '12')
     assert result.returncode == 1 and 'allow-pilot' in result.stderr
-    assert not (repository / 'submitted.txt').exists()
+    assert not submission_file(repository).exists()
 
 
 def test_dry_run_is_read_only(repository):
@@ -257,7 +289,7 @@ def test_tmux_launcher_keeps_completed_pane(repository, fake_tools, tmp_path):
         duplicate = subprocess.run(['bash', str(repository / 'prompts/scripts/start_codex_pipeline_tmux.sh'),
                                     '--through', '00'], env=env, capture_output=True, text=True, timeout=30)
         assert duplicate.returncode == 1 and 'already exists' in duplicate.stderr
-        assert (repository / 'submitted.txt').read_text().splitlines() == ['00']
+        assert submission_file(repository).read_text().splitlines() == ['00']
     finally:
         subprocess.run([tmux, '-L', socket, 'kill-server'], capture_output=True)
 
@@ -266,9 +298,10 @@ def test_revalidate_allows_resume_after_pending_edits(repository, fake_tools):
     assert invoke(repository, fake_tools, '--through', '00').returncode == 0
     with (repository / 'STATUS.md').open('a') as f:
         f.write('Pending work edited after phase 00\n')
+    commit_manual_main_edit(repository)
     resumed = invoke(repository, fake_tools, '--through', '01', '--revalidate')
     assert resumed.returncode == 0, resumed.stdout + resumed.stderr
-    assert (repository / 'submitted.txt').read_text().splitlines() == ['00', '01']
+    assert submission_file(repository).read_text().splitlines() == ['00', '01']
     accepted = pipeline.read_json(repository / pipeline.STATE / 'accepted.json')
     assert Path(accepted[0]['revalidation_report']).is_file()
 
@@ -276,9 +309,10 @@ def test_revalidate_allows_resume_after_pending_edits(repository, fake_tools):
 def test_revalidate_rejects_old_gate_regression(repository, fake_tools):
     assert invoke(repository, fake_tools, '--through', '00').returncode == 0
     (repository / 'tests/test_phase.py').write_text('def test_positive(): assert False\n')
+    commit_manual_main_edit(repository)
     resumed = invoke(repository, fake_tools, '--through', '01', '--revalidate')
     assert resumed.returncode == 1 and 'revalidation failed' in resumed.stderr
-    assert (repository / 'submitted.txt').read_text().splitlines() == ['00']
+    assert submission_file(repository).read_text().splitlines() == ['00']
 
 
 def test_interrupt_terminates_child_group_and_records_stop(repository, fake_tools):
@@ -290,9 +324,9 @@ def test_interrupt_terminates_child_group_and_records_stop(repository, fake_tool
                                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     try:
         deadline = time.monotonic() + 10
-        while not (repository / 'submitted.txt').exists() and time.monotonic() < deadline:
+        while not submission_file(repository).exists() and time.monotonic() < deadline:
             time.sleep(0.05)
-        assert (repository / 'submitted.txt').exists()
+        assert submission_file(repository).exists()
         process.send_signal(signal.SIGTERM)
         stdout, stderr = process.communicate(timeout=10)
         assert process.returncode == 1, stdout + stderr
@@ -317,3 +351,75 @@ def test_campaign_budget_rejects_unbounded_or_unknown_fields(tmp_path):
         path.write_text(json.dumps(invalid))
         with pytest.raises(pipeline.PipelineError):
             pipeline.validate_budget(args, stages, 13, 13)
+
+
+def test_dirty_main_is_preserved_without_codex(repository, fake_tools):
+    (repository / 'STATUS.md').write_text('Preexisting user edit\n')
+    result = invoke(repository, fake_tools, '--through', '00')
+    assert result.returncode == 1 and 'Main checkout must be clean' in result.stderr
+    assert (repository / 'STATUS.md').read_text() == 'Preexisting user edit\n'
+    assert not submission_file(repository).exists()
+
+
+def test_failed_feature_requires_explicit_resume(repository, fake_tools):
+    failed = invoke(repository, {**fake_tools, 'FAKE_MODE': 'nonzero'}, '--through', '00')
+    assert failed.returncode == 1
+    workspace = pending_workspace(repository)
+    blocked = invoke(repository, fake_tools, '--through', '00')
+    assert blocked.returncode == 1 and '--resume-feature' in blocked.stderr
+    resumed = invoke(repository, fake_tools, '--through', '00', '--resume-feature')
+    assert resumed.returncode == 0, resumed.stdout + resumed.stderr
+    assert workspace.exists()
+    assert submission_file(repository).read_text().splitlines() == ['00', '00']
+    assert not (repository / pipeline.STATE / 'current-feature.json').exists()
+
+
+def test_atomic_push_failure_and_retry_do_not_repeat_implementation(repository, fake_tools):
+    remote_path = Path(subprocess.check_output(['git', 'remote', 'get-url', 'origin'], cwd=repository, text=True).strip())
+    hook = remote_path / 'hooks/pre-receive'
+    hook.write_text('#!/bin/sh\nexit 1\n')
+    hook.chmod(0o755)
+    before = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=repository, text=True).strip()
+    failed = invoke(repository, fake_tools, '--through', '01')
+    assert failed.returncode == 1 and 'Git operation failed: push' in failed.stderr
+    assert submission_file(repository).read_text().splitlines() == ['00']
+    assert not (repository / pipeline.STATE / 'accepted.json').exists()
+    assert (repository / pipeline.STATE / 'pending-publication.json').exists()
+    assert subprocess.check_output(['git', 'ls-remote', 'origin', 'refs/heads/main'], cwd=repository, text=True).split()[0] == before
+    assert not subprocess.check_output(['git', 'ls-remote', 'origin', 'refs/heads/feature/*'], cwd=repository, text=True)
+    hook.unlink()
+    published = invoke(repository, fake_tools, '--retry-publish')
+    assert published.returncode == 0, published.stdout + published.stderr
+    assert submission_file(repository).read_text().splitlines() == ['00']
+    accepted = pipeline.read_json(repository / pipeline.STATE / 'accepted.json')
+    assert accepted[0]['published'] and accepted[0]['stage_id'] == '00'
+    assert not (repository / pipeline.STATE / 'pending-publication.json').exists()
+
+
+def test_remote_advancement_blocks_candidate_merge(repository):
+    from pipeline_git import GitWorkflow, WorkflowError
+    state = repository / pipeline.STATE
+    state.mkdir(parents=True)
+    workflow = GitWorkflow(repository, state, pipeline.load_manifest(repository)['git_workflow'])
+    feature = workflow.prepare(pipeline.load_manifest(repository)['stages'][0])
+    upstream = repository.parent / 'other-clone'
+    remote = subprocess.check_output(['git', 'remote', 'get-url', 'origin'], cwd=repository, text=True).strip()
+    subprocess.run(['git', 'clone', '--branch', 'main', remote, str(upstream)], check=True, capture_output=True)
+    (upstream / 'user.txt').write_text('Independent upstream change\n')
+    subprocess.run(['git', 'add', '.'], cwd=upstream, check=True, capture_output=True)
+    subprocess.run(['git', '-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', 'commit', '-m', 'Advance upstream'], cwd=upstream, check=True, capture_output=True)
+    subprocess.run(['git', 'push', 'origin', 'main'], cwd=upstream, check=True, capture_output=True)
+    with pytest.raises(WorkflowError, match='main.*differ'):
+        workflow.commit_candidate(feature, {}, {}, {})
+    assert Path(feature['worktree']).exists()
+    assert subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=repository, text=True).strip() == feature['base_commit']
+
+
+def test_commit_hook_mutation_is_not_merged(repository, fake_tools):
+    hook = repository / '.git/hooks/pre-commit'
+    hook.write_text('#!/bin/sh\nprintf "hook mutation\\n" >> STATUS.md\ngit add STATUS.md\n')
+    hook.chmod(0o755)
+    result = invoke(repository, fake_tools, '--through', '00')
+    assert result.returncode == 1 and 'Commit hooks changed' in result.stderr
+    assert not (repository / pipeline.STATE / 'accepted.json').exists()
+    assert not subprocess.check_output(['git', 'ls-remote', 'origin', 'refs/heads/feature/*'], cwd=repository, text=True)

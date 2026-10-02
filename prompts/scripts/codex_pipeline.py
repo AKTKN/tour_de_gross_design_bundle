@@ -14,6 +14,9 @@ import time
 import uuid
 
 SCRIPT_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(SCRIPT_DIR))
+from pipeline_git import GitWorkflow, WorkflowError, refresh_checksums
+
 ROOT = SCRIPT_DIR.parent.parent
 STATE = '.codex-pipeline/tour-de-gross'
 
@@ -79,8 +82,10 @@ def validate_schema(value, schema, location='result'):
 
 def load_manifest(root):
     manifest = read_json(root / 'prompts/scripts/codex_pipeline_config.json')
-    require(set(manifest) == {'version', 'environment', 'stages'}, 'Unknown pipeline config fields')
+    require(set(manifest) == {'version', 'environment', 'stages', 'git_workflow'}, 'Unknown pipeline config fields')
     require(manifest['version'] == 1 and manifest['environment'] == 'tour_de_gross', 'Unsupported pipeline config')
+    require(manifest['git_workflow'] == {'base_branch': 'main', 'remote': 'origin', 'branch_prefix': 'feature/'},
+            'Unsupported Git branch/worktree workflow')
     stages = manifest['stages']
     require([s['id'] for s in stages] == [f'{i:02}' for i in range(14)], 'Stages must be ordered 00–13')
     for stage in stages:
@@ -226,11 +231,30 @@ def run_pipeline(args, root, manifest):
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError as exc:
             raise PipelineError('Another pipeline is already running in this repository') from exc
+        workflow = GitWorkflow(root, state, manifest['git_workflow'])
         accepted_path = state / 'accepted.json'
         accepted = read_json(accepted_path) if accepted_path.exists() else []
         require(isinstance(accepted, list) and len(accepted) <= len(stages) and [e['stage_id'] for e in accepted] == [f'{i:02}' for i in range(len(accepted))],
                 'Accepted state must be a contiguous phase chain')
         signature = pipeline_signature(root)
+        if workflow.pending.exists():
+            require(args.retry_publish, 'Validated publication is pending; use --retry-publish (no new Codex call)')
+            pending = read_json(workflow.pending)
+            require(pending['entry']['pipeline_signature'] == signature, 'Controls changed since validation; publication stopped')
+            published = workflow.publish(pending)
+            published['workspace_sha256'] = fingerprint(root)
+            if len(accepted) == int(published['stage_id']):
+                accepted.append(published)
+                write_json(accepted_path, accepted)
+            else:
+                require(len(accepted) == int(published['stage_id']) + 1 and accepted[-1]['feature_commit'] == published['feature_commit'],
+                        'Pending publication conflicts with accepted state')
+            workflow.finish()
+            write_json(state / 'active.json', {'stage_id': published['stage_id'], 'state': 'published',
+                                             'branch': published['branch'], 'worktree': published['worktree']})
+            print('Publication verified; no implementation session was rerun.', flush=True)
+            return
+        require(not args.retry_publish, 'No publication is pending')
         for entry in accepted:
             require(entry['pipeline_signature'] == signature, 'Pipeline controls changed; review/archive state before restarting')
             require(entry['prompt_sha256'] == digest(root / stages[int(entry['stage_id'])]['prompt']), 'Accepted prompt changed')
@@ -241,6 +265,7 @@ def run_pipeline(args, root, manifest):
         require(start == len(accepted), 'Cannot skip prerequisites or rerun accepted phases; use the next unaccepted phase')
         require(start <= end, 'Requested interval has no pending stages')
         budget = validate_budget(args, stages, start, end)
+        workflow.synced_main()
         environment_prefix = preflight(root, manifest)
         run_dir = state / 'runs' / (time.strftime('%Y%m%dT%H%M%S') + '-' + uuid.uuid4().hex[:8])
         run_dir.mkdir(parents=True)
@@ -268,13 +293,19 @@ def run_pipeline(args, root, manifest):
         for stage in stages[start:end + 1]:
             phase = run_dir / stage['id']
             phase.mkdir()
+            feature = workflow.prepare(stage, resume=args.resume_feature)
+            workspace = Path(feature['worktree'])
+            workspace_env = dict(os.environ, PYTHONPATH=str(workspace / 'src') + os.pathsep + os.environ.get('PYTHONPATH', ''))
             result_path = phase / 'result.json'
-            before_status = digest(root / 'STATUS.md')
-            before_head = git_output(root, 'rev-parse', 'HEAD')
-            initial_references = {p.name: digest(p) for p in (root / 'reference').glob('*') if p.is_file()}
-            context = (f'Complete only phase {stage["id"]} in {root}. The user has authorized the outer controller to submit '
+            before_status = digest(workspace / 'STATUS.md')
+            before_head = git_output(workspace, 'rev-parse', 'HEAD')
+            initial_references = {p.name: digest(p) for p in (workspace / 'reference').glob('*') if p.is_file()}
+            context = (f'Complete only phase {stage["id"]} in {workspace}. Worktree branch: {feature["branch"]}; main checkout: {root}. The user has authorized the outer controller to submit '
                        f'phases through {stages[end]["id"]} sequentially; you must stop after this one. Read AGENTS.md, STATUS.md '
-                       'and the scientific contracts. Preserve existing edits. Do not commit or push. Use tour_de_gross. '
+                       'and the scientific contracts. Preserve existing edits. Stay in this feature worktree and branch. '
+                       'The controller will commit, merge to main and atomically push both refs only after validation. '
+                       f'Shared external source directory: {root / "external_libs"}. Use that canonical directory for external checkouts. '
+                       'Do not perform Git publication yourself. Use tour_de_gross. '
                        'No long sampling, solver jobs, cluster submission or upstream writes. Source reads and downloads are allowed; '
                        'fork under the user account before external-source modifications. Do not change reference fixtures in unattended mode; '
                        'report a source-backed proposed correction and stop for review.\n'
@@ -289,44 +320,49 @@ def run_pipeline(args, root, manifest):
                 context += f'User campaign compute budget (hard maxima; require validated prerequisites): {json.dumps(budget)}\n'
             prompt = context + '\n' + (root / stage['prompt']).read_text() + '\n' + (root / 'prompts/scripts/codex_stage_footer.md').read_text()
             (phase / 'prompt.md').write_text(prompt)
-            write_json(state / 'active.json', {'stage_id': stage['id'], 'run_dir': str(run_dir), 'state': 'running'})
+            write_json(state / 'active.json', {'stage_id': stage['id'], 'run_dir': str(run_dir), 'state': 'running', **feature})
             command = ['codex', 'exec', '--sandbox', args.sandbox, '--config', 'approval_policy="never"',
                        '--config', 'sandbox_workspace_write.network_access=true', '--add-dir', str(environment_prefix),
-                       '--color', 'never', '-C', str(root), '--output-schema', str(root / 'prompts/scripts/codex_stage_result_schema.json'),
+                       '--add-dir', str(root / 'external_libs'), '--add-dir', str(phase),
+                       '--color', 'never', '-C', str(workspace), '--output-schema', str(root / 'prompts/scripts/codex_stage_result_schema.json'),
                        '--output-last-message', str(result_path)]
             if args.model:
                 command += ['--model', args.model]
             command += ['-']
-            require(run_command(command, root, phase / 'codex.log', min(args.stage_timeout, budget['max_wall_seconds']) if stage['id'] == '13' else args.stage_timeout, stdin=prompt) == 0,
+            require(run_command(command, workspace, phase / 'codex.log', min(args.stage_timeout, budget['max_wall_seconds']) if stage['id'] == '13' else args.stage_timeout, stdin=prompt, env=workspace_env) == 0,
                     f'Codex failed in phase {stage["id"]}; see {phase}')
-            require(git_output(root, 'rev-parse', 'HEAD') == before_head, 'Agent changed Git history')
-            require(pipeline_signature(root) == signature, 'Agent changed pipeline controls; stop for review')
-            require({p.name: digest(p) for p in (root / 'reference').glob('*') if p.is_file()} == initial_references,
+            require(git_output(workspace, 'rev-parse', 'HEAD') == before_head, 'Agent changed Git history')
+            require(pipeline_signature(workspace) == signature, 'Agent changed pipeline controls; stop for review')
+            require({p.name: digest(p) for p in (workspace / 'reference').glob('*') if p.is_file()} == initial_references,
                     'Reference fixtures changed; stop for source-backed review')
-            require(digest(root / 'STATUS.md') != before_status, 'STATUS.md was not updated for this phase')
+            require(digest(workspace / 'STATUS.md') != before_status, 'STATUS.md was not updated for this phase')
             result = read_json(result_path)
-            nodes = validate_result(root, stage, result, schema)
+            nodes = validate_result(workspace, stage, result, schema)
             report = phase / 'pytest.json'
             command = ['conda', 'run', '--no-capture-output', '-n', manifest['environment'], 'python',
                        str(root / 'prompts/scripts/pipeline_check_tests.py'), str(report),
                        'tests/test_reference.py']
-            if (root / 'tests/test_pipeline.py').is_file():
+            if (workspace / 'tests/test_pipeline.py').is_file():
                 command.append('tests/test_pipeline.py')
             command += nodes
-            code = run_command(command, root, phase / 'pytest.log', args.test_timeout)
+            code = run_command(command, workspace, phase / 'pytest.log', args.test_timeout, env=workspace_env)
             require(code == 0, f'Acceptance tests failed in phase {stage["id"]}; see {phase / "pytest.log"}')
             validate_test_report(read_json(report), nodes)
-            require(git_output(root, 'rev-parse', 'HEAD') == before_head, 'Tests changed Git history')
-            require(pipeline_signature(root) == signature, 'Tests changed pipeline controls')
-            require({p.name: digest(p) for p in (root / 'reference').glob('*') if p.is_file()} == initial_references,
+            require(git_output(workspace, 'rev-parse', 'HEAD') == before_head, 'Tests changed Git history')
+            require(pipeline_signature(workspace) == signature, 'Tests changed pipeline controls')
+            require({p.name: digest(p) for p in (workspace / 'reference').glob('*') if p.is_file()} == initial_references,
                     'Tests changed reference fixtures')
             entry = {'stage_id': stage['id'], 'result_path': str(result_path), 'pytest_report': str(report),
                      'prompt_sha256': digest(root / stage['prompt']), 'pipeline_signature': signature,
-                     'workspace_sha256': fingerprint(root), 'reference_hashes': initial_references}
+                     'reference_hashes': initial_references}
+            pending = workflow.commit_candidate(feature, entry, result, read_json(report))
+            entry = workflow.publish(pending)
+            entry['workspace_sha256'] = fingerprint(root)
             accepted.append(entry)
             write_json(accepted_path, accepted)
-            write_json(state / 'active.json', {'stage_id': stage['id'], 'run_dir': str(run_dir), 'state': 'accepted'})
-            print(f'ACCEPTED phase {stage["id"]}; result: {result_path}', flush=True)
+            workflow.finish()
+            write_json(state / 'active.json', {'stage_id': stage['id'], 'run_dir': str(run_dir), 'state': 'published', **feature})
+            print(f'VALIDATED, MERGED AND PUSHED phase {stage["id"]}; result: {result_path}', flush=True)
         print(f'Completed requested phases through {stages[end]["id"]}.', flush=True)
 
 
@@ -340,6 +376,8 @@ def main(argv=None):
     parser.add_argument('--preflight', action='store_true', help='Check local CLI/auth/environment only; no model request')
     parser.add_argument('--status', action='store_true')
     parser.add_argument('--revalidate', action='store_true', help='Rerun prior accepted gates after workspace edits, without new Codex calls for those phases')
+    parser.add_argument('--resume-feature', action='store_true', help='Resume a preserved failed feature worktree after review')
+    parser.add_argument('--retry-publish', action='store_true', help='Retry a validated merge/push without invoking Codex; stop afterwards')
     parser.add_argument('--allow-pilot', action='store_true')
     parser.add_argument('--campaign-budget', type=Path)
     parser.add_argument('--stage-timeout', type=int, default=3600)
@@ -351,7 +389,7 @@ def main(argv=None):
     try:
         manifest = load_manifest(root)
         if args.status:
-            for name in ('active.json', 'accepted.json', 'exit-code'):
+            for name in ('active.json', 'current-feature.json', 'pending-publication.json', 'accepted.json', 'exit-code'):
                 path = root / STATE / name
                 print(f'{name}:\n{path.read_text() if path.exists() else "(none)"}')
             return 0
@@ -370,7 +408,7 @@ def main(argv=None):
             run_pipeline(args, root, manifest)
             (root / STATE / 'exit-code').write_text('0\n')
         return 0
-    except (PipelineError, OSError, KeyError, TypeError, subprocess.SubprocessError, KeyboardInterrupt) as exc:
+    except (PipelineError, WorkflowError, OSError, KeyError, TypeError, subprocess.SubprocessError, KeyboardInterrupt) as exc:
         print(f'PIPELINE STOPPED: {exc}', file=sys.stderr)
         if not (args.list or args.dry_run or args.preflight or args.status):
             state = root / STATE

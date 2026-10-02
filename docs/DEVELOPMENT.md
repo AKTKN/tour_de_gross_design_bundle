@@ -20,3 +20,5 @@ Git tracks source, scientific fixtures, docs, locks and four small curated deliv
 The original delivered checksum index is preserved as `SHA256SUMS.delivery.txt`; it includes a report PDF absent from the supplied workspace. `SHA256SUMS.txt` indexes current nonignored source files except checksum indexes themselves. Setup does not advance implementation phases: prompt 00 is still next and O1--O5 remain unresolved.
 
 The Codex/tmux development controller, phase JSON gates and CLI availability checks are documented in `prompts/scripts/README.md`. It does not start automatically.
+
+Each feature is implemented and validated in a separate worktree on `feature/<phase-stem>`, based on clean synchronized `main`. The controller commits successful work, merges it to main and atomically pushes both refs to origin. Work from the canonical main checkout when launching the pipeline; see the runner guide for failed-feature and publication recovery.

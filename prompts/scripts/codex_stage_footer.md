@@ -2,7 +2,7 @@
 
 # Tour de gross phase completion contract
 
-The outer controller submits a new Codex session only after accepting this phase. Complete this phase alone and stop. Your final response must satisfy `codex_stage_result_schema.json`; return JSON only.
+Work only in the supplied feature branch/worktree. The outer controller submits a new Codex session only after validating, committing, merging and pushing this phase. Complete this phase alone and stop. Your final response must satisfy `codex_stage_result_schema.json`; return JSON only.
 
 Set `status=success` and `next_stage_safe=true` only when every requested deliverable and required acceptance check is complete. Otherwise use `blocked` for a missing source/API/scientific definition and `failed` for an incomplete implementation or failing test, with `next_stage_safe=false` and a concrete `blocking_issue`.
 
@@ -10,4 +10,6 @@ Report all actual commands in `tests`. A required check marked `not_run` prevent
 
 List repository-relative nonempty evidence files in `evidence_paths`, changed paths in `changed_files`, and unresolved source/scientific items in `unresolved_items`. Create `locks/source-lock.json` in phase 00 with pinned source provenance and inspected licenses/hashes. Update STATUS.md with actual commands, evidence, next phase and limitations. O1–O5 may remain open for independent development, but a definition required by the current phase must stop it. No fixture changes in unattended mode: propose source-backed corrections for review instead.
 
-Do not change pipeline controls or AGENTS.md, commit, push, merge, rebase, reset, submit clusters, run unbounded solvers/sampling or write upstream repositories. External checkouts are local to external_libs; fork before edits. Keep joint X/Z correlations, signed Pauli semantics and strict detector checks. Do not substitute Table-6 fits for observations. The only pilot or campaign authorization is the explicit budget in the controller context; enforce it in the workload. Completion JSON reports evidence; it is not proof of scientific sufficiency or paper equivalence.
+Do not change pipeline controls or AGENTS.md. The controller alone owns feature commits, validated merges and pushes; do not execute those Git operations in this Codex session. Do not rebase, reset, submit clusters, run unbounded solvers/sampling or write upstream repositories. External checkouts are local to external_libs; fork before edits. Keep joint X/Z correlations, signed Pauli semantics and strict detector checks. Do not substitute Table-6 fits for observations. The only pilot or campaign authorization is the explicit budget in the controller context; enforce it in the workload. Completion JSON reports evidence; it is not proof of scientific sufficiency or paper equivalence.
+
+Record the branch/worktree in STATUS and the handoff. The controller saves a versioned `validation/phase_<id>.json` report, refreshes source checksums, creates the feature commit, verifies the main merge has the same validated tree, and pushes both refs atomically. Failed validation leaves main and the remote unchanged. A publication failure stops progression and keeps the validated candidate for an explicit `--retry-publish`, without rerunning implementation.

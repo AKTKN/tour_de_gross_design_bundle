@@ -186,5 +186,10 @@
       ],
       "required_paths": []
     }
-  ]
+  ],
+  "git_workflow": {
+    "base_branch": "main",
+    "remote": "origin",
+    "branch_prefix": "feature/"
+  }
 }
