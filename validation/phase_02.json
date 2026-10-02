@@ -1,0 +1,624 @@
+{
+  "stage_id": "02",
+  "branch": "feature/02_graphs_and_deformation",
+  "base_commit": "ed0f278233b5507f091700bb0153200053a9df3e",
+  "result": {
+    "stage_id": "02",
+    "status": "success",
+    "next_stage_safe": true,
+    "summary": "Phase 02 completed on feature/02_graphs_and_deformation in the supplied worktree. Implemented reference graphs, signed ports, local dressing, cycle certificates and fixed input logical subspaces. All 141 tests passed. STATUS updated; main remains clean. Publication belongs to the controller. Stopped before phase 03.",
+    "tests": [
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python -m pip install --no-build-isolation -e .",
+        "result": "passed",
+        "required": false,
+        "notes": "Editable package installed from this feature worktree."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python -",
+        "result": "passed",
+        "required": false,
+        "notes": "Two bounded smoke heredocs verified all eight graph and deformation constructions."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_deformation.py",
+        "result": "passed",
+        "required": true,
+        "notes": "Initial 29 tests passed in 50.27s."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_deformation.py::test_nonreference_logical_basis_is_rejected",
+        "result": "passed",
+        "required": true,
+        "notes": "Additional reference-basis negative test passed in 8.98s."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python tools/audit_deformation.py --output-dir evidence/phase02/certificates",
+        "result": "passed",
+        "required": true,
+        "notes": "Exported eight signed certificate files and their SHA256 index."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python tools/audit_reference.py --output evidence/phase02/independent-audit.json",
+        "result": "passed",
+        "required": true,
+        "notes": "Unchanged independent audit exactly matches delivered results."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python -m pytest -q",
+        "result": "passed",
+        "required": true,
+        "notes": "Initial regression: 140 passed. Final regression: 141 passed in 131.44s, without skips or xfails. Backend regressions retain their phase-00 scope."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python -m pytest --collect-only -q tests/test_deformation.py",
+        "result": "passed",
+        "required": true,
+        "notes": "Collected all 30 final phase tests; all are mapped below."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python -m pip check",
+        "result": "passed",
+        "required": true,
+        "notes": "No broken requirements."
+      },
+      {
+        "command": "conda run --no-capture-output -n tour_de_gross python /tmp/phase02_handoff.py",
+        "result": "passed",
+        "required": true,
+        "notes": "Verified saved signed witnesses, protected files, source hashes, clean main/external checkouts, imports and controller result validation."
+      },
+      {
+        "command": "git diff --check",
+        "result": "passed",
+        "required": true,
+        "notes": "Passed after STATUS update."
+      }
+    ],
+    "acceptance_checks": [
+      {
+        "gate": "A03",
+        "test_nodeids": [
+          "tests/test_deformation.py::test_A03_geometry_and_exact_reference_paths[gross]",
+          "tests/test_deformation.py::test_A03_geometry_and_exact_reference_paths[two_gross]",
+          "tests/test_deformation.py::test_inter_adapter_block_ids_zero_ports_and_no_triangles[gross]",
+          "tests/test_deformation.py::test_inter_adapter_block_ids_zero_ports_and_no_triangles[two_gross]"
+        ]
+      },
+      {
+        "gate": "A04",
+        "test_nodeids": [
+          "tests/test_deformation.py::test_A04_signed_products_dressing_and_cycle_certificates[gross-X]",
+          "tests/test_deformation.py::test_A04_signed_products_dressing_and_cycle_certificates[gross-XX]",
+          "tests/test_deformation.py::test_A04_signed_products_dressing_and_cycle_certificates[gross-Y]",
+          "tests/test_deformation.py::test_A04_signed_products_dressing_and_cycle_certificates[gross-inter_XX]",
+          "tests/test_deformation.py::test_A04_signed_products_dressing_and_cycle_certificates[two_gross-X]",
+          "tests/test_deformation.py::test_A04_signed_products_dressing_and_cycle_certificates[two_gross-XX]",
+          "tests/test_deformation.py::test_A04_signed_products_dressing_and_cycle_certificates[two_gross-Y]",
+          "tests/test_deformation.py::test_A04_signed_products_dressing_and_cycle_certificates[two_gross-inter_XX]",
+          "tests/test_deformation.py::test_generic_full_basis_is_separate_from_paper[gross]",
+          "tests/test_deformation.py::test_generic_full_basis_is_separate_from_paper[two_gross]"
+        ]
+      },
+      {
+        "gate": "A05",
+        "test_nodeids": [
+          "tests/test_deformation.py::test_A05_exactly_requested_input_logical_subspace[gross-X]",
+          "tests/test_deformation.py::test_A05_exactly_requested_input_logical_subspace[gross-XX]",
+          "tests/test_deformation.py::test_A05_exactly_requested_input_logical_subspace[gross-Y]",
+          "tests/test_deformation.py::test_A05_exactly_requested_input_logical_subspace[gross-inter_XX]",
+          "tests/test_deformation.py::test_A05_exactly_requested_input_logical_subspace[two_gross-X]",
+          "tests/test_deformation.py::test_A05_exactly_requested_input_logical_subspace[two_gross-XX]",
+          "tests/test_deformation.py::test_A05_exactly_requested_input_logical_subspace[two_gross-Y]",
+          "tests/test_deformation.py::test_A05_exactly_requested_input_logical_subspace[two_gross-inter_XX]"
+        ]
+      },
+      {
+        "gate": "negative_tests",
+        "test_nodeids": [
+          "tests/test_deformation.py::test_required_cycle_deletion_is_rejected[gross]",
+          "tests/test_deformation.py::test_required_cycle_deletion_is_rejected[two_gross]",
+          "tests/test_deformation.py::test_separate_X1_X7_measurements_rejected_for_XX[gross]",
+          "tests/test_deformation.py::test_separate_X1_X7_measurements_rejected_for_XX[two_gross]",
+          "tests/test_deformation.py::test_signed_group_rejects_minus_identity_and_phase_only_span",
+          "tests/test_deformation.py::test_graph_negative_inputs_parallel_ids_and_generic_oracle",
+          "tests/test_deformation.py::test_Y_port_sign_and_wrong_target_are_rejected",
+          "tests/test_deformation.py::test_nonreference_logical_basis_is_rejected"
+        ]
+      }
+    ],
+    "changed_files": [
+      "STATUS.md",
+      "docs/DEFORMATION_CERTIFICATES.md",
+      "locks/deformation-sources.json",
+      "src/gross_design_bandle/algebra/certificates.py",
+      "src/gross_design_bandle/lpu/__init__.py",
+      "src/gross_design_bandle/lpu/reference.py",
+      "src/gross_design_bandle/surgery/__init__.py",
+      "src/gross_design_bandle/surgery/cycles.py",
+      "src/gross_design_bandle/surgery/deformation.py",
+      "src/gross_design_bandle/surgery/dressing.py",
+      "src/gross_design_bandle/surgery/graph.py",
+      "src/gross_design_bandle/surgery/ports.py",
+      "tests/test_deformation.py",
+      "tools/audit_deformation.py"
+    ],
+    "evidence_paths": [
+      "evidence/phase02/pytest-phase02.txt",
+      "evidence/phase02/pytest-reference-basis-guard.txt",
+      "evidence/phase02/pytest-regression-before-guard.txt",
+      "evidence/phase02/pytest-final.txt",
+      "evidence/phase02/collected-nodeids.txt",
+      "evidence/phase02/certificates/index.json",
+      "evidence/phase02/certificates/gross-X.json",
+      "evidence/phase02/certificates/gross-XX.json",
+      "evidence/phase02/certificates/gross-Y.json",
+      "evidence/phase02/certificates/gross-inter_XX.json",
+      "evidence/phase02/certificates/two_gross-X.json",
+      "evidence/phase02/certificates/two_gross-XX.json",
+      "evidence/phase02/certificates/two_gross-Y.json",
+      "evidence/phase02/certificates/two_gross-inter_XX.json",
+      "evidence/phase02/certificate-verification.json",
+      "evidence/phase02/independent-audit.json",
+      "evidence/phase02/pip-check.txt",
+      "evidence/phase02/guards.json",
+      "evidence/phase02/acceptance-gates.json",
+      "evidence/phase02/handoff-validation.json"
+    ],
+    "unresolved_items": [
+      "O1: Published inter-module K23 observable generators remain undefined; merged code dimension 23 does not resolve this.",
+      "O2: Historical Relay semantics, priors and column policy remain unverified.",
+      "O3: Physical scheduling, shift representative, lowering and boundaries remain unresolved.",
+      "O4: Primitive multiplicities and admission/merging convention remain unresolved.",
+      "O5: Original counts, grids and bootstrap settings remain unavailable.",
+      "Certificates establish algebra only. Instrument coherence, physical Bell implementation, distance and Figure-15 equivalence remain unvalidated. O1\u2013O5 do not block phase-02 algebra.",
+      "SlidingWindowDecoder reuse licensing remains unresolved; no donor code was reused or modified."
+    ],
+    "blocking_issue": null
+  },
+  "controller_pytest": {
+    "exit_code": 0,
+    "tests": {
+      "tests/test_reference.py::test_full_algebra_audit[gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_full_algebra_audit[two_gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_reduced_cycles_are_not_a_standalone_full_basis[gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_reduced_cycles_are_not_a_standalone_full_basis[two_gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_corrupted_cycle_is_rejected[gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_corrupted_cycle_is_rejected[two_gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_ansatz_cutoff_and_monotonicity": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_reference_probability_validation": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_reference.py::test_label_parser": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_manifest_and_stage_selection": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[missing_field]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[unknown_field]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[wrong_stage]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[not_run]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[failed]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[empty_gates]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[duplicate_gate]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[unknown_node]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[missing_evidence]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[path_escape]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[blocked]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[wrong_bool]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[empty_nodes]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_invalid_success_rejected[optional_only]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_open_paper_items_allow_scoped_success": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[skipped]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[xfail]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[failed]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[missing]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_skipped_or_missing_actual_test_rejected[teardown_failure]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_pilot_and_campaign_require_budget": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_sequential_sessions_and_resume": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[nonzero]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[malformed]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[not_run]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[skip]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[fail_test]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[no_status]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[control_edit]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[fixture_edit]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failure_stops_before_next_session[timeout]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_resume_rejects_workspace_changes": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_prerequisite_skipping_and_budget_denied_before_codex": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_dry_run_is_read_only": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_repository_lock_blocks_second_runner": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_actual_report_records_skip_and_xfail": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_tmux_launcher_keeps_completed_pane": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_revalidate_allows_resume_after_pending_edits": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_revalidate_rejects_old_gate_regression": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_interrupt_terminates_child_group_and_records_stop": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_campaign_budget_rejects_unbounded_or_unknown_fields": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_dirty_main_is_preserved_without_codex": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_failed_feature_requires_explicit_resume": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_atomic_push_failure_and_retry_do_not_repeat_implementation": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_remote_advancement_blocks_candidate_merge": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_commit_hook_mutation_is_not_merged": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_sol_high_reasoning_forwarded_and_recorded": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_pipeline.py::test_hard_reasoning_rejected_before_launch": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_A03_geometry_and_exact_reference_paths[gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_A03_geometry_and_exact_reference_paths[two_gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_A04_signed_products_dressing_and_cycle_certificates[gross-XX]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_A04_signed_products_dressing_and_cycle_certificates[gross-X]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_A04_signed_products_dressing_and_cycle_certificates[gross-Y]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_A04_signed_products_dressing_and_cycle_certificates[gross-inter_XX]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_A04_signed_products_dressing_and_cycle_certificates[two_gross-XX]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_A04_signed_products_dressing_and_cycle_certificates[two_gross-X]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_A04_signed_products_dressing_and_cycle_certificates[two_gross-Y]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_A04_signed_products_dressing_and_cycle_certificates[two_gross-inter_XX]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_A05_exactly_requested_input_logical_subspace[gross-XX]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_A05_exactly_requested_input_logical_subspace[gross-X]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_A05_exactly_requested_input_logical_subspace[gross-Y]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_A05_exactly_requested_input_logical_subspace[gross-inter_XX]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_A05_exactly_requested_input_logical_subspace[two_gross-XX]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_A05_exactly_requested_input_logical_subspace[two_gross-X]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_A05_exactly_requested_input_logical_subspace[two_gross-Y]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_A05_exactly_requested_input_logical_subspace[two_gross-inter_XX]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_Y_port_sign_and_wrong_target_are_rejected": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_generic_full_basis_is_separate_from_paper[gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_generic_full_basis_is_separate_from_paper[two_gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_graph_negative_inputs_parallel_ids_and_generic_oracle": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_inter_adapter_block_ids_zero_ports_and_no_triangles[gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_inter_adapter_block_ids_zero_ports_and_no_triangles[two_gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_nonreference_logical_basis_is_rejected": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_required_cycle_deletion_is_rejected[gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_required_cycle_deletion_is_rejected[two_gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_separate_X1_X7_measurements_rejected_for_XX[gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_separate_X1_X7_measurements_rejected_for_XX[two_gross]": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      },
+      "tests/test_deformation.py::test_signed_group_rejects_minus_identity_and_phase_only_span": {
+        "setup": "passed",
+        "call": "passed",
+        "teardown": "passed"
+      }
+    }
+  }
+}

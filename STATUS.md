@@ -88,10 +88,11 @@ Implemented in the separate `feature/model-reasoning` worktree. Verification: `c
 
 ## Next action
 
-Phase 01 is complete for exact signed/GF(2) algebra, immutable BB code data,
-convention adapters and logical shift quotients. Next implementation prompt is
-`prompts/02_graphs_and_deformation.md`, only in a new controller-authorized
-session after phase-01 acceptance and publication. This session stops at 01;
+Phase 02 is complete for stable reference graph/port geometry, local dressing,
+signed omitted-cycle certificates and fixed input logical subspaces. Next
+implementation prompt is `prompts/03_ideal_protocol.md`, only in a new
+controller-authorized session after phase-02 acceptance and publication. This
+session stops at 02;
 strict paper-equivalent sampling remains blocked by O1--O5.
 
 ## Phase 00 source audit completed (2026-10-02)
@@ -299,3 +300,122 @@ and pip check above from this worktree in `tour_de_gross`. Stop after phase 01.
 Next prompt: `prompts/02_graphs_and_deformation.md` only in a subsequent
 controller-authorized session after phase-01 validation/publication. No later
 phase was started by this session.
+
+## Phase 02 graphs and deformation completed (2026-10-02)
+
+Branch: `feature/02_graphs_and_deformation`. Worktree:
+`/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/.codex-pipeline/tour-de-gross/worktrees/02_graphs_and_deformation`.
+Main checkout: `/home/quantum_teresheys/workspace/tour_de_gross_design_bundle`.
+Publication outcome: **not attempted; controller owns acceptance rerun, commit,
+merge and atomic push**. The supplied feature worktree was initially clean and
+existing tracked files were preserved. No reference, AGENTS, pipeline-control or
+independent-audit changes, external patches, source downloads/network writes,
+solvers, sampling, physical circuits or cluster jobs occurred.
+
+Implemented immutable edge-ID auxiliary graphs, selected edge-ID cycles,
+incidence matrices, signed block-qualified ports, exact reference half/full LPUs
+with the identified shared vertex, and the two-block inter-XX algebraic adapter.
+A.1's four requirements and the shifted ZX-dual adjacent-check isomorphism are
+checked on actual supports. A reference-only guard also rejects otherwise valid
+canonical bases whose labels/signs differ from the literal published shifts.
+The full-LPU graph counts are 23/47/19 for gross and 39/81/37 for two-gross;
+installed census is 90/158 when the shared Bell check counts as two measurement
+qubits. The half counts remain 12/18 and 20/32. The inter-XX active algebraic
+counts are 35/58/20 and 57/98/38, with degree-two identity-port subdivision
+vertices and six-edge joint bridge cycles, and no triangular bridge cycles.
+They are distinct from the installed full-LPU census.
+
+The default paper dressing admits only one direct adjacent edge per nonzero
+old-check boundary; there is no spanning-tree/path fallback. The generic GF(2)
+dressing and full-cycle-basis oracle have separate explicit profiles. Original
+selected cycles and ladders are retained. Signed generators validate Hermiticity,
+commutation, the vertex product, and every binary identity relation, rejecting
+-I. Y uses the shared Hermitian port +Y = i X Z. Certificates include old-check
+Paulis, edge dressing masks and phases, incidence/boundary equations, ordered
+signed generators, identity relations, and omitted-cycle complement witnesses in
+the combined signed group. Missing complements have dimensions 2 (X control),
+6 (full XX/Y), and 4 (inter XX) in both sizes. Together with the measured cycles,
+these span the full graph cycle space.
+
+The fixed input logical subspace is explicitly computed from the edge-free
+intersection of the deformed group with data Paulis, then mapped to the input
+logical quotient. It is exactly the one-dimensional span of X1, X1 X7, Y1 or
+block_a:X1 times block_b:X1 as requested. Remaining dimensions are 11 in-module
+and 23 inter-module. Separate X1/X7 measurements have rank-two fixed input
+constraints and are rejected for the XX-only specification. Tests also reject
+unjustified cycle deletion, imaginary/wrong signed Y, -I, phase-blind span
+witnesses, invalid/disconnected graphs, ambiguous parallel path edges, odd
+boundaries, missing local dressing edges and duplicate inter block IDs.
+
+Provenance: `docs/DEFORMATION_CERTIFICATES.md` and
+`locks/deformation-sources.json`. Implementations are independently written;
+no donor source was copied or modified. Read the preserved pinned PDF at
+`/tmp/phase00-resume-tdg.pdf` (SHA256 matches the phase-00 lock), especially A.1's
+four numbered conditions, A.3 Eqs. (39)--(64) and A.4/Fig. 13(b). Immutable
+fixture hashes match delivery; no fixture correction is needed. The unchanged
+delivered binary audit remains a separate oracle. Signed tests independently
+multiply witnesses through `Pauli.__mul__` rather than the new group's product
+implementation. Certificate signs describe a consistent +1 generator sector;
+actual outcomes and instrument coherence remain phase-03 work.
+
+Commands actually run in the supplied worktree:
+
+```bash
+conda run --no-capture-output -n tour_de_gross python -m pip install --no-build-isolation -e .
+conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_deformation.py
+conda run --no-capture-output -n tour_de_gross python -m pytest -q tests/test_deformation.py::test_nonreference_logical_basis_is_rejected
+conda run --no-capture-output -n tour_de_gross python tools/audit_deformation.py --output-dir evidence/phase02/certificates
+conda run --no-capture-output -n tour_de_gross python tools/audit_reference.py --output evidence/phase02/independent-audit.json
+conda run --no-capture-output -n tour_de_gross python -m pytest -q
+conda run --no-capture-output -n tour_de_gross python -m pytest --collect-only -q tests/test_deformation.py
+conda run --no-capture-output -n tour_de_gross python -m pip check
+conda run --no-capture-output -n tour_de_gross python /tmp/phase02_handoff.py
+git diff --check
+```
+
+Also ran two bounded `conda run --no-capture-output -n tour_de_gross python -`
+smoke heredocs: all eight graph/census builds, then all eight signed deformation
+constructions with merged/subspace ranks (both successful). Collection ran
+before and after the final basis guard. Full regressions ran first before that
+guard (**140 passed in 138.94s**) and again after it (**141 passed in 131.44s**).
+The initial phase-only run was **29 passed in 50.27s**; the additional guard was
+**1 passed in 8.98s**. There were no failed implementation checks, skips or
+xfails. Final coverage is 30 new phase nodes plus 111 prior regressions. Existing
+tiny Stim/qLDPC/Relay backend regressions retain their phase-00 scope; no surgery
+circuit or reproduction decoder backend is claimed tested. Pip has no broken
+requirements. Read-only inspection used `cat`, `rg`, `sed`, `ls`, `sha256sum`
+and Git status/branch/source reads; no Git publication commands were run.
+
+Nonempty actual evidence: `evidence/phase02/{pytest-phase02.txt,
+pytest-reference-basis-guard.txt,pytest-regression-before-guard.txt,
+pytest-final.txt,collected-nodeids.txt,independent-audit.json,pip-check.txt,
+certificate-verification.json,guards.json,acceptance-gates.json,
+handoff-validation.json,result.json}`. Eight complete certificates and their
+SHA256 index are under `evidence/phase02/certificates/`:
+`{gross,two_gross}-{X,XX,Y,inter_XX}.json` and `index.json`. Saved witnesses
+were independently reloaded and multiplied; old boundary equations, omitted
+cycle signs, identity signs and target products were checked against the saved
+bytes. The independent audit exactly matches delivered `evidence/algebra_audit.json`.
+The handoff helper verifies the feature branch/worktree, clean main, feature
+import path, unchanged protected fixtures/contracts/controller/source locks,
+clean canonical external checkouts, source PDF hash and all collected node IDs;
+it validates the completion result using the unchanged controller's schema and
+gate/evidence checks. A03/A04/A05/negative_tests each occurs exactly once, with
+exact existing pytest node IDs covering all 30 phase tests. Evidence is retained
+locally under the existing ignored-output policy.
+
+O1--O5 remain unresolved: O1 published inter K23 action generators (merged code
+k23 is not that observable definition); O2 historical Relay semantics and
+priors/columns; O3 schedule, shift representative, lowering and boundaries; O4
+primitive multiplicities/admission; O5 original counts/grids/bootstrap. None is
+assumed resolved or required for independent phase-02 algebra. Strict paper
+manifests remain fail-closed. Donor memory-builder reuse licensing remains open;
+no donor implementation is used by this phase. No distance lower bound,
+physical Bell partition/schedule, measurement-instrument coherence or Figure-15
+sampling is claimed.
+
+Short rerun: execute the two audit commands, `python -m pytest -q`, the
+collection command and pip check above in `tour_de_gross`. Publication remains
+with the controller. Stop after phase 02. Next prompt:
+`prompts/03_ideal_protocol.md`, only in a new controller-authorized session after
+phase-02 validation/publication. No later phase was started.
