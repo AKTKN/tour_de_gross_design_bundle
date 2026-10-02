@@ -64,6 +64,7 @@ def write_bundle(path, metadata, arrays):
             files[target.name] = {'sha256': file_hash(target), 'bytes': target.stat().st_size}
         record = {'format_version': FORMAT_VERSION, 'metadata': metadata, 'files': files}
         (temporary / 'manifest.json').write_text(json.dumps(record, sort_keys=True) + '\n')
+        (temporary / 'manifest.sha256').write_text(file_hash(temporary / 'manifest.json') + '\n')
         # No in-place updates: readers see either no entry or the complete entry.
         os.rename(temporary, path)
     finally:
@@ -74,6 +75,8 @@ def write_bundle(path, metadata, arrays):
 def read_bundle(path, *, mmap_mode='r'):
     path = Path(path)
     try:
+        if file_hash(path / 'manifest.json') != (path / 'manifest.sha256').read_text().strip():
+            raise ValueError('numeric artifact manifest checksum mismatch')
         record = json.loads((path / 'manifest.json').read_text())
         if record['format_version'] != FORMAT_VERSION or not record['files']:
             raise ValueError('unsupported or empty numeric artifact')

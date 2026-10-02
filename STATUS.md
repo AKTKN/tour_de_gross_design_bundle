@@ -1091,3 +1091,19 @@ its source into a fresh reviewed-main worktree and revalidate prior controller
 gates with `--revalidate --reviewed-controls --revalidate-only`, without launching
 an implementation session. Next phase is still `prompts/07_inmodule_XX_Y.md`;
 stop after this maintenance task. Phase 07 has not passed acceptance.
+
+Maintenance follow-up before final handoff: the cache manifest itself is now
+checksummed, so valid-JSON corruption of probability/shape metadata cannot reuse
+old numeric arrays as fresh evidence. The affected cache tests passed **18 in
+2.16s** on this source (`python -m pytest -xq tests/test_fault_cache.py
+--junitxml=evidence/validation_cache/cache-final.xml`). The C10 benchmark command
+was rerun for this storage change: cold **12.84s**, warm **1.78s**, changed p
+**2.43s**, first/reused export **0.69s/0.27s**, numeric storage **26383264 bytes**.
+The earlier timing reports are retained. Completed export arrays were reused:
+after verifying all original index hashes, four manifest hash files were added,
+with writer provenance in the index. No fault matrix was regenerated for that
+migration. The controller separately revalidated **143 prior mapped tests in
+224.76s** on the first maintenance merge, with no model session launched. The
+final source delta after that run is the manifest checksum/cache negative test,
+covered by the 18-node affected run. Normal final publication and reviewed
+controller revalidation follow; phase 07 remains unaccepted and unlaunched.
