@@ -1,1 +1,4 @@
-"""Tour de gross simulation package scaffold; scientific APIs are not implemented."""
+"""Tour de gross: exact BB/signed algebra and audited benchmark declarations.
+
+Physical surgery, scheduling, detector compilation and sampling remain future APIs.
+"""
