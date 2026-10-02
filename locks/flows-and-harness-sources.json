@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "implementation": "Independently written symbolic record compiler, exact signed affine stabilizer oracle, named logical bases, ideal boundary harness and joint fault-signature oracle; no donor source copied or modified",
+  "paper": {
+    "arxiv": "2506.03094v1",
+    "url": "https://arxiv.org/pdf/2506.03094v1",
+    "sha256": "78599e80971cd05ba2d8ba0c1c6c0d62b7d3ccdbe482ab4578770d70e8631c73",
+    "inspected_sections": ["PDF A.4 split correction, printed p. 51", "PDF A.7 decoding matrices and encoded Bell harness, printed pp. 58--59"],
+    "license": "Scientific definitions cited; no implementation copied and PDF not redistributed"
+  },
+  "backend": {
+    "distribution": "stim",
+    "version": "1.16.0",
+    "pin_and_inspected_license": "locks/source-lock.json and locks/environment-lock.json",
+    "usage": "Public exact Clifford tableaus, ideal encoding/MPP, strict DEM extraction and bounded noiseless/probability-one fault oracle checks"
+  },
+  "physical_dependency": "phase04 native_controlled_pauli_v1 and tdg_a5_staged_coloring_asap_v1; locks/physical-scheduling-sources.json",
+  "reference_fixture": {
+    "path": "reference/gross.json",
+    "sha256": "937872cf0cb56785484d0622836c1711e4ece1a1c1b8bafb64a7852535341080",
+    "modified": false
+  },
+  "boundary_policy": "a7_single_block_independent_boundaries_v1: ideal encoded input, noise-free physical original verification after split and ideal commuting MPP closure",
+  "open_items": {
+    "O1": "Published inter-module K23 generators unresolved; no inter subset constructed",
+    "O2": "Historical Relay semantics/priors/column policy unresolved",
+    "O3": "Paper-exact serialized schedule, shift, lowering and boundary policy unresolved; independent policy named explicitly",
+    "O4": "Primitive multiplicities and admission/merging unresolved; no catalogue built",
+    "O5": "Original data/counts/grids/bootstrap unresolved; no rates sampled"
+  },
+  "scope": "D01--D05 construction/oracle tests for gross memory/X1; XX/Y only algebraic Clifford basis adapters"
+}
