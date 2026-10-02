@@ -1107,3 +1107,155 @@ migration. The controller separately revalidated **143 prior mapped tests in
 final source delta after that run is the manifest checksum/cache negative test,
 covered by the 18-node affected run. Normal final publication and reviewed
 controller revalidation follow; phase 07 remains unaccepted and unlaunched.
+
+## Phase 07 pre-resume preparation (2026-10-02)
+
+Stopped phase-07 edits were carried into feature/07_inmodule_XX_Y_resume on reviewed maintenance main. The original worktree, logs, draft STATUS and diff remain under .codex-pipeline/tour-de-gross. Stim-first validation, numerical caching, native export and minimal meaningful test coverage were integrated. This is preparation only: phase 07 is not accepted, and no controller/model session was launched. Its final acceptance/export must still run under prompts/07_inmodule_XX_Y.md. O1--O5 remain open.
+
+Pre-resume smoke checks on final maintenance base: 20 passed in 0.49s (cache, signed-cache invalidation and Stim/reference sign cross-check); compileall and export --help passed. This is not phase-07 acceptance. Maintenance feature/main atomic publication verified; final prior controller revalidation: 143 passed in 220.31s, with no new model session. The original stopped worktree is unchanged.
+
+## Phase 07 completed: independent physical in-module XX/Y (2026-10-02)
+
+Branch: `feature/07_inmodule_XX_Y_resume`. Worktree:
+`/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/.codex-pipeline/tour-de-gross/worktrees/07_inmodule_XX_Y_resume`.
+Preserved the supplied staged/unstaged work; its starting tracked diff and status
+are saved in `evidence/phase07/preserved-{edits.diff,status.txt}`. The original
+stopped worktree and logs remain intact. Canonical main stayed clean. Publication
+was **not attempted**: the controller owns acceptance rerun, feature commit,
+validated main merge and atomic push. This session stops after phase 07.
+
+Extended the existing physical protocol, harness and physical noise ledger to
+gross `X1*X7` and `Y1`, using C=10. The same installed full LPU has 23 vertices,
+47 edge-data sites, 19 selected cycles, 90 LPU sites and 378 total physical sites.
+Active couplers, signed ports and old-check dressing differ between operations.
+Y is the single Hermitian `i X1 Z1`, including CY on the shared-support Bell
+half. It is never a sequence of X/Z measurements. Physical gates, explicit
+Bell preparation/partition/XOR, split edge measurements and software frames
+remain in the full instrument. Ideal MPP occurs only in the labelled benchmark
+input/terminal boundary. `build_physical_x1` retains its previous strict scope
+and default; `build_physical_inmodule` defaults to ten rounds.
+
+The Bell tableau oracle now proves nondemolition on its prepared ancilla
+subspace, retaining exact signs, instead of demanding a bare operator identity
+on arbitrary ancilla inputs. The independent signed tracker caches its full
+immutable signed/affine rows; phase, value and state changes invalidate it.
+The corresponding missing-preparation and stale-sign negative tests pass.
+All 23 named centralizer rows, old-check dependencies and closure records are
+preserved. Active split corrections are ideal validation only; noise construction
+continues to reject that mode without an active-correction noise definition.
+
+Changed coverage is the minimal shared-fixture phase suite: one encoded +, one
+encoded - and one Choi trajectory per operation, with a complete rank-156
+data/reference stabilizer witness and retained eigenspace coherence. Separate
+XX factors or sequential X/Z destroy the required coherence. Complete composite
+signed check tableaus, collision/Eq. (67) checks and installed couplers are
+verified. Nested Bell repeats compare all flattened records/parities; tests no
+longer assert REPEAT spelling. Both C10 split modes pass strict DEM and raw
+reference-record signs; two-round independent signed affine checks and corrupt
+offset/half/frame/sign/controlled-Pauli mutations remain. D04 compares every
+raw joint column between active and software frames, then checks independent
+phase/gate/role/boundary strata; actual stratum sets replace a count threshold.
+D05 injects all 24 input logical Paulis and proves the named action rank is 23.
+Unchanged tiny gate/Bell/Y fixtures exhaust primitive classes in the regression;
+large independent checks use IX/ZI/XX/YZ and first/middle/last round strata.
+No independent exhaustive large-location or distance lower-bound claim is made.
+
+Final exported C10 results:
+
+| operation | raw primitives | include-all copies N | excluding joint-zero N | joint decoder groups | independent raw strata | H rows / logical rows | Table-6 N / delta |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| XX | 211968 | 439380 | 433175 | 73769 | 119 | 2145 / 23 | 398717 / +40663 |
+| Y | 211668 | 438480 | 432280 | 73679 | 131 | 2145 / 23 | 400117 / +38363 |
+
+All three named noisy profiles pass strict DEM extraction for each operation,
+with gauge disabled and no disjoint approximation. Compact DEM error counts
+are 73768/73678, distinct from both sampler N and joint decoder groups. Joint
+X/Z tensor signatures, multiplicities 15/5/1, admission masks and complete
+copy/group maps are retained. No padding or forced N match was performed.
+The native schedule is 13 ticks per merged round (130 for C10, 141 including
+reset/split/original verification), versus the paper's reported 12C coloring.
+These counts describe the explicit independent policy, not paper equivalence.
+
+Numerical cache/export evidence is in `artifacts/index.json` and the compact
+`audit-summary.json`. Both export models started cold: XX construction 24.72s,
+warm read 2.66s, changed-p read/reweight 3.73s; Y 25.48s / 2.61s / 3.54s.
+Harness/location/ledger construction separately took 20.67s/21.35s. First/reused
+native exports took XX 1.25s/0.59s and Y 1.22s/0.60s. Both matrices, signatures
+and every copy/admission/group map agree after warm and p-only reuse. The index
+checksums 65 artifact files totaling 189608509 bytes. No expanded catalogue JSON
+or ZIP was generated; legacy export remains opt-in. Relevant implementation,
+circuit, records and location changes invalidate keys; test/doc changes do not.
+The full cache negative regressions (corruption/interruption/invalidation and
+joint-zero/logical-only policy) executed and passed. Test passes are not cached.
+
+All Python commands used `tour_de_gross` and `PYTHONPATH="$PWD/src"` so imports
+resolve to this feature. `GROSS_DESIGN_CACHE_DIR="$PWD/cache/faults"` explicitly
+uses a writable worktree cache because the controller's canonical cache path is
+outside this session's writable roots. External sources still use the canonical
+`/home/quantum_teresheys/workspace/tour_de_gross_design_bundle/external_libs`;
+none was changed, fetched or copied. Frozen commits, source hashes and clean
+external working trees were checked. The local pinned v1 PDF hash was verified
+and Appendix A.3--A.5/A.7 inspected. Provenance is
+`locks/inmodule-xx-y-sources.json`; API/policy documentation is
+`docs/INMODULE_XX_Y.md`. AGENTS, pipeline controls and scientific fixtures are
+unchanged. No network writes, solver, cluster, production Monte Carlo, decoder
+integration or later-phase implementation ran.
+
+Actual validation commands, from this worktree:
+
+```bash
+export PYTHONPATH="$PWD/src"
+export GROSS_DESIGN_CACHE_DIR="$PWD/cache/faults"
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_inmodule_xx_y.py::test_negative_joint_Bell_preparation_subspace_required --junitxml=evidence/phase07/reproducer.xml
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq tests/test_inmodule_xx_y.py --durations=15 --junitxml=evidence/phase07/affected.xml
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq 'tests/test_inmodule_xx_y.py::test_D02_C10_strict_harness_every_boundary_and_raw_API[Y1]' --durations=5 --junitxml=evidence/phase07/c10-both-modes.xml
+conda run --no-capture-output -n tour_de_gross python -m pytest -xq --durations=20 --junitxml=evidence/phase07/final.xml
+conda run --no-capture-output -n tour_de_gross python tools/audit_inmodule_xx_y.py --output-dir evidence/phase07/artifacts --cache-dir "$PWD/cache/faults"
+conda run --no-capture-output -n tour_de_gross python tools/audit_reference.py --output evidence/phase07/independent-audit.json
+conda run --no-capture-output -n tour_de_gross python -m pytest --collect-only -q tests/test_inmodule_xx_y.py
+conda run --no-capture-output -n tour_de_gross python -m pip check
+conda run --no-capture-output -n tour_de_gross python -c 'import gross_design_bandle, stim; print(gross_design_bandle.__file__); print(stim.__version__)'
+conda run --no-capture-output -n tour_de_gross python -m compileall -q src/gross_design_bandle tests/test_inmodule_xx_y.py tools/audit_inmodule_xx_y.py
+sha256sum evidence/phase07/paper-v1.pdf
+pdftotext -f 45 -l 59 -layout evidence/phase07/paper-v1.pdf evidence/phase07/paper-appendix.txt
+conda run --no-capture-output -n tour_de_gross python /tmp/phase07_handoff.py
+conda run --no-capture-output -n tour_de_gross python /tmp/phase07_result.py
+git diff --check
+```
+
+The first negative reproducer passed **1 in 1.54s**. The affected suite passed
+**20 in 277.93s**, followed by the strengthened both-mode C10 Y check passing
+**1 in 44.41s**. The one final sequential regression passed **234 in 427.03s**,
+with no skips/xfails, on final implementation/test/export source. No failed or
+incomplete run is relabelled passed. Its slowest setup was 34.68s; the affected
+cold model/ledger setup was 64.95s, reduced to 17.99s with cache reuse in the
+final run. The inspected hot path is physical-ledger construction plus validated
+matrix/copy/group creation; no concurrent full suite/export or expensive retry
+was launched. The one final exporter completed both operations. The independent
+algebra audit exactly matches delivery; compilation, whitespace, imports (Stim
+1.16.0) and pip dependency checks pass. No implementation failure remains.
+
+Gate mappings are `evidence/phase07/acceptance-gates.json`: exactly B04_XX_Y,
+D01, D02, D03, D04, D05 and negative_tests, using 22 distinct exact passed nodes
+(20 phase nodes plus the inherited tiny gate/Bell oracle and corrupt-signature
+negative test). The
+handoff verifies their final JUnit results, all source/artifact hashes, frozen
+external sources, clean main and protected files. The result helper checks the
+unchanged controller schema and all nonempty evidence paths. Logs/XML and
+collected nodes, imports/pip checks, source inspection, independent audit,
+summary, handoff checks and completion JSON are local in `evidence/phase07/`.
+Physical circuits, Bell/dressing/frame/observable/record/location ledgers,
+native CSC/signature/map arrays, fixed-fault trials and N reports are in
+`evidence/phase07/artifacts/`, indexed by size and SHA256.
+
+O1--O5 remain open: O1 published inter K23 generators; O2 historical Relay,
+priors and columns; O3 paper-exact serialized schedule/lowering/boundaries;
+O4 exact Table-6 fault population/admission/merging; O5 original statistical
+grids/counts/bootstrap. The independent policies specify all definitions needed
+here. The remaining depth/N mismatches prevent an exact-reproduction claim;
+strict paper manifests remain fail-closed. No reference correction is proposed.
+
+Short reproducible rerun: set the two environment variables above, run the
+phase test command, then the export command sequentially. Next prompt:
+`prompts/08_intermodule_adapter.md`, only in a new controller-authorized session
+after independent acceptance and publication. Stop here.

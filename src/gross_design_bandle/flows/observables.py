@@ -62,7 +62,7 @@ class LogicalBasisAdapter:
                 'abstract_cliffords': list(self.abstract_cliffords), 'rank': expected,
                 'logical_coordinates': coords.tolist(), 'names': list(self.names),
                 'physical_generators': [p.to_dict() for p in self.generators],
-                'scope': 'XX/Y basis adapter only; their physical benchmark validation is later'}
+                'scope': 'named single-block centralizer; physical validation is separate'}
 
 
 def correlation(pauli, axis, ref, register):

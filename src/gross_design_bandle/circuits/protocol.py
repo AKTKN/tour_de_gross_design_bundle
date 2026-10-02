@@ -1,4 +1,4 @@
-"""Noiseless physical X1 body; input encoding is a separate ideal harness."""
+"""Noiseless physical in-module bodies; encoding is a separate ideal harness."""
 from dataclasses import dataclass, replace
 from collections import Counter, defaultdict
 from gross_design_bandle.surgery.frame import Parity, build_split_frame
@@ -113,7 +113,8 @@ class PhysicalProtocol:
                 'edge_data_inactive_after_split':list(edges)}
 
     def to_dict(self):
-        return {'schema_version':1,'scope':'physical noiseless X1 instrument; no detectors or benchmark scoring',
+        return {'schema_version':1,'scope':'physical noiseless in-module instrument; no detectors or benchmark scoring',
+                'operation':self.deformation.lpu.operation,
                 'register':list(self.register),'timing':self.timing,'cycle_hash':self.cycle.hash,
                 'cycle':self.cycle.to_dict(),'schedule_metadata':self.schedule_metadata,
                 'terminal_memory':self.terminal.to_dict(), 'complete_operations':[o.to_dict() for o in self.complete_ops()],
@@ -127,6 +128,17 @@ class PhysicalProtocol:
 def build_physical_x1(deformation,rounds=1):
     if deformation.lpu.operation!='X' or len(deformation.lpu.codes)!=1:
         raise ValueError('phase04 complete physical instrument is X1 only')
+    return build_physical_inmodule(deformation,rounds)
+
+
+def build_physical_inmodule(deformation,rounds=10):
+    """Direct signed X1, X1*X7 or Y1 measurement on one fixed LPU.
+
+    C=10 is the gross reference choice. Other positive counts are explicit
+    construction/debug profiles, not the published gross configuration.
+    """
+    if deformation.lpu.operation not in ('X','XX','Y') or len(deformation.lpu.codes)!=1:
+        raise ValueError('physical in-module instrument requires one X/XX/Y block')
     if not isinstance(rounds,int) or isinstance(rounds,bool) or rounds<1:
         raise ValueError('round count must be positive integer')
     cycle,metadata = staged_schedule(deformation)

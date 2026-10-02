@@ -7,7 +7,7 @@ No faults are added to the ideal encoding, references or terminal verification.
 from dataclasses import dataclass, asdict
 from collections import defaultdict
 from gross_design_bandle.circuits.memory import memory_schedule
-from gross_design_bandle.circuits.protocol import build_physical_x1
+from gross_design_bandle.circuits.protocol import build_physical_inmodule
 from gross_design_bandle.flows.boundaries import input_boundary
 from gross_design_bandle.flows.observables import LogicalBasisAdapter
 
@@ -69,20 +69,23 @@ def benchmark_locations(code, harness, *, operation, rounds, deformation=None):
     """
     if harness.split_mode != 'frame':
         raise ValueError('noise policy currently requires software split frame')
+    bell_roles = {}
     if operation == 'memory':
         s = memory_schedule(code, rounds)
         ops, ledger, register, duration = s.ordered_ops(), s.ledger(), s.register, s.duration
         phases = {t:'memory' for t in range(duration)}
         round_at = {t:min(t//8,rounds-1) for t in range(duration)}
-    elif operation == 'X1':
-        p = build_physical_x1(deformation,rounds)
+    elif operation in ('X1','X1*X7','Y1'):
+        p = build_physical_inmodule(deformation,rounds)
+        bell_roles = {q:f'Bell_half_{half}' for c in p.cycle.checks if c.kind=='bell'
+                      for half,q in enumerate(c.ancillas)}
         duration = 2+rounds*p.cycle.duration
         ops = tuple(o for o in p.complete_ops() if o.time < duration)
         ledger, register = p.ledger(), p.register
         phases = {t:('edge_initialize' if t == 0 else 'split' if t == duration-1 else 'deformed') for t in range(duration)}
         round_at = {t:max(0,min((t-1)//p.cycle.duration,rounds-1)) for t in range(duration)}
     else:
-        raise ValueError('noise benchmark scope is gross memory/X1')
+        raise ValueError('noise benchmark scope is gross memory/X1/XX/Y')
     initial, expected_register, _ = input_boundary(code, LogicalBasisAdapter.single_block(code,operation),register)
     if expected_register != harness.register:
         raise ValueError('noise register/harness mismatch')
@@ -114,14 +117,17 @@ def benchmark_locations(code, harness, *, operation, rounds, deformation=None):
     for o in ops:
         i = lookup[o.time,o.gate,o.qubits]
         kind = 'preparation' if o.gate in ('R','RX') else 'readout' if o.outcome_id else 'two_qubit'
+        role = 'Bell_preparation' if len(o.qubits)==2 and o.data_id is None else 'check_interaction' if o.data_id else 'reset_or_readout'
+        if role != 'Bell_preparation' and o.qubits[0] in bell_roles:
+            role = bell_roles[o.qubits[0]]+('_interaction' if o.data_id else '_reset_or_readout')
         result.append(Location(f'{o.time}/{o.gate}/'+','.join(o.qubits), i-1 if kind=='readout' else i,
             kind,tuple(index[q] for q in o.qubits),o.gate,phases[o.time],o.time,o.round,
-            'Bell_preparation' if len(o.qubits)==2 and o.data_id is None else 'check_interaction' if o.data_id else 'reset_or_readout'))
+            role))
     data = set(code.qubit_ids)
     for q,t in ledger['idle_locations']:
         if t < duration:
             result.append(Location(f'{t}/IDLE/{q}',tick_boundary[t],'idle',(index[q],),'I',
-                phases[t],t,round_at[t], 'BB_data' if q in data else 'edge_data' if q.startswith('edge:') else 'prepared_ancilla'))
+                phases[t],t,round_at[t], 'BB_data' if q in data else 'edge_data' if q.startswith('edge:') else bell_roles[q]+'_idle' if q in bell_roles else 'prepared_ancilla'))
     result.sort(key=lambda l:(l.after_instruction,l.id))
     validate_locations(harness.circuit,result)
     return tuple(result), {'profile':'native_schedule_independent_noise_v1',
